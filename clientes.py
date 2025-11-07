@@ -5,15 +5,14 @@
 # - Formulário de cadastro
 # - Gravação e leitura no Supabase
 # - Tabela com destaque de cor pela data de fim da vigência
-# - Opção de enviar e-mail de boas-vindas após cadastro (com dois botões)
+# - Envio de e-mails por carteira (texto e links personalizados)
+# - PDF anexo para todas as carteiras EXCETO Clube
 #
 # Requer no Streamlit Cloud (Settings -> Secrets):
 #   SUPABASE_URL
 #   SUPABASE_KEY
-#   EMAIL_HOST
-#   EMAIL_PORT
-#   EMAIL_USER
-#   EMAIL_PASS
+#   email_sender
+#   gmail_app_password
 #
 # requirements.txt:
 #   streamlit
@@ -31,10 +30,8 @@ import pandas as pd
 import streamlit as st
 from supabase import create_client, Client
 
-
 # ---------------------- CONFIG STREAMLIT ----------------------
 st.set_page_config(page_title="Clientes - CRM", layout="wide")
-
 
 # ---------------------- SECRETS / CONFIG ----------------------
 def get_secret(name: str, default=None):
@@ -46,12 +43,12 @@ def get_secret(name: str, default=None):
 SUPABASE_URL = get_secret("SUPABASE_URL")
 SUPABASE_KEY = get_secret("SUPABASE_KEY")
 
+# Seu padrão de e-mail (iguais aos outros apps)
 EMAIL_USER = get_secret("email_sender")
 EMAIL_PASS = get_secret("gmail_app_password")
 
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
-
 
 if not SUPABASE_URL or not SUPABASE_KEY:
     st.error("Configuração do Supabase ausente. Defina SUPABASE_URL e SUPABASE_KEY em Secrets.")
@@ -63,12 +60,10 @@ except Exception as e:
     st.error(f"Falha ao inicializar Supabase: {e}")
     st.stop()
 
-
 # ---------------------- AUTENTICAÇÃO SIMPLES ----------------------
 def check_login(user: str, pwd: str) -> bool:
     # Ajuste aqui se quiser trocar credenciais
     return user == "admin" and pwd == "123"
-
 
 if "auth" not in st.session_state:
     st.session_state.auth = False
@@ -88,7 +83,6 @@ if not st.session_state.auth:
             st.error("Credenciais inválidas.")
     st.stop()
 
-
 # ---------------------- FUNÇÕES AUXILIARES ----------------------
 PAISES = {
     "🇧🇷 Brasil (+55)": "+55",
@@ -101,79 +95,12 @@ PAISES = {
 CARTEIRAS_OPCOES = ["Curto Prazo", "Curtíssimo Prazo", "Opções", "Criptomoedas", "Clube"]
 PAGAMENTOS = ["PIX", "PAYPAL", "Infinite"]  # se precisar "Infinitie", troque aqui
 
-
 def montar_telefone(cod: str, numero: str) -> str:
     numero = numero.strip()
     cod = cod.strip()
     if cod and not numero.startswith(cod):
         return f"{cod} {numero}"
     return numero
-
-
-from email.mime.multipart import MIMEMultipart
-from email.mime.application import MIMEApplication
-from email.mime.text import MIMEText
-
-def enviar_email_boas_vindas(nome: str, email_destino: str) -> tuple[bool, str]:
-    if not (EMAIL_USER and EMAIL_PASS and EMAIL_HOST and EMAIL_PORT):
-        return False, "Parâmetros de e-mail ausentes. Configure email_sender e gmail_app_password em Secrets."
-
-    corpo = f"""
-Olá {nome},
-
-Seja muito bem-vindo(a) à **1 Milhão Invest**! 🎯🚀
-
-Seu cadastro foi realizado com sucesso.
-
-📎 No anexo deste e-mail está o **Contrato de Prestação de Serviços**.
-
-Por favor:
-
-1) Leia com atenção o documento
-2) Assine digitalmente ou manualmente
-3) Envie a via assinada de volta para este e-mail
-
-Caso tenha dúvidas, nossa equipe está à disposição para ajudar.
-
-Bem-vindo(a) ao próximo nível!
-
-Atenciosamente,  
-**Equipe 1 Milhão Invest**
-"""
-
-    try:
-        # Mensagem com suporte a anexo
-        msg = MIMEMultipart()
-        msg["Subject"] = "📄 Seu Contrato — 1 Milhão Invest"
-        msg["From"] = EMAIL_USER
-        msg["To"] = email_destino
-
-        # Corpo do email
-        msg.attach(MIMEText(corpo, "plain", "utf-8"))
-
-        # 📎 Anexar PDF
-        with open("1milhaoinvest.pdf", "rb") as f:
-            part = MIMEApplication(f.read(), _subtype="pdf")
-            part.add_header(
-                "Content-Disposition",
-                "attachment",
-                filename="Contrato_1MilhaoInvest.pdf"
-            )
-            msg.attach(part)
-
-        # SMTP Gmail
-        server = smtplib.SMTP(EMAIL_HOST, EMAIL_PORT)
-        server.starttls()
-        server.login(EMAIL_USER, EMAIL_PASS)
-        server.sendmail(EMAIL_USER, email_destino, msg.as_string())
-        server.quit()
-
-        return True, "✅ E-mail com contrato enviado com sucesso!"
-
-    except Exception as e:
-        return False, f"❌ Erro ao enviar e-mail: {e}"
-
-
 
 def status_cor_data_fim(data_fim: date) -> str:
     """Retorna cor de fundo conforme regra:
@@ -189,11 +116,224 @@ def status_cor_data_fim(data_fim: date) -> str:
         return "background-color: yellow"
     return "background-color: lightgreen"
 
+# ---------------------- LINKS E TEMPLATES DE E-MAIL ----------------------
+from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
+from email.mime.text import MIMEText
+
+# Links Telegram
+LINK_CURTO = "https://t.me/+3BTqTX--W6gyNTE0"
+LINK_CURTISSIMO = "https://t.me/+BiTfqYUSiWpjN2U0"
+LINK_OPCOES = "https://t.me/+1si_16NC5E8xNDhk"
+LINK_CRIPTO = LINK_CURTO  # por enquanto, mesmo do Curto
+
+# Aulas bônus (lista simples)
+AULAS_TXT = (
+    "Aulas bônus:\n"
+    "- https://youtu.be/usGS5KpBPcA\n"
+    "- https://youtu.be/mtY0qY1zZN4\n"
+    "- https://youtu.be/2aHj8LSGrV8\n"
+    "- https://youtu.be/0QOtVHX1n-4\n"
+    "- https://youtu.be/pzK8dnK6jsk\n"
+)
+
+# E-book Opções
+EBOOK_OPCOES = "https://drive.google.com/file/d/1U3DBmTbbjiq34tTQdvHcxi2MnZnd8owN/view"
+
+# Textos por carteira (com placeholders {nome}, {inicio}, {fim})
+EMAIL_CORPOS = {
+    "Curto Prazo": f"""
+Olá {{nome}},
+
+Que bom ter você conosco! 🙌  
+
+Obrigado por assinar a **Carteira Recomendada de Curto Prazo**.
+
+📅 Vigência do seu contrato: {{inicio}} a {{fim}}
+
+-----------------------------------------
+✅ PASSOS INICIAIS IMPORTANTES
+-----------------------------------------
+1) Leia o documento em anexo e responda este e-mail com **ACEITE**
+2) Entre no grupo exclusivo do Telegram:
+👉 {LINK_CURTO}
+3) Verifique sua caixa de anti-spam e libere:
+   **avisoscanal1milhao@gmail.com**
+
+-----------------------------------------
+📬 VOCÊ RECEBERÁ TODA SEMANA
+-----------------------------------------
+• Até 5 recomendações de compra
+• Até 5 recomendações de venda descoberta
+• Estratégias completas (entrada, alvos, stop)
+• Atualizações diárias das operações em aberto
+• Avisos automatizados de início e fim
+• Vídeo semanal explicando o racional
+
+-----------------------------------------
+🎁 BÔNUS EXCLUSIVO 1 MILHÃO INVEST
+-----------------------------------------
+{AULAS_TXT}
+
+Bem-vindo(a) ao próximo nível!
+Equipe 1 Milhão Invest
+""",
+
+    "Curtíssimo Prazo": f"""
+Olá {{nome}},
+
+Bem-vindo(a) à **Carteira Recomendada de Curtíssimo Prazo**! ⚡
+
+📅 Vigência do seu contrato: {{inicio}} a {{fim}}
+
+-----------------------------------------
+✅ PASSOS INICIAIS IMPORTANTES
+-----------------------------------------
+1) Leia o documento em anexo e responda este e-mail com **ACEITE**
+2) Entre no grupo exclusivo do Telegram:
+👉 {LINK_CURTISSIMO}
+3) Verifique sua caixa de anti-spam e libere:
+   **avisoscanal1milhao@gmail.com**
+
+-----------------------------------------
+📬 VOCÊ RECEBERÁ TODA SEMANA
+-----------------------------------------
+• Até 5 operações de compra
+• Até 5 operações de venda descoberta
+• Estratégias com entrada, alvos e stop
+• Alertas automatizados
+• Relatório com racional das recomendações
+
+-----------------------------------------
+🎁 BÔNUS EXCLUSIVO 1 MILHÃO INVEST
+-----------------------------------------
+{AULAS_TXT}
+
+Bora buscar performance com agilidade!
+Equipe 1 Milhão Invest
+""",
+
+    "Opções": f"""
+Olá {{nome}},
+
+Seja bem-vindo(a) à **Carteira Recomendada de Opções**! 🔥
+
+📅 Vigência do seu contrato: {{inicio}} a {{fim}}
+
+-----------------------------------------
+✅ PASSOS INICIAIS IMPORTANTES
+-----------------------------------------
+1) Leia o documento em anexo e responda este e-mail com **ACEITE**
+2) Entre no grupo exclusivo do Telegram:
+👉 {LINK_OPCOES}
+3) Verifique sua caixa de anti-spam e libere:
+   **opcoes.1milhao.invest@gmail.com**
+
+-----------------------------------------
+📈 VOCÊ RECEBERÁ
+-----------------------------------------
+• Mínimo de 8 operações por mês (média 2/semana)
+• Alertas com ticker, strike, vencimento e preço
+• Atualizações semanais das operações
+• Relatório de rentabilidade
+
+⚠️ Por serem oportunidades de momento (alta volatilidade),
+recomendamos atenção às mensagens para não perder o timing.
+
+-----------------------------------------
+🎁 BÔNUS EXCLUSIVO 1 MILHÃO INVEST
+-----------------------------------------
+{AULAS_TXT}
+
+📘 E-BOOK exclusivo sobre Mercado de Opções:
+{EBOOK_OPCOES}
+
+Vamos operar com estratégia e controle!
+Equipe 1 Milhão Invest
+""",
+
+    # Criptomoedas usa o mesmo corpo do Curto Prazo (links e tudo)
+    "Criptomoedas": "<<USE_CURTO>>",
+
+    # Clube: sem PDF, sem link
+    "Clube": """
+Olá {nome},
+
+Bem-vindo(a) ao **Clube 1 Milhão Invest**! 🏆
+
+Nossa equipe fará contato exclusivo com você para os próximos passos.
+Qualquer dúvida, estamos à disposição.
+
+Prazer ter você conosco!
+Equipe 1 Milhão Invest
+"""
+}
+
+def _format_date_br(d: date) -> str:
+    try:
+        return d.strftime("%d/%m/%Y")
+    except Exception:
+        # caso venha string
+        try:
+            return pd.to_datetime(d).strftime("%d/%m/%Y")
+        except Exception:
+            return str(d)
+
+def _enviar_email(nome: str, email_destino: str, assunto: str, corpo: str, anexar_pdf: bool) -> tuple[bool, str]:
+    try:
+        msg = MIMEMultipart()
+        msg["Subject"] = assunto
+        msg["From"] = EMAIL_USER
+        msg["To"] = email_destino
+
+        msg.attach(MIMEText(corpo, "plain", "utf-8"))
+
+        if anexar_pdf:
+            # anexa contrato padrão
+            with open("1milhaoinvest.pdf", "rb") as f:
+                part = MIMEApplication(f.read(), _subtype="pdf")
+                part.add_header("Content-Disposition", "attachment", filename="Contrato_1MilhaoInvest.pdf")
+                msg.attach(part)
+
+        server = smtplib.SMTP(EMAIL_HOST, EMAIL_PORT)
+        server.starttls()
+        server.login(EMAIL_USER, EMAIL_PASS)
+        server.sendmail(EMAIL_USER, [email_destino], msg.as_string())
+        server.quit()
+        return True, "OK"
+    except Exception as e:
+        return False, f"{e}"
+
+def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, inicio: date, fim: date) -> list[tuple[str, bool, str]]:
+    """
+    Envia 1 e-mail por carteira.
+    Retorna lista de (carteira, sucesso, mensagem)
+    """
+    resultados = []
+    inicio_br = _format_date_br(inicio)
+    fim_br = _format_date_br(fim)
+
+    for c in carteiras:
+        corpo = EMAIL_CORPOS.get(c, "")
+        if c == "Criptomoedas":
+            # Usa corpo do Curto Prazo
+            corpo = EMAIL_CORPOS["Curto Prazo"]
+        if not corpo:
+            resultados.append((c, False, "Sem template configurado"))
+            continue
+
+        corpo = corpo.format(nome=nome, inicio=inicio_br, fim=fim_br)
+
+        anexar_pdf = (c != "Clube")
+        assunto = f"Bem-vindo(a) — {c}"
+
+        ok, msg = _enviar_email(nome, email_destino, assunto, corpo, anexar_pdf)
+        resultados.append((c, ok, msg))
+    return resultados
 
 # ---------------------- UI: CABEÇALHO ----------------------
 st.title("📋 Cadastro de Clientes")
 st.caption("CRM simples com Supabase + Streamlit")
-
 
 # ---------------------- FORMULÁRIO DE CADASTRO ----------------------
 with st.expander("➕ Novo cadastro", expanded=True):
@@ -245,35 +385,53 @@ with st.expander("➕ Novo cadastro", expanded=True):
                 "observacao": observacao or None,
             }
             try:
-                res = supabase.table("clientes").insert(payload).execute()
+                supabase.table("clientes").insert(payload).execute()
                 st.success("✅ Cliente cadastrado com sucesso!")
 
-                # Guarda último cadastro na sessão para permitir envio de e-mail logo após
-                st.session_state.last_cadastro = {"nome": nome, "email": email}
+                # Guarda dados do cadastro para envio de e-mails por carteira
+                st.session_state.last_cadastro = {
+                    "nome": nome,
+                    "email": email,
+                    "carteiras": carteiras,
+                    "inicio": inicio,
+                    "fim": fim
+                }
             except Exception as e:
                 st.error(f"Erro ao salvar no Supabase: {e}")
 
-
 # ---------------------- AÇÃO: ENVIAR E-MAIL APÓS CADASTRO (DOIS BOTÕES) ----------------------
 if "last_cadastro" in st.session_state and st.session_state.last_cadastro:
-    st.info(f"Deseja enviar e-mail de boas-vindas para **{st.session_state.last_cadastro['email']}**?")
+    lc = st.session_state.last_cadastro
+    lista = ", ".join(lc.get("carteiras", [])) if lc.get("carteiras") else "Nenhuma carteira selecionada"
+    st.info(f"Enviar e-mail de boas-vindas para **{lc['email']}** — carteiras: **{lista}**?")
     c1, c2 = st.columns([1, 1])
     with c1:
-        if st.button("✉️ Enviar e-mail agora", use_container_width=True):
-            ok, msg = enviar_email_boas_vindas(
-                st.session_state.last_cadastro["nome"],
-                st.session_state.last_cadastro["email"],
-            )
-            if ok:
-                st.success(msg)
-                st.session_state.last_cadastro = None
+        if st.button("✉️ Enviar e-mails agora", use_container_width=True):
+            if not lc.get("carteiras"):
+                st.warning("Nenhuma carteira selecionada. Nada foi enviado.")
             else:
-                st.error(msg)
+                resultados = enviar_emails_por_carteira(
+                    nome=lc["nome"],
+                    email_destino=lc["email"],
+                    carteiras=lc["carteiras"],
+                    inicio=lc["inicio"],
+                    fim=lc["fim"]
+                )
+                # Feedback por carteira
+                ok_all = True
+                for carteira, ok, msg in resultados:
+                    if ok:
+                        st.success(f"✅ {carteira}: enviado")
+                    else:
+                        ok_all = False
+                        st.error(f"❌ {carteira}: falhou — {msg}")
+                if ok_all:
+                    st.toast("Todos os e-mails foram enviados com sucesso.", icon="✅")
+            st.session_state.last_cadastro = None
     with c2:
         if st.button("❌ Não enviar", use_container_width=True):
             st.session_state.last_cadastro = None
-            st.toast("Cadastro concluído sem envio de e-mail.", icon="✅")
-
+            st.toast("Cadastro concluído sem envio de e-mails.", icon="✅")
 
 # ---------------------- LISTAGEM / TABELA ----------------------
 st.subheader("📊 Clientes cadastrados")
@@ -289,7 +447,6 @@ if dados:
     df = pd.DataFrame(dados)
 
     # Normalizações de colunas esperadas
-    # Garante colunas mesmo se a tabela tiver variações
     for col in ["nome", "telefone", "email", "carteiras", "data_inicio", "data_fim", "pagamento", "valor", "observacao"]:
         if col not in df.columns:
             df[col] = None
@@ -356,7 +513,6 @@ if dados:
 
 else:
     st.info("Nenhum cliente cadastrado ainda.")
-
 
 # ---------------------- RODAPÉ / DICAS ----------------------
 with st.expander("ℹ️ Dicas & Próximos passos"):
