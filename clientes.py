@@ -5,7 +5,7 @@
 # - Formulário de cadastro
 # - Gravação e leitura no Supabase
 # - Tabela com destaque de cor pela data de fim da vigência
-# - Opção de enviar e-mail de boas-vindas após cadastro
+# - Opção de enviar e-mail de boas-vindas após cadastro (com dois botões)
 #
 # Requer no Streamlit Cloud (Settings -> Secrets):
 #   SUPABASE_URL
@@ -89,11 +89,11 @@ if not st.session_state.auth:
 
 # ---------------------- FUNÇÕES AUXILIARES ----------------------
 PAISES = {
-    "Brasil (+55)": "+55",
-    "Portugal (+351)": "+351",
-    "EUA (+1)": "+1",
-    "Espanha (+34)": "+34",
-    "Outro": ""
+    "🇧🇷 Brasil (+55)": "+55",
+    "🇵🇹 Portugal (+351)": "+351",
+    "🇺🇸 EUA (+1)": "+1",
+    "🇪🇸 Espanha (+34)": "+34",
+    "🌍 Outro": ""
 }
 
 CARTEIRAS_OPCOES = ["Curto Prazo", "Curtíssimo Prazo", "Opções", "Criptomoedas", "Clube"]
@@ -115,7 +115,8 @@ def enviar_email_boas_vindas(nome: str, email_destino: str) -> tuple[bool, str]:
     corpo = f"""Olá {nome},
 
 Seja muito bem-vindo(a)!
-Seu cadastro foi realizado com sucesso. Qualquer dúvida, estamos à disposição.
+Seu cadastro foi realizado com sucesso. Este é um e-mail de teste.
+Qualquer dúvida, estamos à disposição.
 
 Abraços,
 Equipe
@@ -168,7 +169,7 @@ with st.expander("➕ Novo cadastro", expanded=True):
 
         c3, c4, c5 = st.columns([1.2, 1.2, 1.6])
         with c3:
-            pais = st.selectbox("País (código)", options=list(PAISES.keys()), index=0)
+            pais_label = st.selectbox("País (bandeira + código)", options=list(PAISES.keys()), index=0)
         with c4:
             numero = st.text_input("Telefone", placeholder="(00) 00000-0000")
         with c5:
@@ -191,7 +192,7 @@ with st.expander("➕ Novo cadastro", expanded=True):
         salvar = st.form_submit_button("Salvar cadastro", use_container_width=True)
 
     if salvar:
-        telefone = montar_telefone(PAISES.get(pais, ""), numero)
+        telefone = montar_telefone(PAISES.get(pais_label, ""), numero)
         if not nome or not email:
             st.error("Preencha ao menos **Nome Completo** e **Email**.")
         else:
@@ -216,7 +217,7 @@ with st.expander("➕ Novo cadastro", expanded=True):
                 st.error(f"Erro ao salvar no Supabase: {e}")
 
 
-# ---------------------- AÇÃO: ENVIAR E-MAIL APÓS CADASTRO ----------------------
+# ---------------------- AÇÃO: ENVIAR E-MAIL APÓS CADASTRO (DOIS BOTÕES) ----------------------
 if "last_cadastro" in st.session_state and st.session_state.last_cadastro:
     st.info(f"Deseja enviar e-mail de boas-vindas para **{st.session_state.last_cadastro['email']}**?")
     c1, c2 = st.columns([1, 1])
@@ -232,9 +233,9 @@ if "last_cadastro" in st.session_state and st.session_state.last_cadastro:
             else:
                 st.error(msg)
     with c2:
-        if st.button("Agora não", use_container_width=True):
+        if st.button("❌ Não enviar", use_container_width=True):
             st.session_state.last_cadastro = None
-            st.toast("Beleza. Você pode enviar depois na listagem.", icon="✅")
+            st.toast("Cadastro concluído sem envio de e-mail.", icon="✅")
 
 
 # ---------------------- LISTAGEM / TABELA ----------------------
