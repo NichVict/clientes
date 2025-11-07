@@ -110,34 +110,69 @@ def montar_telefone(cod: str, numero: str) -> str:
     return numero
 
 
+from email.mime.multipart import MIMEMultipart
+from email.mime.application import MIMEApplication
+from email.mime.text import MIMEText
+
 def enviar_email_boas_vindas(nome: str, email_destino: str) -> tuple[bool, str]:
     if not (EMAIL_USER and EMAIL_PASS and EMAIL_HOST and EMAIL_PORT):
-        return False, "Parâmetros de e-mail ausentes. Configure EMAIL_* em Secrets."
+        return False, "Parâmetros de e-mail ausentes. Configure email_sender e gmail_app_password em Secrets."
 
-    corpo = f"""Olá {nome},
+    corpo = f"""
+Olá {nome},
 
-Seja muito bem-vindo(a)!
-Seu cadastro foi realizado com sucesso. Este é um e-mail de teste.
-Qualquer dúvida, estamos à disposição.
+Seja muito bem-vindo(a) à **1 Milhão Invest**! 🎯🚀
 
-Abraços,
-Equipe
+Seu cadastro foi realizado com sucesso.
+
+📎 No anexo deste e-mail está o **Contrato de Prestação de Serviços**.
+
+Por favor:
+
+1) Leia com atenção o documento
+2) Assine digitalmente ou manualmente
+3) Envie a via assinada de volta para este e-mail
+
+Caso tenha dúvidas, nossa equipe está à disposição para ajudar.
+
+Bem-vindo(a) ao próximo nível!
+
+Atenciosamente,  
+**Equipe 1 Milhão Invest**
 """
 
     try:
-        msg = MIMEText(corpo, "plain", "utf-8")
-        msg["Subject"] = "Bem-vindo(a)!"
+        # Mensagem com suporte a anexo
+        msg = MIMEMultipart()
+        msg["Subject"] = "📄 Seu Contrato — 1 Milhão Invest"
         msg["From"] = EMAIL_USER
         msg["To"] = email_destino
 
+        # Corpo do email
+        msg.attach(MIMEText(corpo, "plain", "utf-8"))
+
+        # 📎 Anexar PDF
+        with open("1milhaoinvest.pdf", "rb") as f:
+            part = MIMEApplication(f.read(), _subtype="pdf")
+            part.add_header(
+                "Content-Disposition",
+                "attachment",
+                filename="Contrato_1MilhaoInvest.pdf"
+            )
+            msg.attach(part)
+
+        # SMTP Gmail
         server = smtplib.SMTP(EMAIL_HOST, EMAIL_PORT)
         server.starttls()
         server.login(EMAIL_USER, EMAIL_PASS)
-        server.sendmail(EMAIL_USER, [email_destino], msg.as_string())
+        server.sendmail(EMAIL_USER, email_destino, msg.as_string())
         server.quit()
-        return True, "E-mail enviado com sucesso!"
+
+        return True, "✅ E-mail com contrato enviado com sucesso!"
+
     except Exception as e:
-        return False, f"Erro ao enviar e-mail: {e}"
+        return False, f"❌ Erro ao enviar e-mail: {e}"
+
 
 
 def status_cor_data_fim(data_fim: date) -> str:
