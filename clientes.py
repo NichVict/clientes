@@ -46,10 +46,12 @@ def get_secret(name: str, default=None):
 SUPABASE_URL = get_secret("SUPABASE_URL")
 SUPABASE_KEY = get_secret("SUPABASE_KEY")
 
-EMAIL_HOST = get_secret("EMAIL_HOST", "smtp.gmail.com")
-EMAIL_PORT = int(get_secret("EMAIL_PORT", "587"))
-EMAIL_USER = get_secret("EMAIL_USER")
-EMAIL_PASS = get_secret("EMAIL_PASS")
+EMAIL_USER = get_secret("email_sender")
+EMAIL_PASS = get_secret("gmail_app_password")
+
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+
 
 if not SUPABASE_URL or not SUPABASE_KEY:
     st.error("Configuração do Supabase ausente. Defina SUPABASE_URL e SUPABASE_KEY em Secrets.")
