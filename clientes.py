@@ -127,129 +127,126 @@ LINK_CURTISSIMO = "https://t.me/+BiTfqYUSiWpjN2U0"
 LINK_OPCOES = "https://t.me/+1si_16NC5E8xNDhk"
 LINK_CRIPTO = LINK_CURTO  # por enquanto, mesmo do Curto
 
-# Aulas bônus (lista simples)
-AULAS_TXT = (
-    "Aulas bônus:\n"
-    "- https://youtu.be/usGS5KpBPcA\n"
-    "- https://youtu.be/mtY0qY1zZN4\n"
-    "- https://youtu.be/2aHj8LSGrV8\n"
-    "- https://youtu.be/0QOtVHX1n-4\n"
-    "- https://youtu.be/pzK8dnK6jsk\n"
+# Aulas bônus (links limpos e clicáveis)
+AULAS_TXT_HTML = (
+    '<h3>📚 Bônus — Curso Completo (5 aulas)</h3>'
+    '<p>'
+    '<a href="https://youtu.be/usGS5KpBPcA">Aula 1</a><br>'
+    '<a href="https://youtu.be/mtY0qY1zZN4">Aula 2</a><br>'
+    '<a href="https://youtu.be/2aHj8LSGrV8">Aula 3</a><br>'
+    '<a href="https://youtu.be/0QOtVHX1n-4">Aula 4</a><br>'
+    '<a href="https://youtu.be/pzK8dnK6jsk">Aula 5</a>'
+    '</p>'
 )
 
-# E-book Opções
-EBOOK_OPCOES = "https://drive.google.com/file/d/1U3DBmTbbjiq34tTQdvHcxi2MnZnd8owN/view"
+# Botão estilo B (outline)
+def BOTAO_OUTLINE(texto: str, link: str) -> str:
+    return f'''
+<p style="text-align:center;margin:16px 0;">
+  <a href="{link}" target="_blank" style="
+    border:2px solid #0169FF;
+    color:#0169FF;
+    padding:12px 20px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:700;
+    display:inline-block;">
+    {texto}
+  </a>
+</p>
+'''
 
-# Textos por carteira (com placeholders {nome}, {inicio}, {fim})
+# E-book Opções
+EBOOK_OPCOES_HTML = (
+    '<h3>📘 Material Exclusivo</h3>'
+    '<p><a href="https://drive.google.com/file/d/1U3DBmTbbjiq34tTQdvHcxi2MnZnd8owN/view">Baixar E-book de Opções</a></p>'
+)
+
+# Textos por carteira (com placeholders {nome}, {inicio}, {fim}) — agora em HTML com botões
 EMAIL_CORPOS = {
     "Curto Prazo": f"""
-Olá {{nome}},
+<h2>👋 Olá {{nome}}!</h2>
+<p>Que bom ter você conosco na <b>Carteira Recomendada de Curto Prazo</b>. 🧠📈</p>
+<p><b>Vigência do contrato:</b> {{inicio}} a {{fim}}</p>
 
-Que bom ter você conosco! 🙌  
+<h3>✅ Passos iniciais</h3>
+<ol>
+  <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
+  <li>Entre no grupo exclusivo do Telegram:</li>
+</ol>
+{BOTAO_OUTLINE("Entrar no Grupo do Telegram", LINK_CURTO)}
+<p>3) Libere o e-mail: <b>avisoscanal1milhao@gmail.com</b></p>
 
-Obrigado por assinar a **Carteira Recomendada de Curto Prazo**.
+<hr>
+<h3>📬 Você receberá toda semana</h3>
+<ul>
+  <li>Até 5 recomendações de <b>compra</b></li>
+  <li>Até 5 recomendações de <b>venda descoberta</b></li>
+  <li>Entrada, alvos e stop</li>
+  <li>Atualizações diárias das operações abertas</li>
+  <li>Avisos automáticos de início e fim</li>
+  <li>Vídeo semanal explicando o racional</li>
+</ul>
 
-📅 Vigência do seu contrato: {{inicio}} a {{fim}}
+{AULAS_TXT_HTML}
 
------------------------------------------
-✅ PASSOS INICIAIS IMPORTANTES
------------------------------------------
-1) Leia o documento em anexo e responda este e-mail com **ACEITE**
-2) Entre no grupo exclusivo do Telegram:
-👉 {LINK_CURTO}
-3) Verifique sua caixa de anti-spam e libere:
-   **avisoscanal1milhao@gmail.com**
-
------------------------------------------
-📬 VOCÊ RECEBERÁ TODA SEMANA
------------------------------------------
-• Até 5 recomendações de compra
-• Até 5 recomendações de venda descoberta
-• Estratégias completas (entrada, alvos, stop)
-• Atualizações diárias das operações em aberto
-• Avisos automatizados de início e fim
-• Vídeo semanal explicando o racional
-
------------------------------------------
-🎁 BÔNUS EXCLUSIVO 1 MILHÃO INVEST
------------------------------------------
-{AULAS_TXT}
-
-Bem-vindo(a) ao próximo nível!
-Equipe 1 Milhão Invest
+<p>Bem-vindo(a) ao próximo nível!<br>Equipe 1 Milhão Invest</p>
 """,
 
     "Curtíssimo Prazo": f"""
-Olá {{nome}},
+<h2>⚡ Olá {{nome}}!</h2>
+<p>Bem-vindo(a) à <b>Carteira Recomendada de Curtíssimo Prazo</b>.</p>
+<p><b>Vigência do contrato:</b> {{inicio}} a {{fim}}</p>
 
-Bem-vindo(a) à **Carteira Recomendada de Curtíssimo Prazo**! ⚡
+<h3>✅ Passos iniciais</h3>
+<ol>
+  <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
+  <li>Entre no grupo exclusivo do Telegram:</li>
+</ol>
+{BOTAO_OUTLINE("Entrar no Grupo do Telegram", LINK_CURTISSIMO)}
+<p>3) Libere o e-mail: <b>avisoscanal1milhao@gmail.com</b></p>
 
-📅 Vigência do seu contrato: {{inicio}} a {{fim}}
+<hr>
+<h3>📬 Você receberá toda semana</h3>
+<ul>
+  <li>Até 5 compras e 5 vendas descoberta</li>
+  <li>Estratégias com entrada, alvos e stop</li>
+  <li>Alertas automatizados</li>
+  <li>Relatórios com racional</li>
+</ul>
 
------------------------------------------
-✅ PASSOS INICIAIS IMPORTANTES
------------------------------------------
-1) Leia o documento em anexo e responda este e-mail com **ACEITE**
-2) Entre no grupo exclusivo do Telegram:
-👉 {LINK_CURTISSIMO}
-3) Verifique sua caixa de anti-spam e libere:
-   **avisoscanal1milhao@gmail.com**
+{AULAS_TXT_HTML}
 
------------------------------------------
-📬 VOCÊ RECEBERÁ TODA SEMANA
------------------------------------------
-• Até 5 operações de compra
-• Até 5 operações de venda descoberta
-• Estratégias com entrada, alvos e stop
-• Alertas automatizados
-• Relatório com racional das recomendações
-
------------------------------------------
-🎁 BÔNUS EXCLUSIVO 1 MILHÃO INVEST
------------------------------------------
-{AULAS_TXT}
-
-Bora buscar performance com agilidade!
-Equipe 1 Milhão Invest
+<p>Bora buscar performance com agilidade!<br>Equipe 1 Milhão Invest</p>
 """,
 
     "Opções": f"""
-Olá {{nome}},
+<h2>🔥 Olá {{nome}}!</h2>
+<p>Seja bem-vindo(a) à <b>Carteira Recomendada de Opções</b>.</p>
+<p><b>Vigência do contrato:</b> {{inicio}} a {{fim}}</p>
 
-Seja bem-vindo(a) à **Carteira Recomendada de Opções**! 🔥
+<h3>✅ Passos iniciais</h3>
+<ol>
+  <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
+  <li>Entre no grupo exclusivo do Telegram:</li>
+</ol>
+{BOTAO_OUTLINE("Entrar no Grupo do Telegram", LINK_OPCOES)}
+<p>3) Libere o e-mail: <b>opcoes.1milhao.invest@gmail.com</b></p>
 
-📅 Vigência do seu contrato: {{inicio}} a {{fim}}
+<hr>
+<h3>📈 Você terá</h3>
+<ul>
+  <li>Mínimo de 8 operações por mês (média 2/semana)</li>
+  <li>Alertas com ticker, strike, vencimento e preço</li>
+  <li>Atualizações semanais das operações</li>
+  <li>Relatório de rentabilidade</li>
+</ul>
+<p><i>Por ser um mercado mais volátil, acompanhe os avisos para não perder o timing.</i></p>
 
------------------------------------------
-✅ PASSOS INICIAIS IMPORTANTES
------------------------------------------
-1) Leia o documento em anexo e responda este e-mail com **ACEITE**
-2) Entre no grupo exclusivo do Telegram:
-👉 {LINK_OPCOES}
-3) Verifique sua caixa de anti-spam e libere:
-   **opcoes.1milhao.invest@gmail.com**
+{AULAS_TXT_HTML}
+{EBOOK_OPCOES_HTML}
 
------------------------------------------
-📈 VOCÊ RECEBERÁ
------------------------------------------
-• Mínimo de 8 operações por mês (média 2/semana)
-• Alertas com ticker, strike, vencimento e preço
-• Atualizações semanais das operações
-• Relatório de rentabilidade
-
-⚠️ Por serem oportunidades de momento (alta volatilidade),
-recomendamos atenção às mensagens para não perder o timing.
-
------------------------------------------
-🎁 BÔNUS EXCLUSIVO 1 MILHÃO INVEST
------------------------------------------
-{AULAS_TXT}
-
-📘 E-BOOK exclusivo sobre Mercado de Opções:
-{EBOOK_OPCOES}
-
-Vamos operar com estratégia e controle!
-Equipe 1 Milhão Invest
+<p>Vamos operar com estratégia e controle!<br>Equipe 1 Milhão Invest</p>
 """,
 
     # Criptomoedas usa o mesmo corpo do Curto Prazo (links e tudo)
@@ -257,15 +254,10 @@ Equipe 1 Milhão Invest
 
     # Clube: sem PDF, sem link
     "Clube": """
-Olá {nome},
-
-Bem-vindo(a) ao **Clube 1 Milhão Invest**! 🏆
-
-Nossa equipe fará contato exclusivo com você para os próximos passos.
-Qualquer dúvida, estamos à disposição.
-
-Prazer ter você conosco!
-Equipe 1 Milhão Invest
+<h2>🏆 Olá {nome}!</h2>
+<p>Bem-vindo(a) ao <b>Clube 1 Milhão Invest</b>.</p>
+<p>Nossa equipe fará contato exclusivo com você para os próximos passos.</p>
+<p>Conte conosco!<br>Equipe 1 Milhão Invest</p>
 """
 }
 
@@ -286,7 +278,8 @@ def _enviar_email(nome: str, email_destino: str, assunto: str, corpo: str, anexa
         msg["From"] = EMAIL_USER
         msg["To"] = email_destino
 
-        msg.attach(MIMEText(corpo, "plain", "utf-8"))
+        # HTML no corpo do e-mail
+        msg.attach(MIMEText(corpo, "html", "utf-8"))
 
         if anexar_pdf:
             # anexa contrato padrão
@@ -370,7 +363,7 @@ with st.expander("➕ Novo cadastro", expanded=True):
 
     if salvar:
         telefone = montar_telefone(PAISES.get(pais_label, ""), numero)
-        if not nome or not email:
+        if not nome ou not email:
             st.error("Preencha ao menos **Nome Completo** e **Email**.")
         else:
             payload = {
