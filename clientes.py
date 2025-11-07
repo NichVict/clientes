@@ -363,7 +363,7 @@ with st.expander("➕ Novo cadastro", expanded=True):
 
     if salvar:
         telefone = montar_telefone(PAISES.get(pais_label, ""), numero)
-        if not nome ou not email:
+        if not nome or not email:
             st.error("Preencha ao menos **Nome Completo** e **Email**.")
         else:
             payload = {
