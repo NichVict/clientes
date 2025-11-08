@@ -350,7 +350,13 @@ with st.expander("Formulário", expanded=True):
         with c4:
             numero = st.text_input("Telefone", value=edit_data.get("telefone", ""), placeholder="(00) 00000-0000")
         with c5:
-            carteiras = st.multiselect("Carteiras", CARTEIRAS_OPCOES, default=edit_data.get("carteiras", []))
+            carteiras = st.multiselect(
+                "Carteiras",
+                CARTEIRAS_OPCOES,
+                default=(edit_data.get("carteiras") if isinstance(edit_data.get("carteiras"), list) 
+                         else (edit_data.get("carteiras", "").split(", ") if edit_data.get("carteiras") else []))
+            )
+
 
         c6, c7, c8 = st.columns([1, 1, 1])
         with c6:
@@ -606,16 +612,19 @@ if dados:
     
         c1, c2 = st.columns([1,1])
         with c1:
+            
             if st.button("✅ Confirmar exclusão"):
                 try:
                     supabase.table("clientes").delete().eq("id", st.session_state["delete_id"]).execute()
+                    
                     st.success("✅ Cliente excluído com sucesso!")
+            
+                    st.session_state["selected_client_id"] = None
                     st.session_state["confirm_delete"] = False
                     st.session_state["delete_id"] = None
-                    st.session_state["selected_client_id"] = None
+                    
                     st.rerun()
-                except Exception as e:
-                    st.error(f"Erro ao excluir: {e}")
+
     
         with c2:
             if st.button("❌ Cancelar"):
