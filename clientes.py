@@ -544,7 +544,8 @@ if dados:
     df_view["Status Vigência"] = df_view["Fim"].apply(status_vigencia)
 
     # garantir id visível internamente
-    df_view["__id"] = df["id"].values
+    df_view["__id"] = df["id"].astype(str).values
+
 
     # checkbox de seleção
     df_view.insert(0, "Selecionar", False)
@@ -578,7 +579,7 @@ if dados:
             # -------- BOTÃO EDITAR --------
             with colE:                
                 if st.button("📝 Editar cliente"):
-                    cliente = df[df["id"] == selected_id].iloc[0]
+                    cliente = df[df["id"].astype(str) == selected_id].iloc[0]
             
                     st.session_state["edit_mode"] = True
                     st.session_state["edit_id"] = selected_id
