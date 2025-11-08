@@ -349,22 +349,29 @@ with st.expander("Formulário", expanded=True):
             pais_label = st.selectbox("País (bandeira + código)", options=list(PAISES.keys()), index=0)
         with c4:
             numero = st.text_input("Telefone", value=edit_data.get("telefone", ""), placeholder="(00) 00000-0000")
-        with c5:           
-           
+        with c5:                       
+            # tratar carteiras para o multiselect
             carteiras_val = edit_data.get("carteiras", [])
-            # Garante que sempre seja lista
-            if isinstance(carteiras_val, str):
-                try:
-                    # caso tenha vindo como string tipo lista: "['A', 'B']"
-                    import ast
-                    carteiras_val = ast.literal_eval(carteiras_val)
-                except:
-                    carteiras_val = carteiras_val.split(", ")
             
+            # se vier string "A, B"
+            if isinstance(carteiras_val, str):
+                if carteiras_val.strip() == "":
+                    carteiras_val = []
+                elif "," in carteiras_val:
+                    carteiras_val = [x.strip() for x in carteiras_val.split(",")]
+                else:
+                    carteiras_val = [carteiras_val]
+            
+            # se vier None
             elif carteiras_val is None:
                 carteiras_val = []
             
+            # se vier algo inesperado, força lista
+            elif not isinstance(carteiras_val, list):
+                carteiras_val = [str(carteiras_val)]
+            
             carteiras = st.multiselect("Carteiras", CARTEIRAS_OPCOES, default=carteiras_val)
+
 
 
 
