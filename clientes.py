@@ -327,6 +327,29 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
 # ---------------------- UI: CABEÇALHO ----------------------
 st.title("📋 Cadastro de Clientes")
 st.caption("CRM simples com Supabase + Streamlit")
+# ---------------------- DASHBOARD / KPIs ----------------------
+try:
+    query = supabase.table("clientes").select("*").execute()
+    dados_kpi = query.data or []
+    df_kpi = pd.DataFrame(dados_kpi)
+
+    if not df_kpi.empty:
+        df_kpi["data_fim"] = pd.to_datetime(df_kpi["data_fim"], errors="coerce").dt.date
+
+        today = date.today()
+        ativos = df_kpi[df_kpi["data_fim"] >= today]
+        vencendo = df_kpi[(df_kpi["data_fim"] >= today) & (df_kpi["data_fim"] <= today + timedelta(days=30))]
+        vencidos = df_kpi[df_kpi["data_fim"] < today]
+
+        c1, c2, c3 = st.columns(3)
+        c1.metric("🟢 Clientes Ativos", len(ativos))
+        c2.metric("🟡 ≤ 30 dias para vencer", len(vencendo))
+        c3.metric("🔴 Vencidos", len(vencidos))
+
+except Exception as e:
+    st.error(f"Erro ao carregar KPIs: {e}")
+
+
 
 # ---------------------- FORMULÁRIO DE CADASTRO ----------------------
 # ---------------------- FORMULÁRIO DE CADASTRO ----------------------
