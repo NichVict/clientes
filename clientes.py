@@ -498,6 +498,8 @@ try:
 
 except Exception as e:
     st.error(f"Erro ao carregar KPIs: {e}")
+
+
 st.markdown("<div style='height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,180,0.35),transparent);'></div>", unsafe_allow_html=True)
 
 
