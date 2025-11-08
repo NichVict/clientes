@@ -329,37 +329,48 @@ st.title("📋 Cadastro de Clientes")
 st.caption("CRM simples com Supabase + Streamlit")
 
 # ---------------------- FORMULÁRIO DE CADASTRO ----------------------
-with st.expander("➕ Novo cadastro", expanded=True):
-    with st.form("form_cadastro", clear_on_submit=True):
+# ---------------------- FORMULÁRIO DE CADASTRO ----------------------
+st.subheader("➕ Cadastro / Edição de Cliente")
+
+is_edit = st.session_state.get("edit_mode", False)
+edit_data = st.session_state.get("edit_data", {})
+
+with st.expander("Formulário", expanded=True):
+    with st.form("form_cadastro", clear_on_submit=not is_edit):
+
         c1, c2 = st.columns([2, 2])
         with c1:
-            nome = st.text_input("Nome Completo", placeholder="Ex.: Maria Silva")
+            nome = st.text_input("Nome Completo", value=edit_data.get("nome", ""), placeholder="Ex.: Maria Silva")
         with c2:
-            email = st.text_input("Email", placeholder="exemplo@dominio.com")
+            email = st.text_input("Email", value=edit_data.get("email", ""), placeholder="exemplo@dominio.com")
 
         c3, c4, c5 = st.columns([1.2, 1.2, 1.6])
         with c3:
             pais_label = st.selectbox("País (bandeira + código)", options=list(PAISES.keys()), index=0)
         with c4:
-            numero = st.text_input("Telefone", placeholder="(00) 00000-0000")
+            numero = st.text_input("Telefone", value=edit_data.get("telefone", ""), placeholder="(00) 00000-0000")
         with c5:
-            carteiras = st.multiselect("Carteiras", CARTEIRAS_OPCOES, default=[])
+            carteiras = st.multiselect("Carteiras", CARTEIRAS_OPCOES, default=edit_data.get("carteiras", []))
 
         c6, c7, c8 = st.columns([1, 1, 1])
         with c6:
-            inicio = st.date_input("Início da Vigência", value=date.today(), format="DD/MM/YYYY")
+            inicio = st.date_input("Início da Vigência", value=edit_data.get("data_inicio", date.today()), format="DD/MM/YYYY")
         with c7:
-            fim = st.date_input("Final da Vigência", value=date.today() + timedelta(days=90), format="DD/MM/YYYY")
+            fim = st.date_input("Final da Vigência", value=edit_data.get("data_fim", date.today() + timedelta(days=90)), format="DD/MM/YYYY")
         with c8:
-            pagamento = st.selectbox("Forma de Pagamento", PAGAMENTOS, index=0)
+            pagamento = st.selectbox(
+                "Forma de Pagamento",
+                PAGAMENTOS,
+                index=(PAGAMENTOS.index(edit_data["pagamento"]) if is_edit else 0)
+            )
 
         c9, c10 = st.columns([1, 2])
         with c9:
-            valor = st.number_input("Valor líquido", min_value=0.0, step=100.0, format="%.2f")
+            valor = st.number_input("Valor líquido", min_value=0.0, value=float(edit_data.get("valor", 0)), step=100.0, format="%.2f")
         with c10:
-            observacao = st.text_area("Observação (opcional)", placeholder="Notas internas...")
+            observacao = st.text_area("Observação (opcional)", value=edit_data.get("observacao", ""), placeholder="Notas internas...")
 
-        salvar = st.form_submit_button("Salvar cadastro", use_container_width=True)
+        salvar = st.form_submit_button("Salvar", use_container_width=True)
 
     if salvar:
         telefone = montar_telefone(PAISES.get(pais_label, ""), numero)
@@ -370,27 +381,42 @@ with st.expander("➕ Novo cadastro", expanded=True):
                 "nome": nome,
                 "telefone": telefone,
                 "email": email,
-                "carteiras": carteiras,                # text[] no Supabase
+                "carteiras": carteiras,
                 "data_inicio": str(inicio),
                 "data_fim": str(fim),
                 "pagamento": pagamento,
                 "valor": float(valor),
                 "observacao": observacao or None,
             }
-            try:
-                supabase.table("clientes").insert(payload).execute()
-                st.success("✅ Cliente cadastrado com sucesso!")
 
-                # Guarda dados do cadastro para envio de e-mails por carteira
-                st.session_state.last_cadastro = {
-                    "nome": nome,
-                    "email": email,
-                    "carteiras": carteiras,
-                    "inicio": inicio,
-                    "fim": fim
-                }
-            except Exception as e:
-                st.error(f"Erro ao salvar no Supabase: {e}")
+            # Se estiver editando → UPDATE
+            if is_edit:
+                try:
+                    supabase.table("clientes").update(payload).eq("id", st.session_state["edit_id"]).execute()
+                    st.success("✅ Cliente atualizado com sucesso!")
+                    st.session_state["edit_mode"] = False
+                    st.session_state["edit_id"] = None
+                    st.session_state["edit_data"] = None
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Erro ao atualizar: {e}")
+
+            # Se for novo → INSERT
+            else:
+                try:
+                    supabase.table("clientes").insert(payload).execute()
+                    st.success("✅ Cliente cadastrado com sucesso!")
+                    st.session_state.last_cadastro = {
+                        "nome": nome,
+                        "email": email,
+                        "carteiras": carteiras,
+                        "inicio": inicio,
+                        "fim": fim
+                    }
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Erro ao salvar no Supabase: {e}")
+
 
 # ---------------------- AÇÃO: ENVIAR E-MAIL APÓS CADASTRO (DOIS BOTÕES) ----------------------
 if "last_cadastro" in st.session_state and st.session_state.last_cadastro:
@@ -541,6 +567,43 @@ if dados:
         sel = selected_rows.iloc[0]
         st.session_state["selected_client_id"] = sel["__id"]
         st.success(f"Cliente selecionado: {sel['Nome']} ({sel['Email']}) ✅")
+        selected_id = st.session_state.get("selected_client_id")
+
+        if selected_id:
+            colE, colD = st.columns([1,1])
+        
+            with colE:
+                if st.button("📝 Editar cliente", type="primary"):
+                    # Busca cliente no DF
+                    cliente = df[df["id"] == selected_id].iloc[0]
+        
+                    # Preenche sessão com valores para o formulário
+                    st.session_state["edit_mode"] = True
+                    st.session_state["edit_id"] = selected_id
+                    st.session_state["edit_data"] = {
+                        "nome": cliente["nome"],
+                        "email": cliente["email"],
+                        "telefone": cliente["telefone"],
+                        "carteiras": cliente["carteiras"].split(", "),
+                        "data_inicio": cliente["data_inicio"],
+                        "data_fim": cliente["data_fim"],
+                        "pagamento": cliente["pagamento"],
+                        "valor": cliente["valor"],
+                        "observacao": cliente["observacao"],
+                    }
+                    st.rerun()
+        
+            with colD:
+                if st.button("🗑 Excluir cliente"):
+                    if st.confirm("Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita."):
+                        try:
+                            supabase.table("clientes").delete().eq("id", selected_id).execute()
+                            st.success("✅ Cliente excluído com sucesso!")
+                            st.session_state["selected_client_id"] = None
+                            st.rerun()
+                        except Exception as e:
+                            st.error(f"Erro ao excluir: {e}")
+
 
 
 else:
