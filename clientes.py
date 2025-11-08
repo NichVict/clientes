@@ -297,45 +297,67 @@ EMAIL_CORPOS = {
 }
 
 # ---------------------- TEMPLATES DE RENOVAÇÃO ----------------------
-EMAIL_RENOVACAO_30 = """
-<h2>⚠️ Sua assinatura está quase vencendo, {nome}</h2>
+# ---------------------- TEMPLATES DE RENOVAÇÃO ----------------------
+WHATSAPP_BTN = """
+<p style="text-align:center;margin-top:18px;">
+  <a href="https://wa.me/5511940266027" target="_blank" style="
+    background-color:#25D366;
+    color:white;
+    padding:12px 20px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:600;
+    display:inline-block;
+  ">
+    💬 Falar no WhatsApp
+  </a>
+</p>
+"""
 
-<p>Falta cerca de <b>30 dias</b> para o fim da sua assinatura da carteira <b>{carteira}</b>.</p>
+EMAIL_RENOVACAO_30 = f"""
+<h2>⚠️ Sua assinatura está quase vencendo, {{nome}}</h2>
 
-<p>Período atual: <b>{inicio}</b> até <b>{fim}</b></p>
+<p>Falta cerca de <b>30 dias</b> para o fim da sua assinatura da carteira <b>{{carteira}}</b>.</p>
 
-<p>Quer continuar recebendo nossas análises e operações exclusivas?</p>
+<p><b>Período atual:</b> {{inicio}} até {{fim}}</p>
 
-<p>➡️ Responda este e-mail com <b>RENOVAR</b> para garantir continuidade sem interrupções.</p>
+<p>Quer continuar recebendo nossas análises exclusivas e recomendações semanais?</p>
+
+<p>➡️ Responda este e-mail com <b>RENOVAR</b> ou clique abaixo:</p>
+
+{WHATSAPP_BTN}
 
 <p>Equipe 1 Milhão Invest 💚</p>
 """
 
-EMAIL_RENOVACAO_15 = """
-<h2>📈 Renovação da sua assinatura — {carteira}</h2>
+EMAIL_RENOVACAO_15 = f"""
+<h2>📈 Renovação da sua assinatura — {{carteira}}</h2>
 
-<p>Olá {nome},</p>
+<p>Olá {{nome}}, sua assinatura vence em aproximadamente <b>15 dias</b>.</p>
 
-<p>Sua assinatura vence em cerca de <b>15 dias</b>.</p>
-
-<p>Para manter acesso às nossas recomendações e relatórios exclusivos, responda:</p>
+<p>Para manter seu acesso sem interrupções, responda este e-mail com:</p>
 
 <p><b>Quero renovar</b></p>
+
+{WHATSAPP_BTN}
 
 <p>Estamos juntos 🚀</p>
 """
 
-EMAIL_RENOVACAO_7 = """
-<h2>⏳ Últimos dias — sua assinatura está acabando</h2>
+EMAIL_RENOVACAO_7 = f"""
+<h2>⏳ Atenção — sua assinatura expira em breve</h2>
 
-<p>{nome}, falta menos de <b>7 dias</b> para sua assinatura da carteira <b>{carteira}</b> expirar.</p>
+<p>{{nome}}, faltam menos de <b>7 dias</b> para o fim da sua assinatura da carteira <b>{{carteira}}</b>.</p>
 
-<p>Evite perder as operações — basta responder:</p>
+<p>Para não perder as operações e análises exclusivas, responda:</p>
 
 <p><b>RENOVAR</b></p>
 
-<p>Obrigado por acompanhar nosso trabalho 💪</p>
+{WHATSAPP_BTN}
+
+<p>Obrigado por confiar no nosso trabalho 💪</p>
 """
+
 
 
 def _format_date_br(d: date) -> str:
@@ -415,17 +437,18 @@ def enviar_email_renovacao(nome, email_destino, carteira, inicio, fim, dias):
         nome=nome,
         carteira=carteira,
         inicio=inicio_br,
-        fim=fim_br
+        fim=fim_br,
+        whatsapp=WHATSAPP_LINK
     )
 
-    assunto = f"Renovação — {carteira} ({dias} dias restantes)"
+    assunto = f"Renovação {carteira} — {dias} dias restantes"
 
     ok, msg = _enviar_email(
         nome,
         email_destino,
         assunto,
         corpo,
-        anexar_pdf=False  # PDF não precisa pra renovação
+        anexar_pdf=False
     )
 
     return ok, msg
