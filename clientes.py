@@ -817,6 +817,7 @@ if dados:
 
     df["carteiras"] = df["carteiras"].apply(carteiras_to_str)
 
+    # Criar DataFrame da tabela
     df_view = pd.DataFrame({
         "ID": df["id"],
         "Nome": df["nome"],
@@ -829,7 +830,8 @@ if dados:
         "Valor (R$)": df["valor"],
         "Observação": df["observacao"],
     })
-
+    
+    # Status Vigência
     def status_vigencia(d):
         hoje = date.today()
         if isinstance(d, date):
@@ -837,9 +839,16 @@ if dados:
             dias = (d - hoje).days
             return "🟡 < 30 dias" if dias <= 30 else "🟢 > 30 dias"
         return ""
-
+    
     df_view["Status Vigência"] = df_view["Fim"].apply(status_vigencia)
+    
+    # Adiciona coluna Selecionar primeiro
     df_view.insert(0, "Selecionar", False)
+    
+    # Move "Status Vigência" para ser segunda coluna
+    status_col = df_view.pop("Status Vigência")
+    df_view.insert(1, "Status Vigência", status_col)
+
 
     edited = st.data_editor(
         df_view,
