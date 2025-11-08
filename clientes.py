@@ -420,7 +420,7 @@ with st.expander("Formulário", expanded=True):
             # Se estiver editando → UPDATE
             if is_edit:
                 try:
-                    edit_id = str(st.session_state.get("selected_client_id"))  # ✅
+                    edit_id = str(st.session_state.get("selected_client_id"))  # ✅ convertendo
                     st.write("DEBUG — UPDATE ID:", edit_id)
                     st.write("DEBUG — Payload:", payload)
             
@@ -428,9 +428,10 @@ with st.expander("Formulário", expanded=True):
                         supabase
                         .table("clientes")
                         .update(payload)
-                        .eq("id", edit_id)  # ✅ forçado string
+                        .eq("id", edit_id)  # ✅ agora com string
                         .execute()
                     )
+
             
                     st.write("DEBUG — Supabase Response:", response)
             
@@ -620,6 +621,9 @@ if dados:
     if len(selected_rows) > 0:        
         sel = selected_rows.iloc[0]
         selected_id = str(selected_id)  # ✅ força ID como string
+        selected_id = str(selected_id)  # ✅ força ID como string
+        st.session_state["selected_client_id"] = selected_id  # ✅ salva como string também
+
       # <- pega direto da view
         st.session_state["selected_client_id"] = selected_id
         st.write("DEBUG — ID capturado:", selected_id, type(selected_id))
