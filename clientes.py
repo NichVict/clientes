@@ -426,6 +426,11 @@ if "last_cadastro" in st.session_state and st.session_state.last_cadastro:
             st.session_state.last_cadastro = None
             st.toast("Cadastro concluído sem envio de e-mails.", icon="✅")
 
+
+# ---------------------- CAMPO DE BUSCA ----------------------
+search = st.text_input("🔎 Buscar cliente por nome, email ou telefone:")
+
+
 # ---------------------- LISTAGEM / TABELA ----------------------
 st.subheader("📊 Clientes cadastrados")
 
@@ -436,13 +441,6 @@ except Exception as e:
     st.error(f"Erro ao buscar dados no Supabase: {e}")
     dados = []
 # ---------------------- CAMPO DE BUSCA ----------------------
-search = st.text_input("🔎 Buscar cliente por nome, email ou telefone:")
-
-if search:
-    df = df[df.apply(lambda row: search.lower() in str(row).lower(), axis=1)]
-
-
-
 if dados:
     df = pd.DataFrame(dados)
 
@@ -450,6 +448,20 @@ if dados:
     for col in ["nome", "telefone", "email", "carteiras", "data_inicio", "data_fim", "pagamento", "valor", "observacao"]:
         if col not in df.columns:
             df[col] = None
+
+        # --- Filtro de busca (após normalizar colunas) ---
+    if search:
+        # garante as colunas para o filtro
+        for col in ["nome", "email", "telefone"]:
+            if col not in df.columns:
+                df[col] = ""
+        mask = (
+            df["nome"].fillna("").str.contains(search, case=False, na=False) |
+            df["email"].fillna("").str.contains(search, case=False, na=False) |
+            df["telefone"].fillna("").str.contains(search, case=False, na=False)
+        )
+        df = df[mask].copy()
+
 
     # Converte datas
     def parse_data(x):
