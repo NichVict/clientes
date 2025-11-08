@@ -420,10 +420,11 @@ with st.expander("Formulário", expanded=True):
             # Se estiver editando → UPDATE
             if is_edit:
                 try:
-                    supabase.table("clientes")\                    
-                        .update(payload)\
-                        .eq("id", f"uuid('{st.session_state['edit_id']}')")\
-                        .execute()
+                    supabase.table("clientes").update(payload).eq(
+                        "id",
+                        f"uuid('{st.session_state['edit_id']}')"
+                    ).execute()
+
 
                     st.success("✅ Cliente atualizado com sucesso!")
                     st.session_state["edit_mode"] = False
@@ -664,10 +665,11 @@ if dados:
         with c1:
             if st.button("✅ Confirmar exclusão"):
                 try:
-                    supabase.table("clientes")\
-                        .delete()\
-                        .eq("id", f"uuid('{st.session_state['delete_id']}')")\
-                        .execute()
+                    supabase.table("clientes").delete().eq(
+                        "id",
+                        f"uuid('{st.session_state['delete_id']}')"
+                    ).execute()
+
 
 
                 except Exception as e:
