@@ -420,13 +420,14 @@ with st.expander("Formulário", expanded=True):
             # Se estiver editando → UPDATE
             if is_edit:
                 try:
-                    st.write("DEBUG — UPDATE ID:", st.session_state["edit_id"])
+                    st.write("DEBUG — UPDATE ID:", st.session_state.get("selected_client_id"))
                     st.write("DEBUG — Payload:", payload)
             
                     response = (
-                        supabase.table("clientes")
+                        supabase
+                        .table("clientes")
                         .update(payload)
-                        .eq("id", st.session_state["edit_id"])
+                        .eq("id", st.session_state.get("selected_client_id"))
                         .execute()
                     )
             
@@ -436,7 +437,8 @@ with st.expander("Formulário", expanded=True):
                     st.session_state["edit_mode"] = False
                     st.session_state["edit_id"] = None
                     st.session_state["edit_data"] = None
-                    #st.rerun()
+                    st.session_state["selected_client_id"] = None
+                    st.rerun()  # precisa para atualizar a tabela na tela
                 except Exception as e:
                     st.error(f"Erro ao atualizar: {e}")
 
