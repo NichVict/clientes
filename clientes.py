@@ -299,20 +299,19 @@ EMAIL_CORPOS = {
 # ---------------------- TEMPLATES DE RENOVAÇÃO ----------------------
 # ---------------------- TEMPLATES DE RENOVAÇÃO ----------------------
 WHATSAPP_BTN = """
-<p style="text-align:center;margin-top:18px;">
-  <a href="https://wa.me/5511940266027" target="_blank" style="
-    background-color:#25D366;
-    color:white;
-    padding:12px 20px;
-    border-radius:8px;
-    text-decoration:none;
-    font-weight:600;
-    display:inline-block;
-  ">
-    💬 Falar no WhatsApp
-  </a>
-</p>
-"""
+<table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin:20px auto;">
+  <tr>
+    <td align="center" bgcolor="#25D366" style="border-radius:8px;">
+      <a href="https://wa.me/5511940266027"
+         target="_blank"
+         style="font-size:16px; font-family:sans-serif; color:#ffffff; text-decoration:none;
+                padding:12px 20px; display:inline-block; font-weight:bold;">
+        💬 Falar no WhatsApp
+      </a>
+    </td>
+  </tr>
+</table>
+
 
 EMAIL_RENOVACAO_30 = f"""
 <h2>⚠️ Sua assinatura está quase vencendo, {{nome}}</h2>
