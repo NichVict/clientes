@@ -602,6 +602,8 @@ if dados:
         sel = selected_rows.iloc[0]
         selected_id = sel["ID"]                 # <- pega direto da view
         st.session_state["selected_client_id"] = selected_id
+        st.write("DEBUG — ID capturado:", selected_id, type(selected_id))
+
 
     
         # Botões Editar / Excluir
