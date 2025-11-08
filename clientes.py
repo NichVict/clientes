@@ -2,9 +2,9 @@
 # ------------------------------------------------------------
 # App Streamlit para cadastro de clientes com Supabase
 # - Login simples (usuario/senha fixos)
-# - Formulário de cadastro
+# - Formulário de cadastro (também usado para edição)
 # - Gravação e leitura no Supabase
-# - Tabela com destaque de cor pela data de fim da vigência
+# - Tabela com destaque de status de vigência
 # - Envio de e-mails por carteira (texto e links personalizados)
 # - PDF anexo para todas as carteiras EXCETO Clube
 #
@@ -265,7 +265,6 @@ def _format_date_br(d: date) -> str:
     try:
         return d.strftime("%d/%m/%Y")
     except Exception:
-        # caso venha string
         try:
             return pd.to_datetime(d).strftime("%d/%m/%Y")
         except Exception:
@@ -288,7 +287,7 @@ def _enviar_email(nome: str, email_destino: str, assunto: str, corpo: str, anexa
                 part.add_header("Content-Disposition", "attachment", filename="Contrato_1MilhaoInvest.pdf")
                 msg.attach(part)
 
-        server = smtplib.SMTP(EMAIL_HOST, EMAIL_PORT)
+        server = smtplib.SMTP(EMAIL_HOST, 587)
         server.starttls()
         server.login(EMAIL_USER, EMAIL_PASS)
         server.sendmail(EMAIL_USER, [email_destino], msg.as_string())
@@ -328,8 +327,7 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
 st.title("📋 Cadastro de Clientes")
 st.caption("CRM simples com Supabase + Streamlit")
 
-# ---------------------- FORMULÁRIO DE CADASTRO ----------------------
-# ---------------------- FORMULÁRIO DE CADASTRO ----------------------
+# ---------------------- FORMULÁRIO DE CADASTRO / EDIÇÃO ----------------------
 st.subheader("➕ Cadastro / Edição de Cliente")
 
 is_edit = st.session_state.get("edit_mode", False)
@@ -349,13 +347,12 @@ with st.expander("Formulário", expanded=True):
             pais_label = st.selectbox("País (bandeira + código)", options=list(PAISES.keys()), index=0)
         with c4:
             numero = st.text_input("Telefone", value=edit_data.get("telefone", ""), placeholder="(00) 00000-0000")
-        with c5:            
+        with c5:
+            # Converte valor salvo (lista/str) em lista para multiselect
             carteiras_val = edit_data.get("carteiras", [])
             if isinstance(carteiras_val, str):
                 carteiras_val = carteiras_val.split(", ")
             carteiras = st.multiselect("Carteiras", CARTEIRAS_OPCOES, default=carteiras_val)
-
-
 
         c6, c7, c8 = st.columns([1, 1, 1])
         with c6:
@@ -366,7 +363,7 @@ with st.expander("Formulário", expanded=True):
             pagamento = st.selectbox(
                 "Forma de Pagamento",
                 PAGAMENTOS,
-                index=(PAGAMENTOS.index(edit_data["pagamento"]) if is_edit else 0)
+                index=(PAGAMENTOS.index(edit_data.get("pagamento", "PIX")) if is_edit else 0)
             )
 
         c9, c10 = st.columns([1, 2])
