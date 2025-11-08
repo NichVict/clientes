@@ -335,7 +335,7 @@ st.subheader("➕ Cadastro / Edição de Cliente")
 is_edit = st.session_state.get("edit_mode", False)
 edit_data = st.session_state.get("edit_data") or {}
 
-with st.expander("Formulário", expanded=True):
+with st.expander("Formulário", expanded=False):
     with st.form("form_cadastro", clear_on_submit=not is_edit):
 
         c1, c2 = st.columns([2, 2])
