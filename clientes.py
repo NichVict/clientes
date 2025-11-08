@@ -464,6 +464,8 @@ def enviar_email_renovacao(nome, email_destino, carteira, inicio, fim, dias):
 
 # ---------------------- UI: CABEÇALHO ----------------------
 st.title("👥 CRM 1Milhao Invest")
+st.markdown("<div style='height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,180,0.35),transparent);'></div>", unsafe_allow_html=True)
+
 st.caption("Customer Relationship Management")
 # ---------------------- DASHBOARD / KPIs ----------------------
 try:
@@ -898,14 +900,4 @@ if dados:
 
 
 
-# ---------------------- RODAPÉ / DICAS ----------------------
-with st.expander("ℹ️ Dicas & Próximos passos"):
-    st.markdown(
-        """
-- Para autenticação robusta, podemos migrar para **Supabase Auth**.
-- Podemos adicionar **editar/excluir** registros diretamente na tabela.
-- Relatórios: exportar para **Excel/PDF** e **gráficos** de vigências.
-- Automação: e-mail de **renovação** quando faltar 30, 15 e 7 dias.
-- Tema: posso aplicar um **dark theme** igual ao seu dashboard.
-        """
-    )
+
