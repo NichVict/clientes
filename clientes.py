@@ -445,16 +445,16 @@ if dados:
     df = pd.DataFrame(dados)
 
     # Normalizações de colunas esperadas
-    for col in ["nome", "telefone", "email", "carteiras", "data_inicio", "data_fim", "pagamento", "valor", "observacao"]:
+    for col in ["nome", "telefone", "email", "carteiras", "data_inicio", "data_fim", "pagamento", "valor", "observacao", "id"]:
         if col not in df.columns:
             df[col] = None
 
-        # --- Filtro de busca (após normalizar colunas) ---
+    # --- Filtro de busca ---
     if search:
-        # garante as colunas para o filtro
         for col in ["nome", "email", "telefone"]:
             if col not in df.columns:
                 df[col] = ""
+
         mask = (
             df["nome"].fillna("").str.contains(search, case=False, na=False) |
             df["email"].fillna("").str.contains(search, case=False, na=False) |
@@ -462,28 +462,23 @@ if dados:
         )
         df = df[mask].copy()
 
-
     # Converte datas
     def parse_data(x):
         if pd.isna(x) or x is None:
             return None
         try:
-            # Tenta YYYY-MM-DD
             return pd.to_datetime(x).date()
-        except Exception:
+        except:
             try:
-                # Tenta DD/MM/YYYY
                 return datetime.strptime(str(x), "%d/%m/%Y").date()
-            except Exception:
+            except:
                 return None
 
     df["data_inicio"] = df["data_inicio"].apply(parse_data)
     df["data_fim"] = df["data_fim"].apply(parse_data)
 
-    # Ordena por data_fim crescente (próximas vigências no topo)
     df = df.sort_values(by=["data_fim"], ascending=[True], na_position="last")
 
-    # Exibe carteiras como string legível
     def carteiras_to_str(v):
         if isinstance(v, list):
             return ", ".join(v)
@@ -491,11 +486,7 @@ if dados:
 
     df["carteiras"] = df["carteiras"].apply(carteiras_to_str)
 
-    # Seleção e renome de colunas para visualização
-    view_cols = [
-        "nome", "email", "telefone", "carteiras",
-        "data_inicio", "data_fim", "pagamento", "valor", "observacao"
-    ]
+    view_cols = ["nome","email","telefone","carteiras","data_inicio","data_fim","pagamento","valor","observacao"]
     df_view = df[view_cols].copy()
     df_view = df_view.rename(columns={
         "nome": "Nome",
@@ -509,22 +500,31 @@ if dados:
         "observacao": "Observação",
     })
 
-    # Estilo condicional na coluna Fim
+    # ---------------------- SELEÇÃO POR CHECKBOX ----------------------
+    if "id" in df.columns:
+        df_view["Selecionar"] = [
+            st.checkbox("", key=f"select_{i}_{row['email']}")
+            for i, (_, row) in enumerate(df.iterrows())
+        ]
+
+        selected_rows = df[df_view["Selecionar"]].copy()
+        if len(selected_rows) > 0:
+            selected_client = selected_rows.iloc[0]
+            st.session_state["selected_client_id"] = selected_client["id"]
+            st.success(f"Cliente selecionado: {selected_client['nome']} ({selected_client['email']})")
+    else:
+        st.warning("⚠️ A tabela 'clientes' precisa ter uma coluna 'id' (UUID) no Supabase.")
+
+    # Estilo após inserir checkboxes
     def style_fim(col):
-        styles = []
-        for v in col:
-            if isinstance(v, date):
-                styles.append(status_cor_data_fim(v))
-            else:
-                styles.append("")
-        return styles
+        return [status_cor_data_fim(v) if isinstance(v, date) else "" for v in col]
 
     styled = df_view.style.apply(style_fim, subset=["Fim"])
-
     st.dataframe(styled, use_container_width=True)
 
 else:
     st.info("Nenhum cliente cadastrado ainda.")
+
 
 # ---------------------- RODAPÉ / DICAS ----------------------
 with st.expander("ℹ️ Dicas & Próximos passos"):
