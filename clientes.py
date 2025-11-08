@@ -30,6 +30,24 @@ import pandas as pd
 import streamlit as st
 from supabase import create_client, Client
 
+st.markdown("""
+<style>
+.card {
+    border: 1px solid rgba(0,0,0,0.2);
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    transition: 0.2s ease-in-out;
+    background-color: white;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 # ---------------------- CONFIG STREAMLIT ----------------------
 st.set_page_config(page_title="Clientes - CRM", layout="wide")
 
@@ -342,9 +360,23 @@ try:
         vencidos = df_kpi[df_kpi["data_fim"] < today]
 
         c1, c2, c3 = st.columns(3)
-        c1.metric("🟢 Clientes Ativos", len(ativos))
-        c2.metric("🟡 ≤ 30 dias para vencer", len(vencendo))
-        c3.metric("🔴 Vencidos", len(vencidos))
+        
+        with c1:
+            st.markdown(f"<div class='card'><h3>🟢 {len(ativos)}</h3><p>Clientes Ativos</p></div>", unsafe_allow_html=True)
+        
+        with c2:
+            st.markdown(f"<div class='card'><h3>🟡 {len(vencendo)}</h3><p>≤ 30 dias</p></div>", unsafe_allow_html=True)
+        
+        with c3:
+            st.markdown(f"<div class='card'><h3>🔴 {len(vencidos)}</h3><p>Vencidos</p></div>", unsafe_allow_html=True)
+
+
+
+         
+ 
+
+     
+
 
 except Exception as e:
     st.error(f"Erro ao carregar KPIs: {e}")
