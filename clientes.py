@@ -437,7 +437,7 @@ with st.expander("Formulário", expanded=True):
                     st.session_state.last_cadastro = {
                         "nome": nome,
                         "email": email,
-                        "carteiras": carteiras,
+                        "carteiras": list(carteiras) if carteiras else [],
                         "inicio": inicio,
                         "fim": fim
                     }
@@ -497,6 +497,8 @@ except Exception as e:
 # ---------------------- CAMPO DE BUSCA ----------------------
 if dados:
     df = pd.DataFrame(dados)
+    df["id"] = df["id"].astype(str)
+
 
     # Normalizações de colunas esperadas
     for col in ["nome", "telefone", "email", "carteiras", "data_inicio", "data_fim", "pagamento", "valor", "observacao", "id"]:
@@ -540,32 +542,24 @@ if dados:
 
     df["carteiras"] = df["carteiras"].apply(carteiras_to_str)
 
-    view_cols = [
-        "id","nome","email","telefone","carteiras",
-        "data_inicio","data_fim","pagamento","valor","observacao"
-    ]
-    df_view = df[view_cols].copy()
+    def carteiras_to_str(v):
+    if isinstance(v, list):
+        return ", ".join(v)
+    return v or ""
 
-    df_view = df_view.rename(columns={
-        "nome": "Nome",
-        "email": "Email",
-        "telefone": "Telefone",
-        "carteiras": "Carteiras",
-        "data_inicio": "Início",
-        "data_fim": "Fim",
-        "pagamento": "Pagamento",
-        "valor": "Valor (R$)",
-        "observacao": "Observação",
+    df_view = pd.DataFrame({
+        "ID": df["id"],  # <- usa o id do df (não remova)
+        "Nome": df["nome"],
+        "Email": df["email"],
+        "Telefone": df["telefone"],
+        "Carteiras": df["carteiras"].apply(carteiras_to_str),
+        "Início": df["data_inicio"],
+        "Fim": df["data_fim"],
+        "Pagamento": df["pagamento"],
+        "Valor (R$)": df["valor"],
+        "Observação": df["observacao"],
     })
 
-    # força id como string
-    df_view["ID"] = df_view["id"].astype(str)
-    
-    # cria id interno para operações
-    df_view["__id"] = df_view["ID"]
-    
-    # remove id cru (não queremos mostrar ele)
-    df_view = df_view.drop(columns=["id"])
 
 
     # ---------------------- SELEÇÃO POR CHECKBOX ----------------------
@@ -583,40 +577,35 @@ if dados:
 
     df_view["Status Vigência"] = df_view["Fim"].apply(status_vigencia)
 
-    # garantir id visível internamente
-    # força id antes de criar a tabela
-    df["id"] = df["id"].astype(str)
-    
-    # monta tabela com id antes do editor
-    df_view["ID"] = df["id"]
-    df_view["__id"] = df["id"]  # id real interno
-    df_view.insert(0, "Selecionar", False)
     
     # data editor — apenas interação de seleção, sem edição de dados
+    # Inserir coluna de seleção na view
+    df_view.insert(0, "Selecionar", False)
+    
     edited = st.data_editor(
         df_view,
         hide_index=True,
         use_container_width=True,
         num_rows="fixed",
         column_config={
-            "Selecionar": st.column_config.CheckboxColumn("Selecionar"),
-            "__id": st.column_config.TextColumn("ID interno", disabled=True, width=1),
+            "Selecionar": st.column_config.CheckboxColumn("Selecionar", default=False),
+            "ID": st.column_config.TextColumn("ID", disabled=True, width=1),
+            "Início": st.column_config.DateColumn("Início", disabled=True),
+            "Fim": st.column_config.DateColumn("Fim", disabled=True),
+            "Valor (R$)": st.column_config.NumberColumn("Valor (R$)", format="%.2f", disabled=True),
+            "Status Vigência": st.column_config.TextColumn("Status Vigência", disabled=True),
         },
-        disabled=[
-            "ID","Nome","Email","Telefone","Carteiras","Início",
-            "Fim","Pagamento","Valor (R$)","Observação","Status Vigência"
-        ],
+        disabled=["ID","Nome","Email","Telefone","Carteiras","Início","Fim","Pagamento","Valor (R$)","Observação","Status Vigência"],
     )
 
 
 
+
     selected_rows = edited[edited["Selecionar"]]
-    if len(selected_rows) > 0:
+    if len(selected_rows) > 0:        
         sel = selected_rows.iloc[0]
-        st.session_state["selected_client_id"] = sel["__id"]
-        st.success(f"Cliente selecionado: {sel['Nome']} ({sel['Email']}) ✅")
-        selected_id = st.session_state.get("selected_client_id")
-        st.write("ID selecionado:", selected_id)
+        selected_id = sel["ID"]                 # <- pega direto da view
+        st.session_state["selected_client_id"] = selected_id
 
     
         # Botões Editar / Excluir
@@ -625,7 +614,7 @@ if dados:
     
             # -------- BOTÃO EDITAR --------
             with colE:                
-                if st.button("📝 Editar cliente"):
+                if st.button("📝 Editar cliente"):                    
                     cliente = df.loc[df["id"] == selected_id].iloc[0]
                     st.session_state["edit_mode"] = True
                     st.session_state["edit_id"] = selected_id
@@ -633,21 +622,23 @@ if dados:
                         "nome": cliente["nome"],
                         "email": cliente["email"],
                         "telefone": cliente["telefone"],
-                        "carteiras": cliente["carteiras"].split(", ") if isinstance(cliente["carteiras"], str) else cliente["carteiras"],
+                        # mantém lista se já for lista (sem split)
+                        "carteiras": cliente["carteiras"],
                         "data_inicio": cliente["data_inicio"],
                         "data_fim": cliente["data_fim"],
                         "pagamento": cliente["pagamento"],
                         "valor": cliente["valor"],
                         "observacao": cliente["observacao"],
                     }
+
                     st.rerun()
 
     
             # -------- BOTÃO EXCLUIR --------
             with colD:
-                if st.button("🗑 Excluir cliente"):
-                    st.session_state["confirm_delete"] = True
-                    st.session_state["delete_id"] = selected_id
+                if st.button("🗑 Excluir cliente"):                    
+                    supabase.table("clientes").delete().eq("id", st.session_state["delete_id"]).execute()
+
                     st.rerun()
     
     
