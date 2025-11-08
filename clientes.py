@@ -738,60 +738,27 @@ for cli in dados:
 search = st.text_input("🔎 Buscar cliente por nome, email ou telefone:")
 
 # ---------------------- FILTROS AVANÇADOS ----------------------
-st.write("### 🔎 Filtros adicionais")
+# ---------------------- FILTROS AVANÇADOS ----------------------
+with st.expander("🔎 Filtros avançados", expanded=False):
 
-colF1, colF2, colF3 = st.columns(3)
-
-with colF1:
-    filtro_carteiras = st.multiselect(
-        "Filtrar por Carteiras",
-        options=CARTEIRAS_OPCOES,
-        default=[]
+    # Filtro por carteira
+    filtro_carteira = st.multiselect(
+        "Filtrar por carteira",
+        CARTEIRAS_OPCOES
     )
 
-with colF2:
-    filtro_status = st.selectbox(
-        "Status da Vigência",
-        ["Todos", "Ativos", "Vencendo em 30 dias", "Vencidos"]
+    # Filtro por vigência (range)
+    data_range = st.date_input(
+        "Período da Vigência (opcional)",
+        value=(date.today() - timedelta(days=180), date.today() + timedelta(days=180)),
+        format="DD/MM/YYYY"
     )
 
-with colF3:
-    filtro_pagamento = st.multiselect(
-        "Forma de Pagamento",
-        options=PAGAMENTOS,
-        default=[]
-    )
-
-# Filtro por intervalo de datas
-data_inicio_filter, data_fim_filter = st.date_input(
-    "Período da Vigência (opcional)",
-    value=[None, None],
-    format="DD/MM/YYYY"
-)
-
-# Aplicar filtros ao dataframe
-if filtro_carteiras:
-    df = df[df["carteiras"].apply(lambda x: any(c in x for c in filtro_carteiras))]
-
-if filtro_pagamento:
-    df = df[df["pagamento"].isin(filtro_pagamento)]
-
-today = date.today()
-
-if filtro_status == "Ativos":
-    df = df[df["data_fim"] >= today]
-elif filtro_status == "Vencendo em 30 dias":
-    df = df[(df["data_fim"] >= today) & (df["data_fim"] <= today + timedelta(days=30))]
-elif filtro_status == "Vencidos":
-    df = df[df["data_fim"] < today]
-
-# Filtro por range de datas
-if data_inicio_filter and data_fim_filter:
-    df = df[
-        (df["data_inicio"] >= data_inicio_filter) &
-        (df["data_fim"] <= data_fim_filter)
-    ]
-
+    # data_range sempre retorna tupla (inicio, fim)
+    if isinstance(data_range, tuple) and len(data_range) == 2:
+        data_inicio_filter, data_fim_filter = data_range
+    else:
+        data_inicio_filter, data_fim_filter = None, None
 
 
 # 4️⃣ Renderização da tabela
@@ -814,6 +781,20 @@ if dados:
     df["data_fim"] = pd.to_datetime(df["data_fim"], errors="coerce").dt.date
 
     df = df.sort_values(by="data_fim", ascending=True)
+
+        # Aplica filtro de carteiras
+    if filtro_carteira:
+        df = df[df["carteiras"].apply(
+            lambda x: any(c in x for c in filtro_carteira) if isinstance(x, list) else False
+        )]
+
+    # Aplica filtro de datas
+    if data_inicio_filter and data_fim_filter:
+        df = df[
+            (df["data_inicio"] >= data_inicio_filter) &
+            (df["data_fim"] <= data_fim_filter)
+        ]
+
 
     def carteiras_to_str(v):
         return ", ".join(v) if isinstance(v, list) else (v or "")
