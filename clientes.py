@@ -573,11 +573,7 @@ if "last_cadastro" in st.session_state and st.session_state.last_cadastro:
             st.toast("Cadastro concluído sem envio de e-mails.", icon="✅")
 
 
-# ---------------------- CAMPO DE BUSCA ----------------------
-search = st.text_input("🔎 Buscar cliente por nome, email ou telefone:")
 
-if dados:
-    df = pd.DataFrame(dados)
 
 # ---------------------- LISTAGEM / TABELA ----------------------
 st.subheader("📊 Clientes cadastrados")
