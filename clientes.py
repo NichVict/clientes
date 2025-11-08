@@ -517,8 +517,12 @@ if dados:
 
     df["carteiras"] = df["carteiras"].apply(carteiras_to_str)
 
-    view_cols = ["nome","email","telefone","carteiras","data_inicio","data_fim","pagamento","valor","observacao"]
+    view_cols = [
+        "id","nome","email","telefone","carteiras",
+        "data_inicio","data_fim","pagamento","valor","observacao"
+    ]
     df_view = df[view_cols].copy()
+
     df_view = df_view.rename(columns={
         "nome": "Nome",
         "email": "Email",
@@ -530,6 +534,16 @@ if dados:
         "valor": "Valor (R$)",
         "observacao": "Observação",
     })
+
+    # força id como string
+    df_view["ID"] = df_view["id"].astype(str)
+    
+    # cria id interno para operações
+    df_view["__id"] = df_view["ID"]
+    
+    # remove id cru (não queremos mostrar ele)
+    df_view = df_view.drop(columns=["id"])
+
 
     # ---------------------- SELEÇÃO POR CHECKBOX ----------------------
     # --- Status visual por texto/emoji porque data_editor nao estiliza fundo ---
@@ -559,14 +573,15 @@ if dados:
         use_container_width=True,
         num_rows="fixed",
         column_config={
-            "Selecionar": st.column_config.CheckboxColumn("Selecionar", default=False),
-            "__id": st.column_config.TextColumn("ID", disabled=True, width=1),
-            "Valor (R$)": st.column_config.NumberColumn("Valor (R$)", format="%.2f", disabled=True),
-            "Início": st.column_config.DateColumn("Início", disabled=True),
-            "Fim": st.column_config.DateColumn("Fim", disabled=True),
-            "Status Vigência": st.column_config.TextColumn("Status Vigência", disabled=True),
+            "Selecionar": st.column_config.CheckboxColumn("Selecionar"),
+            "__id": st.column_config.TextColumn("ID real", disabled=True, width=1),
         },
+        disabled=[
+            "ID","Nome","Email","Telefone","Carteiras",
+            "Início","Fim","Pagamento","Valor (R$)","Observação","Status Vigência"
+        ],
     )
+
 
     selected_rows = edited[edited["Selecionar"]]
     if len(selected_rows) > 0:
@@ -618,6 +633,7 @@ if dados:
             if st.button("✅ Confirmar exclusão"):
                 try:
                     supabase.table("clientes").delete().eq("id", st.session_state["delete_id"]).execute()
+
                 except Exception as e:
                     st.error(f"Erro ao excluir: {e}")
                 else:
