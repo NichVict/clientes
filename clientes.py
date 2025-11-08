@@ -333,7 +333,7 @@ st.caption("CRM simples com Supabase + Streamlit")
 st.subheader("➕ Cadastro / Edição de Cliente")
 
 is_edit = st.session_state.get("edit_mode", False)
-edit_data = st.session_state.get("edit_data", {})
+edit_data = st.session_state.get("edit_data") or {}
 
 with st.expander("Formulário", expanded=True):
     with st.form("form_cadastro", clear_on_submit=not is_edit):
@@ -349,13 +349,12 @@ with st.expander("Formulário", expanded=True):
             pais_label = st.selectbox("País (bandeira + código)", options=list(PAISES.keys()), index=0)
         with c4:
             numero = st.text_input("Telefone", value=edit_data.get("telefone", ""), placeholder="(00) 00000-0000")
-        with c5:
-            carteiras = st.multiselect(
-                "Carteiras",
-                CARTEIRAS_OPCOES,
-                default=(edit_data.get("carteiras") if isinstance(edit_data.get("carteiras"), list) 
-                         else (edit_data.get("carteiras", "").split(", ") if edit_data.get("carteiras") else []))
-            )
+        with c5:            
+            carteiras_val = edit_data.get("carteiras", [])
+            if isinstance(carteiras_val, str):
+                carteiras_val = carteiras_val.split(", ")
+            carteiras = st.multiselect("Carteiras", CARTEIRAS_OPCOES, default=carteiras_val)
+
 
 
         c6, c7, c8 = st.columns([1, 1, 1])
@@ -580,17 +579,17 @@ if dados:
             colE, colD = st.columns([1,1])
     
             # -------- BOTÃO EDITAR --------
-            with colE:
+            with colE:                
                 if st.button("📝 Editar cliente"):
                     cliente = df[df["id"] == selected_id].iloc[0]
-    
+            
                     st.session_state["edit_mode"] = True
                     st.session_state["edit_id"] = selected_id
                     st.session_state["edit_data"] = {
                         "nome": cliente["nome"],
                         "email": cliente["email"],
                         "telefone": cliente["telefone"],
-                        "carteiras": cliente["carteiras"].split(", "),
+                        "carteiras": cliente["carteiras"].split(", ") if isinstance(cliente["carteiras"], str) else cliente["carteiras"],
                         "data_inicio": cliente["data_inicio"],
                         "data_fim": cliente["data_fim"],
                         "pagamento": cliente["pagamento"],
@@ -598,6 +597,7 @@ if dados:
                         "observacao": cliente["observacao"],
                     }
                     st.rerun()
+
     
             # -------- BOTÃO EXCLUIR --------
             with colD:
@@ -606,24 +606,26 @@ if dados:
                     st.session_state["delete_id"] = selected_id
                     st.rerun()
     
-    # -------- CONFIRMAÇÃO DE EXCLUSÃO --------
+    
     # -------- CONFIRMAÇÃO DE EXCLUSÃO --------
     if st.session_state.get("confirm_delete", False):
         st.warning("⚠️ Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita.")
-        
-        c1, c2 = st.columns([1,1])
+    
+        c1, c2 = st.columns(2)
+    
         with c1:
             if st.button("✅ Confirmar exclusão"):
                 try:
                     supabase.table("clientes").delete().eq("id", st.session_state["delete_id"]).execute()
-                    st.success("✅ Cliente excluído com sucesso!")
                 except Exception as e:
                     st.error(f"Erro ao excluir: {e}")
+                else:
+                    st.toast("✅ Cliente excluído", icon="🗑")
                 
-                # Limpa estados e recarrega
-                st.session_state["selected_client_id"] = None
+                # reset
                 st.session_state["confirm_delete"] = False
                 st.session_state["delete_id"] = None
+                st.session_state["selected_client_id"] = None
                 st.rerun()
     
         with c2:
