@@ -421,8 +421,7 @@ with st.expander("Formulário", expanded=True):
             if is_edit:
                 try:
                     edit_id = str(st.session_state.get("selected_client_id"))  # ✅ convertendo
-                    st.write("DEBUG — UPDATE ID:", edit_id)
-                    st.write("DEBUG — Payload:", payload)
+
             
                     response = (
                         supabase
@@ -433,7 +432,7 @@ with st.expander("Formulário", expanded=True):
                     )
 
             
-                    st.write("DEBUG — Supabase Response:", response)
+                    
             
                     st.success("✅ Cliente atualizado com sucesso!")
                     st.session_state["edit_mode"] = False
@@ -441,8 +440,8 @@ with st.expander("Formulário", expanded=True):
                     st.session_state["edit_data"] = None
                     st.session_state["selected_client_id"] = None
             
-                    # st.rerun()  # habilitar depois do teste
-                    st.stop()
+                    st.rerun()  # habilitar depois do teste
+                    
             
                 except Exception as e:
                     st.error(f"Erro ao atualizar: {e}")
@@ -625,7 +624,7 @@ if dados:
         # ✅ força ID como string
         selected_id = str(selected_id)
         st.session_state["selected_client_id"] = selected_id          
-        st.write("DEBUG — ID capturado:", selected_id, type(selected_id))
+        
 
 
     
