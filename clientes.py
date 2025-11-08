@@ -607,30 +607,31 @@ if dados:
                     st.rerun()
     
     # -------- CONFIRMAÇÃO DE EXCLUSÃO --------
+    # -------- CONFIRMAÇÃO DE EXCLUSÃO --------
     if st.session_state.get("confirm_delete", False):
         st.warning("⚠️ Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita.")
-    
+        
         c1, c2 = st.columns([1,1])
         with c1:
-            
             if st.button("✅ Confirmar exclusão"):
                 try:
                     supabase.table("clientes").delete().eq("id", st.session_state["delete_id"]).execute()
-                    
                     st.success("✅ Cliente excluído com sucesso!")
-            
-                    st.session_state["selected_client_id"] = None
-                    st.session_state["confirm_delete"] = False
-                    st.session_state["delete_id"] = None
-                    
-                    st.rerun()
-
+                except Exception as e:
+                    st.error(f"Erro ao excluir: {e}")
+                
+                # Limpa estados e recarrega
+                st.session_state["selected_client_id"] = None
+                st.session_state["confirm_delete"] = False
+                st.session_state["delete_id"] = None
+                st.rerun()
     
         with c2:
             if st.button("❌ Cancelar"):
                 st.session_state["confirm_delete"] = False
                 st.session_state["delete_id"] = None
                 st.rerun()
+
 
 
 
