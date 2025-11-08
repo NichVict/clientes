@@ -5,9 +5,8 @@
 # - Formulário de cadastro
 # - Gravação e leitura no Supabase
 # - Tabela com destaque de cor pela data de fim da vigência
-# - Envio de e-mails por carteira (HTML + botões outline)
+# - Envio de e-mails por carteira (texto e links personalizados)
 # - PDF anexo para todas as carteiras EXCETO Clube
-# - Ações: Editar e Excluir clientes
 #
 # Requer no Streamlit Cloud (Settings -> Secrets):
 #   SUPABASE_URL
@@ -163,7 +162,7 @@ EBOOK_OPCOES_HTML = (
     '<p><a href="https://drive.google.com/file/d/1U3DBmTbbjiq34tTQdvHcxi2MnZnd8owN/view">Baixar E-book de Opções</a></p>'
 )
 
-# Textos por carteira (com placeholders {nome}, {inicio}, {fim}) — em HTML com botões
+# Textos por carteira (com placeholders {nome}, {inicio}, {fim}) — agora em HTML com botões
 EMAIL_CORPOS = {
     "Curto Prazo": f"""
 <h2>👋 Olá {{nome}}!</h2>
@@ -441,7 +440,7 @@ if dados:
     df = pd.DataFrame(dados)
 
     # Normalizações de colunas esperadas
-    for col in ["id", "nome", "telefone", "email", "carteiras", "data_inicio", "data_fim", "pagamento", "valor", "observacao"]:
+    for col in ["nome", "telefone", "email", "carteiras", "data_inicio", "data_fim", "pagamento", "valor", "observacao"]:
         if col not in df.columns:
             df[col] = None
 
@@ -471,11 +470,11 @@ if dados:
             return ", ".join(v)
         return v or ""
 
-    df["carteiras_str"] = df["carteiras"].apply(carteiras_to_str)
+    df["carteiras"] = df["carteiras"].apply(carteiras_to_str)
 
     # Seleção e renome de colunas para visualização
     view_cols = [
-        "nome", "email", "telefone", "carteiras_str",
+        "nome", "email", "telefone", "carteiras",
         "data_inicio", "data_fim", "pagamento", "valor", "observacao"
     ]
     df_view = df[view_cols].copy()
@@ -483,7 +482,7 @@ if dados:
         "nome": "Nome",
         "email": "Email",
         "telefone": "Telefone",
-        "carteiras_str": "Carteiras",
+        "carteiras": "Carteiras",
         "data_inicio": "Início",
         "data_fim": "Fim",
         "pagamento": "Pagamento",
@@ -502,128 +501,8 @@ if dados:
         return styles
 
     styled = df_view.style.apply(style_fim, subset=["Fim"])
+
     st.dataframe(styled, use_container_width=True)
-
-    # ---------------------- AÇÕES: EDITAR / EXCLUIR ----------------------
-    st.markdown("### ✏️🗑️ Ações por cliente")
-
-    if "editing" not in st.session_state:
-        st.session_state.editing = None  # dict com registro selecionado
-
-    if "confirm_delete_id" not in st.session_state:
-        st.session_state.confirm_delete_id = None
-
-    for _, row in df.iterrows():
-        with st.container():
-            c1, c2, c3, c4, c5 = st.columns([3, 3, 2, 1, 1])
-            c1.markdown(f"**{row.get('nome','')}**")
-            c2.markdown(row.get("email",""))
-            c3.markdown(row.get("carteiras_str",""))
-            edit_key = f"edit_{row['id']}"
-            del_key = f"del_{row['id']}"
-            if c4.button("✏️ Editar", key=edit_key):
-                st.session_state.editing = {
-                    "id": row["id"],
-                    "nome": row["nome"],
-                    "email": row["email"],
-                    "telefone": row["telefone"],
-                    "carteiras": row["carteiras"] if isinstance(row["carteiras"], list) else [],
-                    "data_inicio": row["data_inicio"],
-                    "data_fim": row["data_fim"],
-                    "pagamento": row["pagamento"],
-                    "valor": float(row["valor"]) if row["valor"] is not None else 0.0,
-                    "observacao": row["observacao"] or ""
-                }
-            if c5.button("🗑️ Excluir", key=del_key):
-                st.session_state.confirm_delete_id = row["id"]
-
-    # Confirmação de exclusão
-    if st.session_state.confirm_delete_id:
-        st.warning("Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita.")
-        co1, co2 = st.columns(2)
-        if co1.button("❌ Confirmar exclusão"):
-            try:
-                supabase.table("clientes").delete().eq("id", st.session_state.confirm_delete_id).execute()
-                st.success("Cliente excluído com sucesso.")
-                st.session_state.confirm_delete_id = None
-                st.rerun()
-            except Exception as e:
-                st.error(f"Falha ao excluir: {e}")
-        if co2.button("Cancelar"):
-            st.session_state.confirm_delete_id = None
-
-    # Formulário de edição
-    if st.session_state.editing:
-        st.markdown("---")
-        st.markdown("### ✏️ Editar cliente")
-        data = st.session_state.editing
-
-        with st.form("form_editar", clear_on_submit=False):
-            e1, e2 = st.columns([2, 2])
-            with e1:
-                nome_e = st.text_input("Nome Completo (editar)", value=data["nome"])
-            with e2:
-                email_e = st.text_input("Email (editar)", value=data["email"])
-
-            e3, e4, e5 = st.columns([1.2, 1.2, 1.6])
-            with e3:
-                # como o telefone já tem código, mostramos sem país separado
-                telefone_e = st.text_input("Telefone (editar)", value=data["telefone"])
-            with e4:
-                pagamento_e = st.selectbox("Forma de Pagamento (editar)", PAGAMENTOS, index= PAGAMENTOS.index(data["pagamento"]) if data["pagamento"] in PAGAMENTOS else 0)
-            with e5:
-                carteiras_e = st.multiselect("Carteiras (editar)", CARTEIRAS_OPCOES, default=data["carteiras"])
-
-            e6, e7 = st.columns([1, 1])
-            with e6:
-                inicio_e = st.date_input("Início da Vigência (editar)", value=data["data_inicio"] or date.today(), format="DD/MM/YYYY")
-            with e7:
-                fim_e = st.date_input("Final da Vigência (editar)", value=data["data_fim"] or (date.today()+timedelta(days=90)), format="DD/MM/YYYY")
-
-            valor_e = st.number_input("Valor líquido (editar)", min_value=0.0, step=100.0, format="%.2f", value=data["valor"])
-            observacao_e = st.text_area("Observação (editar)", value=data["observacao"])
-
-            reenviar = st.checkbox("Após salvar, reenviar e-mails por carteira", value=False)
-            salvar_edicao = st.form_submit_button("💾 Salvar alterações")
-
-        if salvar_edicao:
-            try:
-                payload_upd = {
-                    "nome": nome_e,
-                    "telefone": telefone_e,
-                    "email": email_e,
-                    "carteiras": carteiras_e,
-                    "data_inicio": str(inicio_e),
-                    "data_fim": str(fim_e),
-                    "pagamento": pagamento_e,
-                    "valor": float(valor_e),
-                    "observacao": observacao_e or None,
-                }
-                supabase.table("clientes").update(payload_upd).eq("id", data["id"]).execute()
-                st.success("✅ Cliente atualizado com sucesso.")
-
-                if reenviar and carteiras_e:
-                    resultados = enviar_emails_por_carteira(
-                        nome=nome_e,
-                        email_destino=email_e,
-                        carteiras=carteiras_e,
-                        inicio=inicio_e,
-                        fim=fim_e
-                    )
-                    ok_all = True
-                    for carteira, ok, msg in resultados:
-                        if ok:
-                            st.success(f"✉️ {carteira}: e-mail reenviado")
-                        else:
-                            ok_all = False
-                            st.error(f"✉️ {carteira}: falhou — {msg}")
-                    if ok_all:
-                        st.toast("Todos os e-mails foram reenviados.", icon="✅")
-
-                st.session_state.editing = None
-                st.rerun()
-            except Exception as e:
-                st.error(f"Erro ao atualizar: {e}")
 
 else:
     st.info("Nenhum cliente cadastrado ainda.")
@@ -633,7 +512,9 @@ with st.expander("ℹ️ Dicas & Próximos passos"):
     st.markdown(
         """
 - Para autenticação robusta, podemos migrar para **Supabase Auth**.
-- Agora com **Editar/Excluir** direto na interface.
-- Próximo passo: log de e-mails enviados e exportação para Excel.
+- Podemos adicionar **editar/excluir** registros diretamente na tabela.
+- Relatórios: exportar para **Excel/PDF** e **gráficos** de vigências.
+- Automação: e-mail de **renovação** quando faltar 30, 15 e 7 dias.
+- Tema: posso aplicar um **dark theme** igual ao seu dashboard.
         """
     )
