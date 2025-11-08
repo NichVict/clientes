@@ -739,86 +739,72 @@ for cli in dados:
 # ---------------------- FILTROS AVANÇADOS ----------------------
 # ---------------------- FILTROS AVANÇADOS ----------------------
 # ---------------------- FILTROS AVANÇADOS ----------------------
-with st.expander("🎯 Filtros Avançados"):
-    
-    # 🔎 Busca por texto
-    search = st.text_input("Buscar cliente por nome, email ou telefone:")
-
-    # 📂 Filtro por carteira
-    filtro_carteira = st.multiselect(
-        "Carteiras",
-        CARTEIRAS_OPCOES,
-        default=[]
-    )
-
-    # 🟢🟡🔴 Filtro por status
-    status_opcoes = ["🟢 Ativos", "🟡 Vencendo (≤ 30 dias)", "🔴 Vencidos"]
-    filtro_status = st.multiselect(
-        "Status da Vigência",
-        status_opcoes,
-        default=[]
-    )
-
-
-# ✅ Converte as datas antes de filtrar
-df["data_inicio"] = pd.to_datetime(df["data_inicio"], errors="coerce").dt.date
-df["data_fim"] = pd.to_datetime(df["data_fim"], errors="coerce").dt.date
-
-# 🔎 Filtro texto
-if search:
-    df = df[
-        df["nome"].fillna("").str.contains(search, case=False, na=False) |
-        df["email"].fillna("").str.contains(search, case=False, na=False) |
-        df["telefone"].fillna("").str.contains(search, case=False, na=False)
-    ]
-
-# 📂 Filtro carteira
-if filtro_carteira:
-    df = df[df["carteiras"].apply(
-        lambda x: any(c in x for c in filtro_carteira) if isinstance(x, list) else False
-    )]
-
-# 🟢🟡🔴 Filtro status
-if filtro_status:
-    hoje = date.today()
-    
-    def status_calc(d):
-        if d < hoje: return "🔴 Vencidos"
-        dias = (d - hoje).days
-        return "🟡 Vencendo (≤ 30 dias)" if dias <= 30 else "🟢 Ativos"
-
-    df = df[df["data_fim"].apply(status_calc).isin(filtro_status)]
-
 
 # 4️⃣ Renderização da tabela
 if dados:
     df = pd.DataFrame(dados)
     df["id"] = df["id"].astype(str)
 
+    # 🔧 Ajusta campos obrigatórios
     for col in ["nome","telefone","email","carteiras","data_inicio","data_fim","pagamento","valor","observacao","id"]:
         if col not in df.columns:
             df[col] = None
-
-        # 🔍 Aplica filtro de texto
+    
+    # Converte datas antes dos filtros
+    df["data_inicio"] = pd.to_datetime(df["data_inicio"], errors="coerce").dt.date
+    df["data_fim"] = pd.to_datetime(df["data_fim"], errors="coerce").dt.date
+    
+    # ---------------------- FILTROS AVANÇADOS ----------------------
+    with st.expander("🎯 Filtros Avançados"):
+    
+        search = st.text_input("Buscar cliente por nome, email ou telefone:")
+    
+        filtro_carteira = st.multiselect(
+            "Carteiras",
+            CARTEIRAS_OPCOES,
+            default=[]
+        )
+    
+        status_opcoes = ["🟢 Ativos", "🟡 Vencendo (≤ 30 dias)", "🔴 Vencidos"]
+        filtro_status = st.multiselect(
+            "Status da Vigência",
+            status_opcoes,
+            default=[]
+        )
+    
+    # 🔎 Busca texto
     if search:
         df = df[
             df["nome"].fillna("").str.contains(search, case=False, na=False) |
             df["email"].fillna("").str.contains(search, case=False, na=False) |
             df["telefone"].fillna("").str.contains(search, case=False, na=False)
         ]
-
-    # 📂 Aplica filtro por carteira
+    
+    # 📂 Filtro carteira
     if filtro_carteira:
         df = df[df["carteiras"].apply(
             lambda x: any(c in x for c in filtro_carteira) if isinstance(x, list) else False
         )]
+    
+    # 🟢🟡🔴 Filtro vigência
+    if filtro_status:
+        hoje = date.today()
+        def status_calc(d):
+            if d < hoje: 
+                return "🔴 Vencidos"
+            dias = (d - hoje).days
+            return "🟡 Vencendo (≤ 30 dias)" if dias <= 30 else "🟢 Ativos"
+    
+        df = df[df["data_fim"].apply(status_calc).isin(filtro_status)]
+    
+    # Ordenação final por data fim
+    df = df.sort_values(by="data_fim", ascending=True)
+    
+    # Formata carteiras p/ tabela
+    df["carteiras"] = df["carteiras"].apply(
+        lambda v: ", ".join(v) if isinstance(v, list) else (v or "")
+    )
 
-    # 🗓 Aplica filtro por período de vigência
-    if data_inicio_filter and data_fim_filter:
-        df = df[
-            (df["data_inicio"] >= data_inicio_filter) &
-            (df["data_fim"] <= data_fim_filter)
-        ]
 
 
     def carteiras_to_str(v):
