@@ -738,29 +738,56 @@ for cli in dados:
 
 # ---------------------- FILTROS AVANÇADOS ----------------------
 # ---------------------- FILTROS AVANÇADOS ----------------------
-with st.expander("🔎 Filtros avançados", expanded=False):
+# ---------------------- FILTROS AVANÇADOS ----------------------
+with st.expander("🎯 Filtros Avançados"):
+    
+    # 🔎 Busca por texto
+    search = st.text_input("Buscar cliente por nome, email ou telefone:")
 
-    # 3️⃣ Campo de busca
-    search = st.text_input("🔎 Buscar cliente por nome, email ou telefone:")
-
-    # Filtro por carteira
+    # 📂 Filtro por carteira
     filtro_carteira = st.multiselect(
-        "Filtrar por carteira",
-        CARTEIRAS_OPCOES
+        "Carteiras",
+        CARTEIRAS_OPCOES,
+        default=[]
     )
 
-    # Filtro por vigência (range)
-    data_range = st.date_input(
-        "Período da Vigência (opcional)",
-        value=(date.today() - timedelta(days=180), date.today() + timedelta(days=180)),
-        format="DD/MM/YYYY"
+    # 🟢🟡🔴 Filtro por status
+    status_opcoes = ["🟢 Ativos", "🟡 Vencendo (≤ 30 dias)", "🔴 Vencidos"]
+    filtro_status = st.multiselect(
+        "Status da Vigência",
+        status_opcoes,
+        default=[]
     )
 
-    # data_range sempre retorna tupla (inicio, fim)
-    if isinstance(data_range, tuple) and len(data_range) == 2:
-        data_inicio_filter, data_fim_filter = data_range
-    else:
-        data_inicio_filter, data_fim_filter = None, None
+
+# ✅ Converte as datas antes de filtrar
+df["data_inicio"] = pd.to_datetime(df["data_inicio"], errors="coerce").dt.date
+df["data_fim"] = pd.to_datetime(df["data_fim"], errors="coerce").dt.date
+
+# 🔎 Filtro texto
+if search:
+    df = df[
+        df["nome"].fillna("").str.contains(search, case=False, na=False) |
+        df["email"].fillna("").str.contains(search, case=False, na=False) |
+        df["telefone"].fillna("").str.contains(search, case=False, na=False)
+    ]
+
+# 📂 Filtro carteira
+if filtro_carteira:
+    df = df[df["carteiras"].apply(
+        lambda x: any(c in x for c in filtro_carteira) if isinstance(x, list) else False
+    )]
+
+# 🟢🟡🔴 Filtro status
+if filtro_status:
+    hoje = date.today()
+    
+    def status_calc(d):
+        if d < hoje: return "🔴 Vencidos"
+        dias = (d - hoje).days
+        return "🟡 Vencendo (≤ 30 dias)" if dias <= 30 else "🟢 Ativos"
+
+    df = df[df["data_fim"].apply(status_calc).isin(filtro_status)]
 
 
 # 4️⃣ Renderização da tabela
