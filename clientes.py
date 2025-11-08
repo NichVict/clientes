@@ -349,11 +349,23 @@ with st.expander("Formulário", expanded=True):
             pais_label = st.selectbox("País (bandeira + código)", options=list(PAISES.keys()), index=0)
         with c4:
             numero = st.text_input("Telefone", value=edit_data.get("telefone", ""), placeholder="(00) 00000-0000")
-        with c5:            
+        with c5:           
+           
             carteiras_val = edit_data.get("carteiras", [])
+            # Garante que sempre seja lista
             if isinstance(carteiras_val, str):
-                carteiras_val = carteiras_val.split(", ")
+                try:
+                    # caso tenha vindo como string tipo lista: "['A', 'B']"
+                    import ast
+                    carteiras_val = ast.literal_eval(carteiras_val)
+                except:
+                    carteiras_val = carteiras_val.split(", ")
+            
+            elif carteiras_val is None:
+                carteiras_val = []
+            
             carteiras = st.multiselect("Carteiras", CARTEIRAS_OPCOES, default=carteiras_val)
+
 
 
 
