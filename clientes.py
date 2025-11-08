@@ -568,16 +568,16 @@ if dados:
         st.session_state["selected_client_id"] = sel["__id"]
         st.success(f"Cliente selecionado: {sel['Nome']} ({sel['Email']}) ✅")
         selected_id = st.session_state.get("selected_client_id")
-
+    
+        # Botões Editar / Excluir
         if selected_id:
             colE, colD = st.columns([1,1])
-        
+    
+            # -------- BOTÃO EDITAR --------
             with colE:
-                if st.button("📝 Editar cliente", type="primary"):
-                    # Busca cliente no DF
+                if st.button("📝 Editar cliente"):
                     cliente = df[df["id"] == selected_id].iloc[0]
-        
-                    # Preenche sessão com valores para o formulário
+    
                     st.session_state["edit_mode"] = True
                     st.session_state["edit_id"] = selected_id
                     st.session_state["edit_data"] = {
@@ -592,22 +592,37 @@ if dados:
                         "observacao": cliente["observacao"],
                     }
                     st.rerun()
-        
+    
+            # -------- BOTÃO EXCLUIR --------
             with colD:
                 if st.button("🗑 Excluir cliente"):
-                    if st.confirm("Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita."):
-                        try:
-                            supabase.table("clientes").delete().eq("id", selected_id).execute()
-                            st.success("✅ Cliente excluído com sucesso!")
-                            st.session_state["selected_client_id"] = None
-                            st.rerun()
-                        except Exception as e:
-                            st.error(f"Erro ao excluir: {e}")
+                    st.session_state["confirm_delete"] = True
+                    st.session_state["delete_id"] = selected_id
+                    st.rerun()
+    
+    # -------- CONFIRMAÇÃO DE EXCLUSÃO --------
+    if st.session_state.get("confirm_delete", False):
+        st.warning("⚠️ Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita.")
+    
+        c1, c2 = st.columns([1,1])
+        with c1:
+            if st.button("✅ Confirmar exclusão"):
+                try:
+                    supabase.table("clientes").delete().eq("id", st.session_state["delete_id"]).execute()
+                    st.success("✅ Cliente excluído com sucesso!")
+                    st.session_state["confirm_delete"] = False
+                    st.session_state["delete_id"] = None
+                    st.session_state["selected_client_id"] = None
+                    st.rerun()
+                except Exception as e:
+                    st.error(f"Erro ao excluir: {e}")
+    
+        with c2:
+            if st.button("❌ Cancelar"):
+                st.session_state["confirm_delete"] = False
+                st.session_state["delete_id"] = None
+                st.rerun()
 
-
-
-else:
-    st.info("Nenhum cliente cadastrado ainda.")
 
 
 # ---------------------- RODAPÉ / DICAS ----------------------
