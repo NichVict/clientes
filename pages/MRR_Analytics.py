@@ -69,3 +69,33 @@ growth = df.groupby("mes")["id"].count().reset_index()
 growth = growth.rename(columns={"id": "novos_clientes"})
 
 st.line_chart(growth, x="mes", y="novos_clientes")
+
+# --------- EXPLICACAO DOS METRICOS ---------
+with st.expander("📘 Conceitos — entenda os indicadores"):
+    st.markdown("""
+### 💰 MRR — Monthly Recurring Revenue
+Receita recorrente mensal.  
+É quanto o seu negócio gera por mês com assinaturas ativas.
+
+> **Fórmula simplificada:** soma de todos os valores mensais dos assinantes ativos
+
+---
+
+### 🔁 Churn Rate
+Percentual de clientes que cancelam / deixam de renovar dentro de um período.
+
+> **Fórmula:** clientes perdidos ÷ clientes totais do início do período
+
+Quanto menor o churn, melhor.  
+Churn alto = alerta de retenção!
+
+---
+
+### 🧠 LTV — Lifetime Value
+Valor total que um cliente gera durante o tempo em que permanece ativo.
+
+> **Fórmula simplificada:** ticket mensal médio × tempo médio na base
+
+LTV alto = base fiel e receita mais previsível ✅
+""")
+
