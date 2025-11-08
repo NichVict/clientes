@@ -438,7 +438,7 @@ with st.expander("Formulário", expanded=True):
                     st.session_state["edit_id"] = None
                     st.session_state["edit_data"] = None
                     st.session_state["selected_client_id"] = None
-                    st.rerun()  # precisa para atualizar a tabela na tela
+                    #st.rerun()  # precisa para atualizar a tabela na tela
                 except Exception as e:
                     st.error(f"Erro ao atualizar: {e}")
 
