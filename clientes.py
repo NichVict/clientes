@@ -627,14 +627,22 @@ if dados:
             # -------- BOTÃO EDITAR --------
             with colE:                
                 if st.button("📝 Editar cliente"):                    
-                    cliente = df.loc[df["id"] == selected_id].iloc[0]
+                    selected_id = str(selected_id)
+                    df["id"] = df["id"].astype(str)
+                
+                    rows = df.loc[df["id"] == selected_id]
+                    if rows.empty:
+                        st.error("❌ Erro: ID não encontrado no dataframe.")
+                        st.stop()
+                
+                    cliente = rows.iloc[0]
+                
                     st.session_state["edit_mode"] = True
                     st.session_state["selected_client_id"] = selected_id
                     st.session_state["edit_data"] = {
                         "nome": cliente["nome"],
                         "email": cliente["email"],
                         "telefone": cliente["telefone"],
-                        # mantém lista se já for lista (sem split)
                         "carteiras": cliente["carteiras"],
                         "data_inicio": cliente["data_inicio"],
                         "data_fim": cliente["data_fim"],
@@ -642,8 +650,8 @@ if dados:
                         "valor": cliente["valor"],
                         "observacao": cliente["observacao"],
                     }
-
                     st.rerun()
+
 
     
             # -------- BOTÃO EXCLUIR --------
