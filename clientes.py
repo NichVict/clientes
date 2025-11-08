@@ -351,26 +351,30 @@ with st.expander("Formulário", expanded=True):
             numero = st.text_input("Telefone", value=edit_data.get("telefone", ""), placeholder="(00) 00000-0000")
         with c5:                       
             # tratar carteiras para o multiselect
-            carteiras_val = edit_data.get("carteiras", [])
+            # --- trata carteiras para o multiselect ---
+            raw_carteiras = edit_data.get("carteiras", [])
             
-            # se vier string "A, B"
-            if isinstance(carteiras_val, str):
-                if carteiras_val.strip() == "":
+            if isinstance(raw_carteiras, list):
+                carteiras_val = raw_carteiras
+            
+            elif isinstance(raw_carteiras, str):
+                if raw_carteiras.strip() == "":
                     carteiras_val = []
-                elif "," in carteiras_val:
-                    carteiras_val = [x.strip() for x in carteiras_val.split(",")]
                 else:
-                    carteiras_val = [carteiras_val]
+                    parts = [p.strip() for p in raw_carteiras.replace("[","").replace("]","").replace("'","").split(",")]
+                    carteiras_val = [p for p in parts if p != ""]
             
-            # se vier None
-            elif carteiras_val is None:
+            elif raw_carteiras is None:
                 carteiras_val = []
             
-            # se vier algo inesperado, força lista
-            elif not isinstance(carteiras_val, list):
-                carteiras_val = [str(carteiras_val)]
+            else:
+                carteiras_val = [str(raw_carteiras)]
+            
+            # garante que só valores válidos entrem
+            carteiras_val = [c for c in carteiras_val if c in CARTEIRAS_OPCOES]
             
             carteiras = st.multiselect("Carteiras", CARTEIRAS_OPCOES, default=carteiras_val)
+
 
 
 
