@@ -685,7 +685,7 @@ st.markdown("<br><br>", unsafe_allow_html=True)
 
 st.markdown("<div style='height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,180,0.35),transparent);'></div>", unsafe_allow_html=True)
 
-st.markdown("<br><br>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 st.subheader("🧑‍🤝‍🧑 Clientes Cadastrados")
 st.markdown("<br><br>", unsafe_allow_html=True)
 
