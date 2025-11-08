@@ -33,19 +33,36 @@ from supabase import create_client, Client
 st.markdown("""
 <style>
 .card {
-    border: 1px solid rgba(0,0,0,0.2);
-    padding: 20px;
-    border-radius: 12px;
+    background: #121212; /* fundo dark */
+    border: 1px solid rgba(0,255,180,0.25); /* borda verde aqua leve */
+    padding: 22px;
+    border-radius: 14px;
     text-align: center;
-    transition: 0.2s ease-in-out;
-    background-color: white;
+    transition: 0.25s ease;
+    box-shadow: 0 0 8px rgba(0,255,180,0.12);
 }
+
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 0 18px rgba(0,255,200,0.25);
+    border-color: rgba(0,255,200,0.45);
+}
+
+.card h3 {
+    font-size: 34px;
+    margin: 0;
+    color: #00E6A8; /* verde neon */
+    font-weight: 700;
+}
+
+.card p {
+    margin: 4px 0 0;
+    font-size: 15px;
+    color: #e0e0e0;
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 
 # ---------------------- CONFIG STREAMLIT ----------------------
