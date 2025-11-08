@@ -436,7 +436,7 @@ with st.expander("Formulário", expanded=True):
                     st.session_state["edit_mode"] = False
                     st.session_state["edit_id"] = None
                     st.session_state["edit_data"] = None
-                    st.rerun()
+                    #st.rerun()
                 except Exception as e:
                     st.error(f"Erro ao atualizar: {e}")
 
