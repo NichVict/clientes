@@ -428,7 +428,7 @@ with st.expander("Formulário", expanded=True):
                         supabase
                         .table("clientes")
                         .update(payload)
-                        .eq("id", edit_id)  # ✅ agora com string
+                        .eq("id", str(st.session_state.get("selected_client_id")))
                         .execute()
                     )
 
@@ -620,12 +620,11 @@ if dados:
     selected_rows = edited[edited["Selecionar"]]
     if len(selected_rows) > 0:        
         sel = selected_rows.iloc[0]
-        selected_id = str(selected_id)  # ✅ força ID como string
-        selected_id = str(selected_id)  # ✅ força ID como string
-        st.session_state["selected_client_id"] = selected_id  # ✅ salva como string também
-
-      # <- pega direto da view
-        st.session_state["selected_client_id"] = selected_id
+        selected_id = sel["ID"]
+    
+        # ✅ força ID como string
+        selected_id = str(selected_id)
+        st.session_state["selected_client_id"] = selected_id          
         st.write("DEBUG — ID capturado:", selected_id, type(selected_id))
 
 
