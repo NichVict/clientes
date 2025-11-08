@@ -409,7 +409,7 @@ with st.expander("Formulário", expanded=True):
                 "nome": nome,
                 "telefone": telefone,
                 "email": email,
-                "carteiras": carteiras,
+                "carteiras": list(carteiras) if carteiras else [],
                 "data_inicio": str(inicio),
                 "data_fim": str(fim),
                 "pagamento": pagamento,
@@ -420,12 +420,7 @@ with st.expander("Formulário", expanded=True):
             # Se estiver editando → UPDATE
             if is_edit:
                 try:
-                    supabase.table("clientes").update(payload).eq(
-                        "id",
-                        f"uuid('{st.session_state['edit_id']}')"
-                    ).execute()
-
-
+                    supabase.table("clientes").update(payload).eq("id", st.session_state["edit_id"]).execute()
                     st.success("✅ Cliente atualizado com sucesso!")
                     st.session_state["edit_mode"] = False
                     st.session_state["edit_id"] = None
@@ -665,12 +660,7 @@ if dados:
         with c1:
             if st.button("✅ Confirmar exclusão"):
                 try:
-                    supabase.table("clientes").delete().eq(
-                        "id",
-                        f"uuid('{st.session_state['delete_id']}')"
-                    ).execute()
-
-
+                    supabase.table("clientes").delete().eq("id", st.session_state["delete_id"]).execute()
 
                 except Exception as e:
                     st.error(f"Erro ao excluir: {e}")
