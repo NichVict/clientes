@@ -737,6 +737,63 @@ for cli in dados:
 # 3️⃣ Campo de busca
 search = st.text_input("🔎 Buscar cliente por nome, email ou telefone:")
 
+# ---------------------- FILTROS AVANÇADOS ----------------------
+st.write("### 🔎 Filtros adicionais")
+
+colF1, colF2, colF3 = st.columns(3)
+
+with colF1:
+    filtro_carteiras = st.multiselect(
+        "Filtrar por Carteiras",
+        options=CARTEIRAS_OPCOES,
+        default=[]
+    )
+
+with colF2:
+    filtro_status = st.selectbox(
+        "Status da Vigência",
+        ["Todos", "Ativos", "Vencendo em 30 dias", "Vencidos"]
+    )
+
+with colF3:
+    filtro_pagamento = st.multiselect(
+        "Forma de Pagamento",
+        options=PAGAMENTOS,
+        default=[]
+    )
+
+# Filtro por intervalo de datas
+data_inicio_filter, data_fim_filter = st.date_input(
+    "Período da Vigência (opcional)",
+    value=[None, None],
+    format="DD/MM/YYYY"
+)
+
+# Aplicar filtros ao dataframe
+if filtro_carteiras:
+    df = df[df["carteiras"].apply(lambda x: any(c in x for c in filtro_carteiras))]
+
+if filtro_pagamento:
+    df = df[df["pagamento"].isin(filtro_pagamento)]
+
+today = date.today()
+
+if filtro_status == "Ativos":
+    df = df[df["data_fim"] >= today]
+elif filtro_status == "Vencendo em 30 dias":
+    df = df[(df["data_fim"] >= today) & (df["data_fim"] <= today + timedelta(days=30))]
+elif filtro_status == "Vencidos":
+    df = df[df["data_fim"] < today]
+
+# Filtro por range de datas
+if data_inicio_filter and data_fim_filter:
+    df = df[
+        (df["data_inicio"] >= data_inicio_filter) &
+        (df["data_fim"] <= data_fim_filter)
+    ]
+
+
+
 # 4️⃣ Renderização da tabela
 if dados:
     df = pd.DataFrame(dados)
