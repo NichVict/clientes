@@ -382,10 +382,11 @@ try:
             st.markdown(f"<div class='card'><h3>🟢 {len(ativos)}</h3><p>Clientes Ativos</p></div>", unsafe_allow_html=True)
         
         with c2:
-            st.markdown(f"<div class='card'><h3>🟡 {len(vencendo)}</h3><p>≤ 30 dias</p></div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='card'><h3>🟡 {len(vencendo)}</h3><p>≤ 30 dias para vencer</p></div>", unsafe_allow_html=True)
         
         with c3:
             st.markdown(f"<div class='card'><h3>🔴 {len(vencidos)}</h3><p>Vencidos</p></div>", unsafe_allow_html=True)
+
 
 
 
