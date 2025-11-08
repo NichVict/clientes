@@ -501,26 +501,47 @@ if dados:
     })
 
     # ---------------------- SELEÇÃO POR CHECKBOX ----------------------
-    if "id" in df.columns:
-        df_view["Selecionar"] = [
-            st.checkbox("", key=f"select_{i}_{row['email']}")
-            for i, (_, row) in enumerate(df.iterrows())
-        ]
+    # --- Status visual por texto/emoji porque data_editor nao estiliza fundo ---
+    def status_vigencia(d):
+        if isinstance(d, date):
+            hoje = date.today()
+            if d < hoje:
+                return "🔴 Vencida"
+            dias = (d - hoje).days
+            if dias <= 30:
+                return "🟡 < 30 dias"
+            return "🟢 > 30 dias"
+        return ""
 
-        selected_rows = df[df_view["Selecionar"]].copy()
-        if len(selected_rows) > 0:
-            selected_client = selected_rows.iloc[0]
-            st.session_state["selected_client_id"] = selected_client["id"]
-            st.success(f"Cliente selecionado: {selected_client['nome']} ({selected_client['email']})")
-    else:
-        st.warning("⚠️ A tabela 'clientes' precisa ter uma coluna 'id' (UUID) no Supabase.")
+    df_view["Status Vigência"] = df_view["Fim"].apply(status_vigencia)
 
-    # Estilo após inserir checkboxes
-    def style_fim(col):
-        return [status_cor_data_fim(v) if isinstance(v, date) else "" for v in col]
+    # garantir id visível internamente
+    df_view["__id"] = df["id"].values
 
-    styled = df_view.style.apply(style_fim, subset=["Fim"])
-    st.dataframe(styled, use_container_width=True)
+    # checkbox de seleção
+    df_view.insert(0, "Selecionar", False)
+
+    edited = st.data_editor(
+        df_view,
+        hide_index=True,
+        use_container_width=True,
+        num_rows="fixed",
+        column_config={
+            "Selecionar": st.column_config.CheckboxColumn("Selecionar", default=False),
+            "__id": st.column_config.TextColumn("ID", visible=False),
+            "Valor (R$)": st.column_config.NumberColumn("Valor (R$)", format="%.2f", disabled=True),
+            "Início": st.column_config.DateColumn("Início", disabled=True),
+            "Fim": st.column_config.DateColumn("Fim", disabled=True),
+            "Status Vigência": st.column_config.TextColumn("Status Vigência", disabled=True),
+        },
+    )
+
+    selected_rows = edited[edited["Selecionar"]]
+    if len(selected_rows) > 0:
+        sel = selected_rows.iloc[0]
+        st.session_state["selected_client_id"] = sel["__id"]
+        st.success(f"Cliente selecionado: {sel['Nome']} ({sel['Email']}) ✅")
+
 
 else:
     st.info("Nenhum cliente cadastrado ainda.")
