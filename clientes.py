@@ -528,7 +528,7 @@ if dados:
         num_rows="fixed",
         column_config={
             "Selecionar": st.column_config.CheckboxColumn("Selecionar", default=False),
-            "__id": st.column_config.TextColumn("ID", visible=False),
+            "__id": st.column_config.TextColumn("ID", disabled=True, width=1),
             "Valor (R$)": st.column_config.NumberColumn("Valor (R$)", format="%.2f", disabled=True),
             "Início": st.column_config.DateColumn("Início", disabled=True),
             "Fim": st.column_config.DateColumn("Fim", disabled=True),
