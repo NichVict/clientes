@@ -734,12 +734,14 @@ for cli in dados:
             st.toast(f"📬 E-mail de renovação enviado ({dias} dias) — {cli['nome']}", icon="✅")
 
 
-# 3️⃣ Campo de busca
-search = st.text_input("🔎 Buscar cliente por nome, email ou telefone:")
+
 
 # ---------------------- FILTROS AVANÇADOS ----------------------
 # ---------------------- FILTROS AVANÇADOS ----------------------
 with st.expander("🔎 Filtros avançados", expanded=False):
+
+    # 3️⃣ Campo de busca
+    search = st.text_input("🔎 Buscar cliente por nome, email ou telefone:")
 
     # Filtro por carteira
     filtro_carteira = st.multiselect(
@@ -770,6 +772,7 @@ if dados:
         if col not in df.columns:
             df[col] = None
 
+        # 🔍 Aplica filtro de texto
     if search:
         df = df[
             df["nome"].fillna("").str.contains(search, case=False, na=False) |
@@ -777,18 +780,13 @@ if dados:
             df["telefone"].fillna("").str.contains(search, case=False, na=False)
         ]
 
-    df["data_inicio"] = pd.to_datetime(df["data_inicio"], errors="coerce").dt.date
-    df["data_fim"] = pd.to_datetime(df["data_fim"], errors="coerce").dt.date
-
-    df = df.sort_values(by="data_fim", ascending=True)
-
-        # Aplica filtro de carteiras
+    # 📂 Aplica filtro por carteira
     if filtro_carteira:
         df = df[df["carteiras"].apply(
             lambda x: any(c in x for c in filtro_carteira) if isinstance(x, list) else False
         )]
 
-    # Aplica filtro de datas
+    # 🗓 Aplica filtro por período de vigência
     if data_inicio_filter and data_fim_filter:
         df = df[
             (df["data_inicio"] >= data_inicio_filter) &
