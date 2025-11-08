@@ -581,11 +581,66 @@ search = st.text_input("🔎 Buscar cliente por nome, email ou telefone:")
 st.subheader("📊 Clientes cadastrados")
 
 try:
-    query = supabase.table("clientes").select("*").order("created_at", desc=True).execute()
+    query = (
+        supabase
+        .table("clientes")
+        .select("*")
+        .order("created_at", desc=True)
+        .execute()
+    )
     dados = query.data or []
 except Exception as e:
     st.error(f"Erro ao buscar dados no Supabase: {e}")
     dados = []
+
+# ✅ Disparador automático de avisos de renovação
+from datetime import date
+
+for cli in dados:
+    try:
+        fim = pd.to_datetime(cli["data_fim"]).date()
+    except:
+        continue  
+
+    today = date.today()
+    dias = (fim - today).days
+
+    avisos = {
+        30: "aviso_30",
+        15: "aviso_15",
+        7: "aviso_7"
+    }
+
+    if dias in avisos:
+        campo = avisos[dias]
+
+        if not cli.get(campo, False):
+            # preparar carteiras
+            c = cli.get("carteiras", [])
+            if isinstance(c, str):
+                c = [x.strip() for x in c.split(",") if x.strip()]
+
+            enviar_emails_por_carteira(
+                nome=cli["nome"],
+                email_destino=cli["email"],
+                carteiras=c,
+                inicio=cli["data_inicio"],
+                fim=cli["data_fim"]
+            )
+
+            supabase.table("clientes").update({campo: True}).eq("id", cli["id"]).execute()
+
+            st.toast(
+                f"📬 Aviso automático enviado ({dias} dias antes) — {cli['nome']}",
+                icon="✅"
+            )
+
+#############################################
+# ✅ DEPOIS DISSO VEM O SEARCH
+#############################################
+
+search = st.text_input("🔎 Buscar cliente por nome, email ou telefone:")
+
 # ---------------------- CAMPO DE BUSCA ----------------------
 if dados:
     df = pd.DataFrame(dados)
