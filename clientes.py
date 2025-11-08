@@ -464,7 +464,7 @@ def enviar_email_renovacao(nome, email_destino, carteira, inicio, fim, dias):
 
 # ---------------------- UI: CABEÇALHO ----------------------
 st.title("📋 Cadastro de Clientes")
-st.caption("CRM simples com Supabase + Streamlit")
+st.caption("CRM 1milhao Invest")
 # ---------------------- DASHBOARD / KPIs ----------------------
 try:
     query = supabase.table("clientes").select("*").execute()
