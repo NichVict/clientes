@@ -650,7 +650,7 @@ if "last_cadastro" in st.session_state and st.session_state.last_cadastro:
     st.info(f"Enviar e-mail de boas-vindas para **{lc['email']}** — carteiras: **{lista}**?")
     c1, c2 = st.columns([1, 1])
     with c1:
-        if st.button("✉️ Enviar e-mails agora", use_container_width=True):
+        if st.button("✉️ Enviar e-mails com Pack boas vindas", use_container_width=True):
             if not lc.get("carteiras"):
                 st.warning("Nenhuma carteira selecionada. Nada foi enviado.")
             else:
@@ -673,7 +673,7 @@ if "last_cadastro" in st.session_state and st.session_state.last_cadastro:
                     st.toast("Todos os e-mails foram enviados com sucesso.", icon="✅")
             st.session_state.last_cadastro = None
     with c2:
-        if st.button("❌ Não enviar", use_container_width=True):
+        if st.button("❌ Não enviar e-mails", use_container_width=True):
             st.session_state.last_cadastro = None
             st.toast("Cadastro concluído sem envio de e-mails.", icon="✅")
 
