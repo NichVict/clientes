@@ -576,6 +576,7 @@ if "last_cadastro" in st.session_state and st.session_state.last_cadastro:
 
 
 # ---------------------- LISTAGEM / TABELA ----------------------
+# ---------------------- LISTAGEM / TABELA ----------------------
 st.subheader("📊 Clientes cadastrados")
 
 # 1️⃣ Buscar dados
@@ -633,62 +634,38 @@ for cli in dados:
 # 3️⃣ Campo de busca
 search = st.text_input("🔎 Buscar cliente por nome, email ou telefone:")
 
-
-# ---------------------- CAMPO DE BUSCA ----------------------
+# 4️⃣ Renderização da tabela
 if dados:
     df = pd.DataFrame(dados)
     df["id"] = df["id"].astype(str)
 
-
-    # Normalizações de colunas esperadas
-    for col in ["nome", "telefone", "email", "carteiras", "data_inicio", "data_fim", "pagamento", "valor", "observacao", "id"]:
+    for col in ["nome","telefone","email","carteiras","data_inicio","data_fim","pagamento","valor","observacao","id"]:
         if col not in df.columns:
             df[col] = None
 
-    # --- Filtro de busca ---
     if search:
-        for col in ["nome", "email", "telefone"]:
-            if col not in df.columns:
-                df[col] = ""
-
-        mask = (
+        df = df[
             df["nome"].fillna("").str.contains(search, case=False, na=False) |
             df["email"].fillna("").str.contains(search, case=False, na=False) |
             df["telefone"].fillna("").str.contains(search, case=False, na=False)
-        )
-        df = df[mask].copy()
+        ]
 
-    # Converte datas
-    def parse_data(x):
-        if pd.isna(x) or x is None:
-            return None
-        try:
-            return pd.to_datetime(x).date()
-        except:
-            try:
-                return datetime.strptime(str(x), "%d/%m/%Y").date()
-            except:
-                return None
+    df["data_inicio"] = pd.to_datetime(df["data_inicio"], errors="coerce").dt.date
+    df["data_fim"] = pd.to_datetime(df["data_fim"], errors="coerce").dt.date
 
-    df["data_inicio"] = df["data_inicio"].apply(parse_data)
-    df["data_fim"] = df["data_fim"].apply(parse_data)
-
-    df = df.sort_values(by=["data_fim"], ascending=[True], na_position="last")
+    df = df.sort_values(by="data_fim", ascending=True)
 
     def carteiras_to_str(v):
-        if isinstance(v, list):
-            return ", ".join(v)
-        return v or ""
+        return ", ".join(v) if isinstance(v, list) else (v or "")
 
     df["carteiras"] = df["carteiras"].apply(carteiras_to_str)
 
-
     df_view = pd.DataFrame({
-        "ID": df["id"],  # <- usa o id do df (não remova)
+        "ID": df["id"],
         "Nome": df["nome"],
         "Email": df["email"],
         "Telefone": df["telefone"],
-        "Carteiras": df["carteiras"].apply(carteiras_to_str),
+        "Carteiras": df["carteiras"],
         "Início": df["data_inicio"],
         "Fim": df["data_fim"],
         "Pagamento": df["pagamento"],
@@ -696,28 +673,17 @@ if dados:
         "Observação": df["observacao"],
     })
 
-
-
-    # ---------------------- SELEÇÃO POR CHECKBOX ----------------------
-    # --- Status visual por texto/emoji porque data_editor nao estiliza fundo ---
     def status_vigencia(d):
+        hoje = date.today()
         if isinstance(d, date):
-            hoje = date.today()
-            if d < hoje:
-                return "🔴 Vencida"
+            if d < hoje: return "🔴 Vencida"
             dias = (d - hoje).days
-            if dias <= 30:
-                return "🟡 < 30 dias"
-            return "🟢 > 30 dias"
+            return "🟡 < 30 dias" if dias <= 30 else "🟢 > 30 dias"
         return ""
 
     df_view["Status Vigência"] = df_view["Fim"].apply(status_vigencia)
-
-    
-    # data editor — apenas interação de seleção, sem edição de dados
-    # Inserir coluna de seleção na view
     df_view.insert(0, "Selecionar", False)
-    
+
     edited = st.data_editor(
         df_view,
         hide_index=True,
@@ -734,91 +700,48 @@ if dados:
         disabled=["ID","Nome","Email","Telefone","Carteiras","Início","Fim","Pagamento","Valor (R$)","Observação","Status Vigência"],
     )
 
-
-
-
     selected_rows = edited[edited["Selecionar"]]
-    if len(selected_rows) > 0:        
+    if len(selected_rows) > 0:
         sel = selected_rows.iloc[0]
-        selected_id = sel["ID"]
-    
-        # ✅ força ID como string
-        selected_id = str(selected_id)
-        st.session_state["selected_client_id"] = selected_id          
-        
+        selected_id = str(sel["ID"])
+        st.session_state["selected_client_id"] = selected_id
 
+        colE, colD = st.columns(2)
 
-    
-        # Botões Editar / Excluir
-        if selected_id:
-            colE, colD = st.columns([1,1])
-    
-            # -------- BOTÃO EDITAR --------
-            with colE:                
-                if st.button("📝 Editar cliente"):                    
-                    selected_id = str(selected_id)
-                    df["id"] = df["id"].astype(str)
-                
-                    rows = df.loc[df["id"] == selected_id]
-                    if rows.empty:
-                        st.error("❌ Erro: ID não encontrado no dataframe.")
-                        st.stop()
-                
-                    cliente = rows.iloc[0]
-                
-                    st.session_state["edit_mode"] = True
-                    st.session_state["selected_client_id"] = selected_id
-                    st.session_state["edit_data"] = {
-                        "nome": cliente["nome"],
-                        "email": cliente["email"],
-                        "telefone": cliente["telefone"],
-                        "carteiras": cliente["carteiras"],
-                        "data_inicio": cliente["data_inicio"],
-                        "data_fim": cliente["data_fim"],
-                        "pagamento": cliente["pagamento"],
-                        "valor": cliente["valor"],
-                        "observacao": cliente["observacao"],
-                    }
-                    st.rerun()
+        with colE:
+            if st.button("📝 Editar cliente"):
+                df["id"] = df["id"].astype(str)
+                cliente = df[df["id"] == selected_id].iloc[0]
 
+                st.session_state["edit_mode"] = True
+                st.session_state["edit_data"] = cliente.to_dict()
+                st.rerun()
 
-    
-            # -------- BOTÃO EXCLUIR --------
-            with colD:
-                if st.button("🗑 Excluir cliente"):
-                    st.session_state["confirm_delete"] = True
-                    st.session_state["delete_id"] = selected_id
-                    st.rerun()
+        with colD:
+            if st.button("🗑 Excluir cliente"):
+                st.session_state["confirm_delete"] = True
+                st.session_state["delete_id"] = selected_id
+                st.rerun()
 
-    
-    
-    # -------- CONFIRMAÇÃO DE EXCLUSÃO --------
     if st.session_state.get("confirm_delete", False):
         st.warning("⚠️ Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita.")
-    
+
         c1, c2 = st.columns(2)
-    
+
         with c1:
             if st.button("✅ Confirmar exclusão"):
-                try:
-                    supabase.table("clientes").delete().eq("id", st.session_state["delete_id"]).execute()
-
-                except Exception as e:
-                    st.error(f"Erro ao excluir: {e}")
-                else:
-                    st.toast("✅ Cliente excluído", icon="🗑")
-                
-                # reset
+                supabase.table("clientes").delete().eq("id", st.session_state["delete_id"]).execute()
+                st.toast("✅ Cliente excluído", icon="🗑")
                 st.session_state["confirm_delete"] = False
-                st.session_state["delete_id"] = None
                 st.session_state["selected_client_id"] = None
                 st.rerun()
-    
+
         with c2:
             if st.button("❌ Cancelar"):
                 st.session_state["confirm_delete"] = False
                 st.session_state["delete_id"] = None
                 st.rerun()
+
 
 
 
