@@ -508,6 +508,7 @@ st.markdown("<div style='height:1px;background:linear-gradient(90deg,transparent
 # ---------------------- FORMULÁRIO DE CADASTRO ----------------------
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.subheader("🆕 Cadastro e Edição de Clientes")
+st.markdown("<br>", unsafe_allow_html=True)
 
 is_edit = st.session_state.get("edit_mode", False)
 edit_data = st.session_state.get("edit_data") or {}
