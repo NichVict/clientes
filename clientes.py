@@ -680,7 +680,12 @@ if "last_cadastro" in st.session_state and st.session_state.last_cadastro:
 
 # ---------------------- LISTAGEM / TABELA ----------------------
 # ---------------------- LISTAGEM / TABELA ----------------------
-st.subheader("👥 Clientes cadastrados")
+st.markdown("<br><br>", unsafe_allow_html=True)
+
+st.markdown("<div style='height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,180,0.35),transparent);'></div>", unsafe_allow_html=True)
+
+
+st.subheader("👥 Clientes Cadastrados")
 
 # 1️⃣ Buscar dados
 try:
