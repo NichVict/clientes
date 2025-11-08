@@ -506,7 +506,7 @@ except Exception as e:
 
 # ---------------------- FORMULÁRIO DE CADASTRO ----------------------
 # ---------------------- FORMULÁRIO DE CADASTRO ----------------------
-st.subheader("➕ Cadastro / Edição de Cliente")
+st.subheader("🆕 Cadastro e Edição de Clientes")
 
 is_edit = st.session_state.get("edit_mode", False)
 edit_data = st.session_state.get("edit_data") or {}
@@ -680,7 +680,7 @@ if "last_cadastro" in st.session_state and st.session_state.last_cadastro:
 
 # ---------------------- LISTAGEM / TABELA ----------------------
 # ---------------------- LISTAGEM / TABELA ----------------------
-st.subheader("📊 Clientes cadastrados")
+st.subheader("👥 Clientes cadastrados")
 
 # 1️⃣ Buscar dados
 try:
@@ -755,7 +755,7 @@ if dados:
     df["data_fim"] = pd.to_datetime(df["data_fim"], errors="coerce").dt.date
     
     # ---------------------- FILTROS AVANÇADOS ----------------------
-    with st.expander("🎯 Filtros Avançados"):
+    with st.expander("⚙️ Filtros Avançados"):
     
         search = st.text_input("Buscar cliente por nome, email ou telefone:")
     
