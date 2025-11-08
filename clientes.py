@@ -435,6 +435,13 @@ try:
 except Exception as e:
     st.error(f"Erro ao buscar dados no Supabase: {e}")
     dados = []
+# ---------------------- CAMPO DE BUSCA ----------------------
+search = st.text_input("🔎 Buscar cliente por nome, email ou telefone:")
+
+if search:
+    df = df[df.apply(lambda row: search.lower() in str(row).lower(), axis=1)]
+
+
 
 if dados:
     df = pd.DataFrame(dados)
