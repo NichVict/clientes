@@ -296,6 +296,48 @@ EMAIL_CORPOS = {
 """
 }
 
+# ---------------------- TEMPLATES DE RENOVAÇÃO ----------------------
+EMAIL_RENOVACAO_30 = """
+<h2>⚠️ Sua assinatura está quase vencendo, {nome}</h2>
+
+<p>Falta cerca de <b>30 dias</b> para o fim da sua assinatura da carteira <b>{carteira}</b>.</p>
+
+<p>Período atual: <b>{inicio}</b> até <b>{fim}</b></p>
+
+<p>Quer continuar recebendo nossas análises e operações exclusivas?</p>
+
+<p>➡️ Responda este e-mail com <b>RENOVAR</b> para garantir continuidade sem interrupções.</p>
+
+<p>Equipe 1 Milhão Invest 💚</p>
+"""
+
+EMAIL_RENOVACAO_15 = """
+<h2>📈 Renovação da sua assinatura — {carteira}</h2>
+
+<p>Olá {nome},</p>
+
+<p>Sua assinatura vence em cerca de <b>15 dias</b>.</p>
+
+<p>Para manter acesso às nossas recomendações e relatórios exclusivos, responda:</p>
+
+<p><b>Quero renovar</b></p>
+
+<p>Estamos juntos 🚀</p>
+"""
+
+EMAIL_RENOVACAO_7 = """
+<h2>⏳ Últimos dias — sua assinatura está acabando</h2>
+
+<p>{nome}, falta menos de <b>7 dias</b> para sua assinatura da carteira <b>{carteira}</b> expirar.</p>
+
+<p>Evite perder as operações — basta responder:</p>
+
+<p><b>RENOVAR</b></p>
+
+<p>Obrigado por acompanhar nosso trabalho 💪</p>
+"""
+
+
 def _format_date_br(d: date) -> str:
     try:
         return d.strftime("%d/%m/%Y")
@@ -358,6 +400,37 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
         ok, msg = _enviar_email(nome, email_destino, assunto, corpo, anexar_pdf)
         resultados.append((c, ok, msg))
     return resultados
+
+def enviar_email_renovacao(nome, email_destino, carteira, inicio, fim, dias):
+    inicio_br = _format_date_br(inicio)
+    fim_br = _format_date_br(fim)
+
+    templates = {
+        30: EMAIL_RENOVACAO_30,
+        15: EMAIL_RENOVACAO_15,
+        7: EMAIL_RENOVACAO_7
+    }
+
+    corpo = templates[dias].format(
+        nome=nome,
+        carteira=carteira,
+        inicio=inicio_br,
+        fim=fim_br
+    )
+
+    assunto = f"Renovação — {carteira} ({dias} dias restantes)"
+
+    ok, msg = _enviar_email(
+        nome,
+        email_destino,
+        assunto,
+        corpo,
+        anexar_pdf=False  # PDF não precisa pra renovação
+    )
+
+    return ok, msg
+
+
 
 # ---------------------- UI: CABEÇALHO ----------------------
 st.title("📋 Cadastro de Clientes")
@@ -596,6 +669,7 @@ except Exception as e:
 # 2️⃣ Disparador automático de avisos de renovação
 from datetime import date
 
+# Disparador automático de avisos de renovação
 for cli in dados:
     try:
         fim = pd.to_datetime(cli["data_fim"]).date()
@@ -605,31 +679,30 @@ for cli in dados:
     today = date.today()
     dias = (fim - today).days
 
-    avisos = {
-        30: "aviso_30",
-        15: "aviso_15",
-        7: "aviso_7"
-    }
+    avisos = {30: "aviso_30", 15: "aviso_15", 7: "aviso_7"}
 
     if dias in avisos:
         campo = avisos[dias]
 
         if not cli.get(campo, False):
-            c = cli.get("carteiras", [])
-            if isinstance(c, str):
-                c = [x.strip() for x in c.split(",") if x.strip()]
+            carteiras = cli.get("carteiras", [])
+            if isinstance(carteiras, str):
+                carteiras = [x.strip() for x in carteiras.split(",")]
 
-            enviar_emails_por_carteira(
-                nome=cli["nome"],
-                email_destino=cli["email"],
-                carteiras=c,
-                inicio=cli["data_inicio"],
-                fim=cli["data_fim"]
-            )
+            for cart in carteiras:
+                enviar_email_renovacao(
+                    nome=cli["nome"],
+                    email_destino=cli["email"],
+                    carteira=cart,
+                    inicio=cli["data_inicio"],
+                    fim=cli["data_fim"],
+                    dias=dias
+                )
 
             supabase.table("clientes").update({campo: True}).eq("id", cli["id"]).execute()
 
-            st.toast(f"📬 Aviso enviado ({dias} dias antes) — {cli['nome']}", icon="✅")
+            st.toast(f"📬 E-mail de renovação enviado ({dias} dias) — {cli['nome']}", icon="✅")
+
 
 # 3️⃣ Campo de busca
 search = st.text_input("🔎 Buscar cliente por nome, email ou telefone:")
