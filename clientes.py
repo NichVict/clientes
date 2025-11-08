@@ -584,12 +584,15 @@ if dados:
     df_view["Status Vigência"] = df_view["Fim"].apply(status_vigencia)
 
     # garantir id visível internamente
-    df_view["__id"] = df["id"].astype(str).values
-
-
-    # checkbox de seleção
+    # força id antes de criar a tabela
+    df["id"] = df["id"].astype(str)
+    
+    # monta tabela com id antes do editor
+    df_view["ID"] = df["id"]
+    df_view["__id"] = df["id"]  # id real interno
     df_view.insert(0, "Selecionar", False)
-
+    
+    # data editor — apenas interação de seleção, sem edição de dados
     edited = st.data_editor(
         df_view,
         hide_index=True,
@@ -597,13 +600,14 @@ if dados:
         num_rows="fixed",
         column_config={
             "Selecionar": st.column_config.CheckboxColumn("Selecionar"),
-            "__id": st.column_config.TextColumn("ID real", disabled=True, width=1),
+            "__id": st.column_config.TextColumn("ID interno", disabled=True, width=1),
         },
         disabled=[
-            "ID","Nome","Email","Telefone","Carteiras",
-            "Início","Fim","Pagamento","Valor (R$)","Observação","Status Vigência"
+            "ID","Nome","Email","Telefone","Carteiras","Início",
+            "Fim","Pagamento","Valor (R$)","Observação","Status Vigência"
         ],
     )
+
 
 
     selected_rows = edited[edited["Selecionar"]]
@@ -612,6 +616,8 @@ if dados:
         st.session_state["selected_client_id"] = sel["__id"]
         st.success(f"Cliente selecionado: {sel['Nome']} ({sel['Email']}) ✅")
         selected_id = st.session_state.get("selected_client_id")
+        st.write("ID selecionado:", selected_id)
+
     
         # Botões Editar / Excluir
         if selected_id:
@@ -620,8 +626,7 @@ if dados:
             # -------- BOTÃO EDITAR --------
             with colE:                
                 if st.button("📝 Editar cliente"):
-                    cliente = df[df["id"].astype(str) == selected_id].iloc[0]
-
+                    cliente = df.loc[df["id"] == selected_id].iloc[0]
                     st.session_state["edit_mode"] = True
                     st.session_state["edit_id"] = selected_id
                     st.session_state["edit_data"] = {
