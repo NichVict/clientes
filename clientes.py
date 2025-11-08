@@ -298,20 +298,22 @@ EMAIL_CORPOS = {
 
 # ---------------------- TEMPLATES DE RENOVAÇÃO ----------------------
 # ---------------------- TEMPLATES DE RENOVAÇÃO ----------------------
-WHATSAPP_BTN = """
-<table role="presentation" border="0" cellpadding="0" cellspacing="0" style="margin:20px auto;">
-  <tr>
-    <td align="center" bgcolor="#25D366" style="border-radius:8px;">
-      <a href="https://wa.me/5511940266027"
-         target="_blank"
-         style="font-size:16px; font-family:sans-serif; color:#ffffff; text-decoration:none;
-                padding:12px 20px; display:inline-block; font-weight:bold;">
-        💬 Falar no WhatsApp
-      </a>
-    </td>
-  </tr>
-</table>
 
+WHATSAPP_BTN = """
+<p style="text-align:center;margin-top:18px;">
+  <a href="https://wa.me/5511940266027" target="_blank" style="
+    background-color:#25D366;
+    color:white;
+    padding:12px 20px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:600;
+    display:inline-block;
+  ">
+    💬 Falar no WhatsApp
+  </a>
+</p>
+"""
 
 EMAIL_RENOVACAO_30 = f"""
 <h2>⚠️ Sua assinatura está quase vencendo, {{nome}}</h2>
@@ -338,6 +340,8 @@ EMAIL_RENOVACAO_15 = f"""
 
 <p><b>Quero renovar</b></p>
 
+<p><b>Período atual:</b> {{inicio}} até {{fim}}</p>
+
 {WHATSAPP_BTN}
 
 <p>Estamos juntos 🚀</p>
@@ -352,10 +356,13 @@ EMAIL_RENOVACAO_7 = f"""
 
 <p><b>RENOVAR</b></p>
 
+<p><b>Período atual:</b> {{inicio}} até {{fim}}</p>
+
 {WHATSAPP_BTN}
 
 <p>Obrigado por confiar no nosso trabalho 💪</p>
 """
+
 
 
 
