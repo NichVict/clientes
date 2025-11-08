@@ -542,10 +542,6 @@ if dados:
 
     df["carteiras"] = df["carteiras"].apply(carteiras_to_str)
 
-    def carteiras_to_str(v):
-    if isinstance(v, list):
-        return ", ".join(v)
-    return v or ""
 
     df_view = pd.DataFrame({
         "ID": df["id"],  # <- usa o id do df (não remova)
@@ -636,10 +632,11 @@ if dados:
     
             # -------- BOTÃO EXCLUIR --------
             with colD:
-                if st.button("🗑 Excluir cliente"):                    
-                    supabase.table("clientes").delete().eq("id", st.session_state["delete_id"]).execute()
-
+                if st.button("🗑 Excluir cliente"):
+                    st.session_state["confirm_delete"] = True
+                    st.session_state["delete_id"] = selected_id
                     st.rerun()
+
     
     
     # -------- CONFIRMAÇÃO DE EXCLUSÃO --------
