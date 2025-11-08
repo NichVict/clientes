@@ -433,6 +433,7 @@ def enviar_email_renovacao(nome, email_destino, carteira, inicio, fim, dias):
     inicio_br = _format_date_br(inicio)
     fim_br = _format_date_br(fim)
 
+    # Escolhe qual template usar
     templates = {
         30: EMAIL_RENOVACAO_30,
         15: EMAIL_RENOVACAO_15,
@@ -443,21 +444,21 @@ def enviar_email_renovacao(nome, email_destino, carteira, inicio, fim, dias):
         nome=nome,
         carteira=carteira,
         inicio=inicio_br,
-        fim=fim_br,
-        whatsapp=WHATSAPP_LINK
+        fim=fim_br
     )
 
-    assunto = f"Renovação {carteira} — {dias} dias restantes"
+    assunto = f"Renovação — {carteira} ({dias} dias restantes)"
 
     ok, msg = _enviar_email(
         nome,
         email_destino,
         assunto,
         corpo,
-        anexar_pdf=False
+        anexar_pdf=False  # PDF não precisa na renovação
     )
 
     return ok, msg
+
 
 
 
