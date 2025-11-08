@@ -614,7 +614,7 @@ if dados:
     selected_rows = edited[edited["Selecionar"]]
     if len(selected_rows) > 0:        
         sel = selected_rows.iloc[0]
-        selected_id = sel["ID"]                 # <- pega direto da view
+        selected_id = int(sel["ID"])             # <- pega direto da view
         st.session_state["selected_client_id"] = selected_id
         st.write("DEBUG — ID capturado:", selected_id, type(selected_id))
 
@@ -629,7 +629,7 @@ if dados:
                 if st.button("📝 Editar cliente"):                    
                     cliente = df.loc[df["id"] == selected_id].iloc[0]
                     st.session_state["edit_mode"] = True
-                    st.session_state["edit_id"] = selected_id
+                    st.session_state["selected_client_id"] = selected_id
                     st.session_state["edit_data"] = {
                         "nome": cliente["nome"],
                         "email": cliente["email"],
