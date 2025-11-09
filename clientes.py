@@ -197,6 +197,22 @@ EBOOK_OPCOES_HTML = (
     '<p><a href="https://drive.google.com/file/d/1U3DBmTbbjiq34tTQdvHcxi2MnZnd8owN/view">Baixar E-book de Opções</a></p>'
 )
 
+WHATSAPP_BTN = """
+<p style="text-align:center;margin-top:18px;">
+  <a href="https://wa.me/5511940266027" target="_blank" style="
+    background-color:#25D366;
+    color:white;
+    padding:12px 20px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:600;
+    display:inline-block;
+  ">
+    💬 Falar no WhatsApp
+  </a>
+</p>
+"""
+
 # Textos por carteira (com placeholders {nome}, {inicio}, {fim}) — agora em HTML com botões
 EMAIL_CORPOS = {
     "Curto Prazo": f"""
@@ -324,21 +340,7 @@ EMAIL_CORPOS = {
 # ---------------------- TEMPLATES DE RENOVAÇÃO ----------------------
 # ---------------------- TEMPLATES DE RENOVAÇÃO ----------------------
 
-WHATSAPP_BTN = """
-<p style="text-align:center;margin-top:18px;">
-  <a href="https://wa.me/5511940266027" target="_blank" style="
-    background-color:#25D366;
-    color:white;
-    padding:12px 20px;
-    border-radius:8px;
-    text-decoration:none;
-    font-weight:600;
-    display:inline-block;
-  ">
-    💬 Falar no WhatsApp
-  </a>
-</p>
-"""
+
 
 EMAIL_RENOVACAO_30 = f"""
 <h2>⚠️ Sua assinatura está quase vencendo, {{nome}}</h2>
