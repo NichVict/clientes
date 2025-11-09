@@ -942,22 +942,36 @@ if dados:
         selected_id = str(sel["ID"])
         st.session_state["selected_client_id"] = selected_id
 
-        colE, colD = st.columns(2)
-
+        colE, colM, colD = st.columns(3)
+        
         with colE:
             if st.button("📝 Editar cliente"):
                 df["id"] = df["id"].astype(str)
                 cliente = df[df["id"] == selected_id].iloc[0]
-
+        
                 st.session_state["edit_mode"] = True
                 st.session_state["edit_data"] = cliente.to_dict()
                 st.rerun()
-
+        
+        with colM:
+            telefone = sel["Telefone"]
+            telefone_clean = "".join(filter(str.isdigit, str(telefone)))
+        
+            if telefone_clean:
+                msg = f"Olá {sel['Nome']}, tudo bem? 😊"
+                link = f"https://wa.me/55{telefone_clean}?text={msg.replace(' ', '%20')}"
+                if st.button("💬 WhatsApp"):
+                    st.session_state["zap_link"] = link
+                    st.markdown(f"<meta http-equiv='refresh' content='0; url={link}'>", unsafe_allow_html=True)
+            else:
+                st.info("📱 Sem telefone para contato")
+        
         with colD:
             if st.button("🗑 Excluir cliente"):
                 st.session_state["confirm_delete"] = True
                 st.session_state["delete_id"] = selected_id
                 st.rerun()
+
 
     if st.session_state.get("confirm_delete", False):
         st.warning("⚠️ Tem certeza que deseja excluir este cliente? Esta ação não pode ser desfeita.")
