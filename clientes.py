@@ -630,7 +630,7 @@ with st.expander("Formulário", expanded=is_edit):
         with c6:
             inicio = st.date_input("Início da Vigência", value=edit_data.get("data_inicio", date.today()), format="DD/MM/YYYY")
         with c7:
-            fim = st.date_input("Final da Vigência", value=edit_data.get("data_fim", date.today() + timedelta(days=90)), format="DD/MM/YYYY")
+            fim = st.date_input("Final da Vigência", value=edit_data.get("data_fim", date.today() + timedelta(days=180)), format="DD/MM/YYYY")
         with c8:
             pagamento = st.selectbox(
                 "Forma de Pagamento",
