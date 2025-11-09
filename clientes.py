@@ -172,10 +172,10 @@ LINK_GG_CLUBE         = "https://groups.google.com/g/clubenecton"
 # Botão sólido (estilo Google) – azul
 def BOTAO_GOOGLE(texto: str, link: str) -> str:
     return f'''
-<p style="text-align:center;margin:10px 0 18px;">
+<p style="text-align:left;margin:10px 0 18px;">
   <a href="{link}" target="_blank" style="
-    background:#1a73e8;
-    color:#ffffff;
+    border:2px solid #25D366;
+    color:#25D366;
     padding:12px 20px;
     border-radius:8px;
     text-decoration:none;
@@ -185,6 +185,7 @@ def BOTAO_GOOGLE(texto: str, link: str) -> str:
   </a>
 </p>
 '''
+
 
 
 # Aulas bônus (links limpos e clicáveis)
@@ -202,7 +203,7 @@ AULAS_TXT_HTML = (
 # Botão estilo B (outline)
 def BOTAO_OUTLINE(texto: str, link: str) -> str:
     return f'''
-<p style="text-align:center;margin:16px 0;">
+<p style="text-align:left;margin:16px 0;">
   <a href="{link}" target="_blank" style="
     border:2px solid #0169FF;
     color:#0169FF;
@@ -216,6 +217,7 @@ def BOTAO_OUTLINE(texto: str, link: str) -> str:
 </p>
 '''
 
+
 # E-book Opções
 EBOOK_OPCOES_HTML = (
     '<h3>📘 Material Exclusivo</h3>'
@@ -223,7 +225,7 @@ EBOOK_OPCOES_HTML = (
 )
 
 WHATSAPP_BTN = """
-<p style="text-align:center;margin-top:18px;">
+<p style="text-align:left;margin-top:18px;">
   <a href="https://wa.me/5511940266027" target="_blank" style="
     background-color:#25D366;
     color:white;
@@ -233,10 +235,11 @@ WHATSAPP_BTN = """
     font-weight:600;
     display:inline-block;
   ">
-    💬 Falar no WhatsApp
+    💬 Falar com Suporte
   </a>
 </p>
 """
+
 
 # Textos por carteira (com placeholders {nome}, {inicio}, {fim}) — agora em HTML com botões
 EMAIL_CORPOS = {
