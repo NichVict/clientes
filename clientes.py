@@ -979,6 +979,27 @@ if dados:
                 st.rerun()
 
 
+    # ===================== RELATÓRIO DE VENDAS NO PERÍODO =====================
+    with st.expander("📊 Relatório de Vendas / Assinaturas no Período"):
+        c1, c2 = st.columns(2)
+        dt_inicio = c1.date_input("Data inicial", value=date.today().replace(day=1))
+        dt_fim = c2.date_input("Data final", value=date.today())
+
+        df_rel = df[
+            (df["data_inicio"] >= dt_inicio) &
+            (df["data_inicio"] <= dt_fim)
+        ].copy()
+
+        st.write(f"🔎 Registros encontrados: **{len(df_rel)}**")
+
+        df_rel["valor"] = pd.to_numeric(df_rel["valor"], errors="coerce").fillna(0)
+        total = df_rel["valor"].sum()
+
+        st.dataframe(df_rel[["nome","email","carteiras","data_inicio","data_fim","valor"]], use_container_width=True)
+
+        st.markdown(f"### 💰 Total no período: **R$ {total:,.2f}**")
+
+
 
 
 
