@@ -955,18 +955,28 @@ if dados:
                 st.rerun()
         
         with colM:            
-            telefone = str(sel["Telefone"]).strip()
+            telefone = sel["Telefone"]
         
-            # Mantém + se existir, remove qualquer outra coisa que não seja número
-            telefone_clean = re.sub(r"[^\d+]", "", telefone)
+            if telefone:
+                # Mantém apenas + e dígitos
+                telefone_clean = "".join([c for c in str(telefone) if c.isdigit() or c == "+"])
         
-            if telefone_clean:
+                # Se não tiver +, adiciona um (pois banco já tem prefixo do país)
+                if not telefone_clean.startswith("+"):
+                    telefone_clean = "+" + telefone_clean
+        
+                # Remove qualquer símbolo extra
+                telefone_clean = telefone_clean.replace(" ", "").replace("-", "")
+        
                 msg = f"Olá {sel['Nome']}, tudo bem? 😊"
-                msg_enc = msg.replace(" ", "%20")
-                link = f"https://wa.me/{telefone_clean}?text={msg_enc}"
+                msg_encoded = msg.replace(" ", "%20")
+        
+                link = f"https://api.whatsapp.com/send?phone={telefone_clean}&text={msg_encoded}"
+        
                 st.link_button("💬 WhatsApp", link)
             else:
                 st.info("📱 Sem telefone cadastrado")
+
 
         
         with colD:
