@@ -973,7 +973,7 @@ if dados:
         
                 link = f"https://api.whatsapp.com/send?phone={telefone_clean}&text={msg_encoded}"
         
-                st.link_button("💬 WhatsApp", link)
+                st.link_button("💬 Conversar por WhatsApp", link)
             else:
                 st.info("📱 Sem telefone cadastrado")
 
