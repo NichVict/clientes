@@ -226,6 +226,7 @@ EMAIL_CORPOS = {
 {AULAS_TXT_HTML}
 
 <p>Bem-vindo(a) ao próximo nível!<br>Equipe 1 Milhão Invest</p>
+{WHATSAPP_BTN}
 """,
 
     "Curtíssimo Prazo": f"""
@@ -253,6 +254,7 @@ EMAIL_CORPOS = {
 {AULAS_TXT_HTML}
 
 <p>Bora buscar performance com agilidade!<br>Equipe 1 Milhão Invest</p>
+{WHATSAPP_BTN}
 """,
 
     "Opções": f"""
@@ -282,19 +284,42 @@ EMAIL_CORPOS = {
 {EBOOK_OPCOES_HTML}
 
 <p>Vamos operar com estratégia e controle!<br>Equipe 1 Milhão Invest</p>
+{WHATSAPP_BTN}
 """,
 
-    # Criptomoedas usa o mesmo corpo do Curto Prazo (links e tudo)
-    "Criptomoedas": "<<USE_CURTO>>",
+    "Criptomoedas": f"""
+<h2>👋 Olá {{nome}}!</h2>
+<p>Bem-vindo(a) à <b>Carteira de Criptomoedas</b>. 🚀</p>
+<p><b>Vigência do contrato:</b> {{inicio}} a {{fim}}</p>
 
-    # Clube: sem PDF, sem link
-    "Clube": """
-<h2>🏆 Olá {nome}!</h2>
+<h3>✅ Passos iniciais</h3>
+<ol>
+  <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
+  <li>Entre no grupo exclusivo do Telegram:</li>
+</ol>
+{BOTAO_OUTLINE("Entrar no Grupo do Telegram", LINK_CRIPTO)}
+<p>3) Libere o e-mail: <b>avisoscanal1milhao@gmail.com</b></p>
+
+<hr>
+
+{AULAS_TXT_HTML}
+
+<p>Bem-vindo(a) ao universo cripto com inteligência e gestão!<br>Equipe 1 Milhão Invest</p>
+{WHATSAPP_BTN}
+""",
+
+    "Clube": f"""
+<h2>🏆 Olá {{nome}}!</h2>
 <p>Bem-vindo(a) ao <b>Clube 1 Milhão Invest</b>.</p>
-<p>Nossa equipe fará contato exclusivo com você para os próximos passos.</p>
-<p>Conte conosco!<br>Equipe 1 Milhão Invest</p>
+<p>Nosso contato será personalizado e direto com nossa equipe.</p>
+
+<p>Estamos muito felizes em ter você conosco!</p>
+
+<p>Equipe 1 Milhão Invest</p>
+{WHATSAPP_BTN}
 """
 }
+
 
 # ---------------------- TEMPLATES DE RENOVAÇÃO ----------------------
 # ---------------------- TEMPLATES DE RENOVAÇÃO ----------------------
