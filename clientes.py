@@ -960,11 +960,13 @@ if dados:
             if telefone_clean:
                 msg = f"Olá {sel['Nome']}, tudo bem? 😊"
                 link = f"https://wa.me/55{telefone_clean}?text={msg.replace(' ', '%20')}"
-                if st.button("💬 WhatsApp"):
-                    st.session_state["zap_link"] = link
-                    st.markdown(f"<meta http-equiv='refresh' content='0; url={link}'>", unsafe_allow_html=True)
-            else:
-                st.info("📱 Sem telefone para contato")
+                if telefone_clean:
+                    msg = f"Olá {sel['Nome']}, tudo bem? 😊"
+                    link = f"https://wa.me/55{telefone_clean}?text={msg.replace(' ', '%20')}"
+                    st.link_button("💬 WhatsApp", link)
+                else:
+                    st.info("📱 Sem telefone cadastrado")
+
         
         with colD:
             if st.button("🗑 Excluir cliente"):
