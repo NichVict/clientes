@@ -480,9 +480,6 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
 
     for c in carteiras:
         corpo = EMAIL_CORPOS.get(c, "")
-        if c == "Criptomoedas":
-            # Usa corpo do Curto Prazo
-            corpo = EMAIL_CORPOS["Curto Prazo"]
         if not corpo:
             resultados.append((c, False, "Sem template configurado"))
             continue
