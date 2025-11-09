@@ -253,7 +253,7 @@ EMAIL_CORPOS = {
 {BOTAO_OUTLINE("Entrar no Grupo do Telegram", LINK_CURTO)}
 <br><br>
 {BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CURTO)}
-<p>3) Libere o e-mail: <b>avisoscanal1milhao@gmail.com</b></p>
+#<p>3) Libere o e-mail: <b>avisoscanal1milhao@gmail.com</b></p>
 
 <hr>
 <h3>📬 Você receberá toda semana</h3>
@@ -287,7 +287,7 @@ EMAIL_CORPOS = {
 {BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CURTISSIMO)}
 
 
-<p>3) Libere o e-mail: <b>avisoscanal1milhao@gmail.com</b></p>
+#<p>3) Libere o e-mail: <b>avisoscanal1milhao@gmail.com</b></p>
 
 <hr>
 <h3>📬 Você receberá toda semana</h3>
@@ -318,7 +318,7 @@ EMAIL_CORPOS = {
 <br><br>
 {BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_OPCOES)}
 
-<p>3) Libere o e-mail: <b>opcoes.1milhao.invest@gmail.com</b></p>
+#<p>3) Libere o e-mail: <b>opcoes.1milhao.invest@gmail.com</b></p>
 
 <hr>
 <h3>📈 Você terá</h3>
@@ -351,7 +351,7 @@ EMAIL_CORPOS = {
 <br><br>
 {BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CRIPTO)}
 
-<p>3) Libere o e-mail: <b>avisoscanal1milhao@gmail.com</b></p>
+#<p>3) Libere o e-mail: <b>avisoscanal1milhao@gmail.com</b></p>
 
 <hr>
 
