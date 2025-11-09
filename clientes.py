@@ -160,7 +160,32 @@ from email.mime.text import MIMEText
 LINK_CURTO = "https://t.me/+3BTqTX--W6gyNTE0"
 LINK_CURTISSIMO = "https://t.me/+BiTfqYUSiWpjN2U0"
 LINK_OPCOES = "https://t.me/+1si_16NC5E8xNDhk"
-LINK_CRIPTO = LINK_CURTO  # por enquanto, mesmo do Curto
+LINK_CRIPTO = "https://t.me/+f9Ck6W_Bb00zZDI0"
+
+# Links Google Groups (um por carteira)
+LINK_GG_CURTO         = "https://groups.google.com/g/listasemanal"
+LINK_GG_CURTISSIMO    = "https://groups.google.com/g/listacurtissimo"
+LINK_GG_OPCOES        = "https://groups.google.com/g/lisopcoes"
+LINK_GG_CRIPTO        = "https://groups.google.com/g/carteiracriptos"
+LINK_GG_CLUBE         = "https://groups.google.com/g/clubenecton"
+
+# Botão sólido (estilo Google) – azul
+def BOTAO_GOOGLE(texto: str, link: str) -> str:
+    return f'''
+<p style="text-align:center;margin:10px 0 18px;">
+  <a href="{link}" target="_blank" style="
+    background:#1a73e8;
+    color:#ffffff;
+    padding:12px 20px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:700;
+    display:inline-block;">
+    {texto}
+  </a>
+</p>
+'''
+
 
 # Aulas bônus (links limpos e clicáveis)
 AULAS_TXT_HTML = (
@@ -223,9 +248,11 @@ EMAIL_CORPOS = {
 <h3>✅ Passos iniciais</h3>
 <ol>
   <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>Entre no grupo exclusivo do Telegram:</li>
+  <li>Entre nos grupos exclusivos do Telegram e Google Groups:</li>
 </ol>
 {BOTAO_OUTLINE("Entrar no Grupo do Telegram", LINK_CURTO)}
+<br><br>
+{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CURTO)}
 <p>3) Libere o e-mail: <b>avisoscanal1milhao@gmail.com</b></p>
 
 <hr>
@@ -253,9 +280,13 @@ EMAIL_CORPOS = {
 <h3>✅ Passos iniciais</h3>
 <ol>
   <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>Entre no grupo exclusivo do Telegram:</li>
+  <li>Entre nos grupos exclusivos do Telegram e Google Groups:</li>
 </ol>
 {BOTAO_OUTLINE("Entrar no Grupo do Telegram", LINK_CURTISSIMO)}
+<br><br>
+{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CURTISSIMO)}
+
+
 <p>3) Libere o e-mail: <b>avisoscanal1milhao@gmail.com</b></p>
 
 <hr>
@@ -281,9 +312,12 @@ EMAIL_CORPOS = {
 <h3>✅ Passos iniciais</h3>
 <ol>
   <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>Entre no grupo exclusivo do Telegram:</li>
+  <li>Entre nos grupos exclusivos do Telegram e Google Groups:</li>
 </ol>
 {BOTAO_OUTLINE("Entrar no Grupo do Telegram", LINK_OPCOES)}
+<br><br>
+{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_OPCOES)}
+
 <p>3) Libere o e-mail: <b>opcoes.1milhao.invest@gmail.com</b></p>
 
 <hr>
@@ -311,9 +345,12 @@ EMAIL_CORPOS = {
 <h3>✅ Passos iniciais</h3>
 <ol>
   <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>Entre no grupo exclusivo do Telegram:</li>
+  <li>Entre nos grupos exclusivos do Telegram e Google Groups:</li>
 </ol>
 {BOTAO_OUTLINE("Entrar no Grupo do Telegram", LINK_CRIPTO)}
+<br><br>
+{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CRIPTO)}
+
 <p>3) Libere o e-mail: <b>avisoscanal1milhao@gmail.com</b></p>
 
 <hr>
@@ -330,6 +367,9 @@ EMAIL_CORPOS = {
 <p>Nosso contato será personalizado e direto com nossa equipe.</p>
 
 <p>Estamos muito felizes em ter você conosco!</p>
+<br><br>
+{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CLUBE)}
+
 
 <p>Equipe 1 Milhão Invest</p>
 {WHATSAPP_BTN}
