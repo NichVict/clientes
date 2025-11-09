@@ -953,19 +953,19 @@ if dados:
                 st.session_state["edit_data"] = cliente.to_dict()
                 st.rerun()
         
-        with colM:
-            telefone = sel["Telefone"]
-            telefone_clean = "".join(filter(str.isdigit, str(telefone)))
+        with colM:            
+            telefone = str(sel["Telefone"]).strip()
+        
+            # Mantém + se existir, remove qualquer outra coisa que não seja número
+            telefone_clean = re.sub(r"[^\d+]", "", telefone)
         
             if telefone_clean:
                 msg = f"Olá {sel['Nome']}, tudo bem? 😊"
-                link = f"https://wa.me/55{telefone_clean}?text={msg.replace(' ', '%20')}"
-                if telefone_clean:
-                    msg = f"Olá {sel['Nome']}, tudo bem? 😊"
-                    link = f"https://wa.me/55{telefone_clean}?text={msg.replace(' ', '%20')}"
-                    st.link_button("💬 WhatsApp", link)
-                else:
-                    st.info("📱 Sem telefone cadastrado")
+                msg_enc = msg.replace(" ", "%20")
+                link = f"https://wa.me/{telefone_clean}?text={msg_enc}"
+                st.link_button("💬 WhatsApp", link)
+            else:
+                st.info("📱 Sem telefone cadastrado")
 
         
         with colD:
