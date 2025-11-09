@@ -266,8 +266,7 @@ EMAIL_CORPOS = {
   <li>Até 5 recomendações de <b>venda descoberta</b></li>
   <li>Entrada, alvos e stop</li>
   <li>Atualizações diárias das operações abertas</li>
-  <li>Avisos automáticos de início e fim</li>
-  <li>Vídeo semanal explicando o racional</li>
+  <li>Avisos automáticos de início e fim</li>  
 </ul>
 
 {AULAS_TXT_HTML}
