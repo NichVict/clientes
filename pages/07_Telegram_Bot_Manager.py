@@ -29,16 +29,7 @@ st.caption("Controle, sincronização e administração dos acessos ao Telegram.
 
 st.markdown("---")
 
-st.subheader("📡 Status & Ações do Bot")
 
-col1, col2 = st.columns(2)
-
-with col1:
-    if st.button("🔄 Rodar sincronização manual agora"):
-        st.info("A sincronização será executada quando o bot for integrado.")
-        
-with col2:
-    auto = st.checkbox("⏱ Rodar automaticamente enquanto esta página estiver aberta")
 
 st.markdown("---")
 
@@ -206,11 +197,27 @@ def loop_automatico():
 
 
 # ==========================
-# BOTÕES
+# CONTROLES DO BOT NA TELA
 # ==========================
-if st.button("🔄 Rodar sincronização manual agora"):
-    rodar_bot()
-    st.success("Bot sincronizado com sucesso.")
+st.markdown("---")
+st.subheader("📡 Status & Ações do Bot")
+
+# garante estado inicial
+if "auto_bot" not in st.session_state:
+    st.session_state["auto_bot"] = False
+
+col1, col2 = st.columns(2)
+
+with col1:
+    if st.button("🔄 Rodar sincronização manual agora"):
+        rodar_bot()
+        st.success("Bot sincronizado com sucesso.")
+
+with col2:
+    auto = st.checkbox(
+        "⏱ Rodar automaticamente enquanto esta página estiver aberta",
+        value=st.session_state["auto_bot"]
+    )
 
 if auto:
     st.session_state["auto_bot"] = True
@@ -218,4 +225,5 @@ if auto:
     thread.start()
 else:
     st.session_state["auto_bot"] = False
+
 
