@@ -3,6 +3,8 @@ import pandas as pd
 import os
 from supabase import create_client, Client
 
+last_update_id = 0
+
 # ==========================
 # CONFIG SUPABASE
 # ==========================
@@ -174,21 +176,27 @@ def processar_start(message):
 # POLLING (busca mensagens)
 # ==========================
 def rodar_bot():
-    updates = bot.get_updates(offset=bot.last_update_id, timeout=1)
+    global last_update_id
+
+    try:
+        updates = bot.get_updates(offset=last_update_id + 1, timeout=1)
+    except Exception as e:
+        st.error(f"Erro ao buscar updates: {e}")
+        return
+
     for update in updates:
-        bot.last_update_id = update.update_id + 1
+        last_update_id = update.update_id
 
-        if update.message is None:
-            continue
+        if update.message:
+            msg = update.message
+            texto = msg.text or ""
 
-        msg = update.message
+            if texto.startswith("/start"):
+                try:
+                    processar_start(msg)
+                except Exception as e:
+                    st.error(f"Erro no processar_start: {e}")
 
-        # evita mensagens sem texto
-        if not msg.text:
-            continue
-
-        if msg.text.startswith("/start"):
-            processar_start(msg)
 
 
 # ==========================
