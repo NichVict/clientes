@@ -534,6 +534,93 @@ st.title("🌀 CRM 1Milhao Invest")
 st.markdown("<div style='height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,180,0.35),transparent);'></div>", unsafe_allow_html=True)
 
 st.caption("Customer Relationship Management")
+
+with st.expander("ℹ️ Como funciona este CRM", expanded=False):
+
+    st.markdown("""
+    Este CRM foi desenvolvido para facilitar **todo o fluxo de gestão de clientes, leads, assinaturas e comunicação** da 1Milhao Invest.  
+    Abaixo está um resumo simples e direto de como tudo funciona:
+
+    ### 🧑‍💻 **1. Cadastro de Leads e Clientes**
+    - Você pode cadastrar tanto **Leads** (não compraram ainda) quanto **Clientes** (com carteira ativa).
+    - Leads ficam com status **⚪ Lead** e não entram nos KPIs financeiros nem nas métricas de vigência.
+    - Clientes possuem vigência, pagamento, valor e uma ou mais carteiras (Curto Prazo, Curtíssimo, Opções, Criptos, Clube).
+
+    ---
+
+    ### ✏️ **2. Edição Completa**
+    - Qualquer cliente ou lead pode ser editado a qualquer momento.
+    - Após salvar uma edição, você pode **reenviar os e-mails das carteiras** usando o botão de Pack.
+    - Conversão de Lead → Cliente é feita **somente alterando a carteira**.
+
+    ---
+
+    ### ✉️ **3. Envio Automático e Manual de E-mails**
+    **Envio manual (sempre disponível):**
+    - Após criar **ou editar** um cliente, aparece a opção de enviar o **Pack de Boas-Vindas**, contendo:
+        - Instruções da carteira  
+        - Links do Telegram  
+        - Links do Google Groups  
+        - Materiais extras (curso, e-book)  
+        - Contrato em PDF (exceto Clube)  
+
+    **Envio automático:**
+    - O CRM envia avisos automáticos de **renovação** quando faltam:
+        - **30 dias**
+        - **15 dias**
+        - **7 dias**
+    - Isso funciona apenas para clientes com vigência ativa.
+
+    ---
+
+    ### 📊 **4. Dashboard / KPIs**
+    Os cards mostram automaticamente:
+    - **🟢 Clientes Ativos**
+    - **🟡 Clientes que vencem em até 30 dias**
+    - **🔴 Clientes Vencidos**
+    - Leads não entram nessas métricas.
+
+    ---
+
+    ### 🧩 **5. Tabela Completa e Inteligente**
+    - Você pode filtrar por:
+        - Nome, email, telefone  
+        - Carteira  
+        - Status de vigência  
+    - Cada linha tem status visual:
+        - **🟢 > 30 dias**  
+        - **🟡 < 30 dias**  
+        - **🔴 Vencida**  
+        - **⚪ Lead**
+    - De cada cliente você pode:
+        - Editar  
+        - Excluir  
+        - Abrir WhatsApp direto por link gerado automaticamente  
+
+    ---
+
+    ### 💰 **6. Relatório de Faturamento**
+    - Escolha um período e veja:
+        - Todos os clientes vendidos nesse intervalo  
+        - Valores individuais  
+        - Total do período  
+    - Apenas clientes entram no relatório (Leads são ignorados).
+
+    ---
+
+    ### 🤝 **Resumo Geral**
+    O CRM cuida de tudo:
+    - Cadastro  
+    - Edição  
+    - Comunicação  
+    - Renovação automática  
+    - Gestão de carteiras  
+    - WhatsApp integrado  
+    - Relatório financeiro  
+
+    É sua central completa para gestão de toda a operação comercial e recorrência.
+    """)
+
 # ---------------------- DASHBOARD / KPIs ----------------------
 try:
     query = supabase.table("clientes").select("*").execute()
