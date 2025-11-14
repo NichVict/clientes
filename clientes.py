@@ -464,7 +464,8 @@ def _enviar_email(nome: str, email_destino: str, assunto: str, corpo: str, anexa
 def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, inicio: date, fim: date) -> list[tuple[str, bool, str]]:
     """
     Envia 1 e-mail por carteira.
-    Agora insere o botão VALIDAR ACESSO acima do botão Google Groups.
+    Remove botões antigos de Telegram, insere botão correto de validação
+    e deixa apenas o botão de Google Groups do template original.
     """
     resultados = []
     inicio_br = _format_date_br(inicio)
@@ -476,34 +477,55 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
             resultados.append((c, False, "Sem template configurado"))
             continue
 
-        # ---- 1) Formata o texto original da carteira ----
+        # ------------------------------------------
+        # 1) Preenche texto base da carteira
+        # ------------------------------------------
         corpo = corpo.format(nome=nome, inicio=inicio_br, fim=fim_br)
 
-        # ---- 2) Se existe link gerado pelo cadastro, monta o bloco de validação ----
-        bloco_bot = ""
+        # ------------------------------------------
+        # 2) Remove QUALQUER botão antigo de Telegram
+        # ------------------------------------------
+        remover = [
+            "Entrar no Grupo do Telegram",
+            "Clique abaixo para validar sua entrada",
+            "VALIDAR ACESSO NO TELEGRAM",
+            "Valide seu acesso ao Telegram",
+        ]
+        for r in remover:
+            corpo = corpo.replace(r, "")
+
+        # ------------------------------------------
+        # 3) Monta botão correto de validação Telegram
+        # ------------------------------------------
+        botao_telegram = ""
         if st.session_state.get("last_cadastro") and st.session_state.last_cadastro.get("telegram_link"):
             link = st.session_state.last_cadastro["telegram_link"]
-            bloco_bot = (
-                f'<h3>🤖 Valide seu acesso ao Telegram</h3>'
-                f'<p>Clique abaixo para validar sua entrada:</p>'
+            botao_telegram = (
                 f'<p><a href="{link}" '
-                f'style="font-size:18px;font-weight:700;color:#0088ff;">'
+                f'style="font-size:17px;font-weight:700;color:#0866ff;">'
                 f'👉 VALIDAR ACESSO NO TELEGRAM</a></p><br>'
             )
 
-        # ---- 3) Inserir o bloco acima do botão Google Groups ----
-        # Localiza o primeiro botão Google Groups
-        marker = "Entrar no Grupo Google"
+        # ------------------------------------------
+        # 4) Injeta o botão do Telegram ANTES do botão Google
+        # ------------------------------------------
+        marker = "Entrar no Grupo Google"  # aparece em todos os templates
+        partes = corpo.split(marker)
 
-        if marker in corpo:
-            # Quebra o template ao meio e insere o bloco
-            partes = corpo.split(marker)
-            corpo = partes[0] + bloco_bot + marker + partes[1]
+        if len(partes) >= 2:
+            corpo = (
+                partes[0]
+                + botao_telegram
+                + marker
+                + partes[1]
+            )
         else:
-            # fallback (muito raro)
-            corpo = bloco_bot + corpo
+            # fallback — se por algum motivo não achar o marker
+            corpo = botao_telegram + corpo
 
-        # ---- 4) Envia o e-mail ----
+        # ------------------------------------------
+        # 5) Envia e-mail com ou sem PDF
+        # ------------------------------------------
         anexar_pdf = (c != "Clube")
         assunto = f"Bem-vindo(a) — {c}"
 
@@ -511,6 +533,7 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
         resultados.append((c, ok, msg))
 
     return resultados
+
 
 
 
