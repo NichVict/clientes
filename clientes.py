@@ -267,7 +267,7 @@ EMAIL_CORPOS = {
 <h3>✅ Passos iniciais</h3>
 <ol>
   <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>A seguir, valide seu acesso ao Telegram e entre no grupo do Google:</li>
+  <li>A seguir, valide seu acesso ao grupo do Google e ao grupo do Telegram:</li>
 </ol>
 
 {BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CURTO)}
@@ -279,7 +279,7 @@ EMAIL_CORPOS = {
   <li>Até 5 recomendações de <b>venda descoberta</b></li>
   <li>Entrada, alvos e stop</li>
   <li>Atualizações diárias das operações abertas</li>
-  <li>Avisos automáticos de início e fim</li>  
+  <li>Alertas automatizados de início e fim de cada operação</li>  
 </ul>
 
 {AULAS_TXT_HTML}
@@ -296,7 +296,7 @@ EMAIL_CORPOS = {
 <h3>✅ Passos iniciais</h3>
 <ol>
   <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>Valide seu acesso ao Telegram e entre no grupo do Google:</li>
+  <li>A seguir, valide seu acesso ao grupo do Google e ao grupo do Telegram:</li>
 </ol>
 
 {BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CURTISSIMO)}
@@ -306,8 +306,7 @@ EMAIL_CORPOS = {
 <ul>
   <li>Até 5 compras e 5 vendas descoberta</li>
   <li>Estratégias com entrada, alvos e stop</li>
-  <li>Alertas automatizados</li>
-  <li>Relatórios com racional</li>
+  <li>Alertas automatizados de início e fim de cada operação</li>  
 </ul>
 
 {AULAS_TXT_HTML}
@@ -324,7 +323,7 @@ EMAIL_CORPOS = {
 <h3>✅ Passos iniciais</h3>
 <ol>
   <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>Valide seu acesso ao Telegram e entre no grupo do Google:</li>
+  <li>A seguir, valide seu acesso ao grupo do Google e ao grupo do Telegram:</li>
 </ol>
 
 {BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_OPCOES)}
@@ -354,7 +353,7 @@ EMAIL_CORPOS = {
 <h3>✅ Passos iniciais</h3>
 <ol>
   <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>Valide seu acesso ao Telegram e entre no grupo do Google:</li>
+  <li>A seguir, valide seu acesso ao grupo do Google e ao grupo do Telegram:</li>
 </ol>
 
 {BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CRIPTO)}
