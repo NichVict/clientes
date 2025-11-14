@@ -242,7 +242,7 @@ WHATSAPP_BTN = """
 """
 
 
-# Textos por carteira (com placeholders {nome}, {inicio}, {fim}) — agora em HTML com botões
+# Textos por carteira (com placeholders {nome}, {inicio}, {fim}) — AGORA SEM BOTÃO ANTIGO DE TELEGRAM
 EMAIL_CORPOS = {
     "Curto Prazo": f"""
 <h2>👋 Olá {{nome}}!</h2>
@@ -252,12 +252,10 @@ EMAIL_CORPOS = {
 <h3>✅ Passos iniciais</h3>
 <ol>
   <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>Entre nos grupos exclusivos do Telegram e Google Groups:</li>
+  <li>A seguir, valide seu acesso ao Telegram e entre no grupo do Google:</li>
 </ol>
-{BOTAO_OUTLINE("Entrar no Grupo do Telegram", LINK_CURTO)}
-<br><br>
-{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CURTO)}
 
+{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CURTO)}
 
 <hr>
 <h3>📬 Você receberá toda semana</h3>
@@ -283,14 +281,10 @@ EMAIL_CORPOS = {
 <h3>✅ Passos iniciais</h3>
 <ol>
   <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>Entre nos grupos exclusivos do Telegram e Google Groups:</li>
+  <li>Valide seu acesso ao Telegram e entre no grupo do Google:</li>
 </ol>
-{BOTAO_OUTLINE("Entrar no Grupo do Telegram", LINK_CURTISSIMO)}
-<br><br>
+
 {BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CURTISSIMO)}
-
-
-
 
 <hr>
 <h3>📬 Você receberá toda semana</h3>
@@ -315,13 +309,10 @@ EMAIL_CORPOS = {
 <h3>✅ Passos iniciais</h3>
 <ol>
   <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>Entre nos grupos exclusivos do Telegram e Google Groups:</li>
+  <li>Valide seu acesso ao Telegram e entre no grupo do Google:</li>
 </ol>
-{BOTAO_OUTLINE("Entrar no Grupo do Telegram", LINK_OPCOES)}
-<br><br>
+
 {BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_OPCOES)}
-
-
 
 <hr>
 <h3>📈 Você terá</h3>
@@ -348,13 +339,10 @@ EMAIL_CORPOS = {
 <h3>✅ Passos iniciais</h3>
 <ol>
   <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>Entre nos grupos exclusivos do Telegram e Google Groups:</li>
+  <li>Valide seu acesso ao Telegram e entre no grupo do Google:</li>
 </ol>
-{BOTAO_OUTLINE("Entrar no Grupo do Telegram", LINK_CRIPTO)}
-<br><br>
+
 {BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CRIPTO)}
-
-
 
 <hr>
 
@@ -371,13 +359,14 @@ EMAIL_CORPOS = {
 
 <p>Estamos muito felizes em ter você conosco!</p>
 <br><br>
-{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CLUBE)}
 
+{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CLUBE)}
 
 <p>Equipe 1 Milhão Invest</p>
 {WHATSAPP_BTN}
 """
 }
+
 
 
 # ---------------------- TEMPLATES DE RENOVAÇÃO ----------------------
@@ -473,6 +462,10 @@ def _enviar_email(nome: str, email_destino: str, assunto: str, corpo: str, anexa
         return False, f"{e}"
 
 def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, inicio: date, fim: date) -> list[tuple[str, bool, str]]:
+    """
+    Envia 1 e-mail por carteira.
+    Agora insere o botão VALIDAR ACESSO acima do botão Google Groups.
+    """
     resultados = []
     inicio_br = _format_date_br(inicio)
     fim_br = _format_date_br(fim)
@@ -483,25 +476,34 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
             resultados.append((c, False, "Sem template configurado"))
             continue
 
-        # ---- Formata o texto base (sem botão de Telegram antigo) ----
+        # ---- 1) Formata o texto original da carteira ----
         corpo = corpo.format(nome=nome, inicio=inicio_br, fim=fim_br)
 
-        # ---- Insere o botão NOVO de validação logo após o texto principal ----
+        # ---- 2) Se existe link gerado pelo cadastro, monta o bloco de validação ----
+        bloco_bot = ""
         if st.session_state.get("last_cadastro") and st.session_state.last_cadastro.get("telegram_link"):
             link = st.session_state.last_cadastro["telegram_link"]
-
-            botao_validacao = (
-                f'<br><h3>🤖 Validar seu acesso</h3>'
-                f'<p>Clique no botão abaixo para validar seu acesso ao Telegram:</p>'
+            bloco_bot = (
+                f'<h3>🤖 Valide seu acesso ao Telegram</h3>'
+                f'<p>Clique abaixo para validar sua entrada:</p>'
                 f'<p><a href="{link}" '
-                f'style="border:2px solid #0088ff; color:#0088ff; padding:12px 20px; '
-                f'border-radius:8px; text-decoration:none; font-weight:700; display:inline-block;">'
+                f'style="font-size:18px;font-weight:700;color:#0088ff;">'
                 f'👉 VALIDAR ACESSO NO TELEGRAM</a></p><br>'
             )
 
-            # Insere o botão de validação imediatamente após o parágrafo inicial
-            corpo = botao_validacao + corpo
+        # ---- 3) Inserir o bloco acima do botão Google Groups ----
+        # Localiza o primeiro botão Google Groups
+        marker = "Entrar no Grupo Google"
 
+        if marker in corpo:
+            # Quebra o template ao meio e insere o bloco
+            partes = corpo.split(marker)
+            corpo = partes[0] + bloco_bot + marker + partes[1]
+        else:
+            # fallback (muito raro)
+            corpo = bloco_bot + corpo
+
+        # ---- 4) Envia o e-mail ----
         anexar_pdf = (c != "Clube")
         assunto = f"Bem-vindo(a) — {c}"
 
