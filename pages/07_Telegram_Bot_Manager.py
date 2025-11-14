@@ -296,12 +296,13 @@ def remover_cliente_dos_grupos_e_virar_lead(cli) -> bool:
             (
                 f"⚠️ Olá {nome}! Sua assinatura da(s) carteira(s) {carteiras_texto} "
                 f"venceu e seu acesso ao(s) grupo(s) exclusivo(s) foi removido.\n\n"
-                f"Se quiser renovar, fale com a equipe ou responda esta mensagem."
+                f"Se quiser renovar, fale com a equipe pelo WhatsApp: https://wa.me/5511940266027"
             )
         )
     except Exception:
         # se não conseguir mandar mensagem privada, vida que segue
         pass
+
 
     return True
 
