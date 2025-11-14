@@ -187,6 +187,21 @@ def BOTAO_GOOGLE(texto: str, link: str) -> str:
 </p>
 '''
 
+def BOTAO_TELEGRAM(texto: str, link: str) -> str:
+    return f'''
+<p style="text-align:left;margin:10px 0 18px;">
+  <a href="{link}" target="_blank" style="
+    border:2px solid #7D3C98;
+    color:#7D3C98;
+    padding:12px 20px;
+    border-radius:8px;
+    text-decoration:none;
+    font-weight:700;
+    display:inline-block;">
+    {texto}
+  </a>
+</p>
+'''
 
 
 # Aulas bônus (links limpos e clicáveis)
@@ -500,11 +515,7 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
         botao_telegram = ""
         if st.session_state.get("last_cadastro") and st.session_state.last_cadastro.get("telegram_link"):
             link = st.session_state.last_cadastro["telegram_link"]
-            botao_telegram = (
-                f'<p><a href="{link}" '
-                f'style="font-size:17px;font-weight:700;color:#0866ff;">'
-                f'👉 VALIDAR ACESSO NO TELEGRAM</a></p><br>'
-            )
+            botao_telegram = BOTAO_TELEGRAM("Validar acesso no Telegram", link_telegram)
 
         # ------------------------------------------
         # 4) Injeta o botão do Telegram ANTES do botão Google        # ------------------------------------------
