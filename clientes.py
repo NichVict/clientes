@@ -507,21 +507,15 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
             )
 
         # ------------------------------------------
-        # 4) Injeta o botão do Telegram ANTES do botão Google
-        # ------------------------------------------
-        marker = "Entrar no Grupo Google"  # aparece em todos os templates
-        partes = corpo.split(marker)
-
-        if len(partes) >= 2:
-            corpo = (
-                partes[0]
-                + botao_telegram
-                + marker
-                + partes[1]
+        # 4) Injeta o botão do Telegram ANTES do botão Google        # ------------------------------------------
+        
+        marker = "Entrar no Grupo Google"
+        if marker in corpo and botao_telegram:
+            corpo = corpo.replace(
+                marker,
+                marker + "</a></p>\n" + botao_telegram  # fecha botão Google e insere Telegram logo abaixo
             )
-        else:
-            # fallback — se por algum motivo não achar o marker
-            corpo = botao_telegram + corpo
+
 
         # ------------------------------------------
         # 5) Envia e-mail com ou sem PDF
