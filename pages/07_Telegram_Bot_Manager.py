@@ -77,4 +77,145 @@ st.dataframe(
 
 st.markdown("---")
 
-st.info("⚙️ O bot será integrado nos próximos passos.")
+import time
+import threading
+import telebot
+
+# ==========================
+# CONFIG BOT DO TELEGRAM
+# ==========================
+TELEGRAM_TOKEN = get_secret("TELEGRAM_BOT_TOKEN")
+
+if not TELEGRAM_TOKEN:
+    st.error("❌ TELEGRAM_BOT_TOKEN não foi configurado em Secrets.")
+    st.stop()
+
+bot = telebot.TeleBot(TELEGRAM_TOKEN, parse_mode="HTML")
+
+# ==========================
+# FUNÇÕES AUXILIARES
+# ==========================
+def carteiras_to_list(raw):
+    if isinstance(raw, list):
+        return raw
+    if isinstance(raw, str):
+        raw = raw.replace("[", "").replace("]", "").replace("'", "")
+        return [x.strip() for x in raw.split(",") if x.strip()]
+    return []
+
+
+def parse_date(d):
+    try:
+        return pd.to_datetime(d).date()
+    except:
+        return None
+
+
+# Grupo por carteira (config no secrets)
+CARTEIRA_GRUPOS = {
+    "Curto Prazo": st.secrets.get("TG_CURTO_LINK", ""),
+    "Curtíssimo Prazo": st.secrets.get("TG_CURTISSIMO_LINK", ""),
+    "Opções": st.secrets.get("TG_OPCOES_LINK", ""),
+    "Criptomoedas": st.secrets.get("TG_CRIPTO_LINK", ""),
+    "Clube": st.secrets.get("TG_CLUBE_LINK", ""),
+}
+
+# ==========================
+# PROCESSADOR DO /start
+# ==========================
+def processar_start(message):
+    parts = message.text.split()
+    if len(parts) < 2:
+        bot.reply_to(message, "Para validar seu acesso, use o link enviado no e-mail.")
+        return
+
+    cliente_id = parts[1]
+
+    # Busca cliente no Supabase
+    resp = supabase.table("clientes").select("*").eq("id", cliente_id).execute()
+    if not resp.data:
+        bot.reply_to(message, "❌ Cadastro não encontrado. Fale com o suporte.")
+        return
+
+    cli = resp.data[0]
+
+    nome = cli.get("nome") or "investidor"
+    carteiras = carteiras_to_list(cli.get("carteiras", []))
+    data_fim = parse_date(cli.get("data_fim"))
+    hoje = pd.Timestamp.now().date()
+
+    # Atualiza Telegram no Supabase
+    try:
+        supabase.table("clientes").update({
+            "telegram_id": message.from_user.id,
+            "telegram_username": message.from_user.username,
+            "telegram_first_name": message.from_user.first_name,
+            "telegram_connected": True,
+            "telegram_last_sync": pd.Timestamp.utcnow().isoformat()
+        }).eq("id", cliente_id).execute()
+    except:
+        pass
+
+    # Verifica vigência
+    if not data_fim or data_fim < hoje:
+        bot.reply_to(
+            message,
+            f"⚠️ Olá {nome}! Sua assinatura está vencida (até {data_fim})."
+        )
+        return
+
+    # Monta resposta com links
+    linhas = [
+        f"🎉 Olá <b>{nome}</b>! Seu acesso foi validado.\n\nAqui estão seus grupos:"
+    ]
+
+    for c in carteiras:
+        link = CARTEIRA_GRUPOS.get(c, "")
+        if link:
+            linhas.append(f"• <b>{c}</b>: {link}")
+        else:
+            linhas.append(f"• <b>{c}</b>: (link não configurado)")
+
+    bot.reply_to(message, "\n".join(linhas))
+
+
+# ==========================
+# POLLING (busca mensagens)
+# ==========================
+def rodar_bot():
+    updates = bot.get_updates(offset=bot.last_update_id, timeout=1)
+    for update in updates:
+        bot.last_update_id = update.update_id + 1
+
+        if update.message is None:
+            continue
+
+        msg = update.message
+
+        if msg.text.startswith("/start"):
+            processar_start(msg)
+
+
+# ==========================
+# TIMER AUTOMÁTICO
+# ==========================
+def loop_automatico():
+    while st.session_state.get("auto_bot", False):
+        rodar_bot()
+        time.sleep(3)  # roda a cada 3 segundos
+
+
+# ==========================
+# BOTÕES
+# ==========================
+if st.button("🔄 Rodar sincronização manual agora"):
+    rodar_bot()
+    st.success("Bot sincronizado com sucesso.")
+
+if auto:
+    st.session_state["auto_bot"] = True
+    thread = threading.Thread(target=loop_automatico, daemon=True)
+    thread.start()
+else:
+    st.session_state["auto_bot"] = False
+
