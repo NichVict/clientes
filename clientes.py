@@ -799,23 +799,9 @@ with st.expander("Formulário", expanded=is_edit):
 
             
                 except Exception as e:
-                    st.error(f"Erro ao atualizar: {e}")
-
-
-            
+                    st.error(f"Erro ao atualizar: {e}")          
                     
             
-                    st.success("✅ Cliente atualizado com sucesso!")
-                    st.session_state["edit_mode"] = False
-                    st.session_state["edit_id"] = None
-                    st.session_state["edit_data"] = None
-                    st.session_state["selected_client_id"] = None
-            
-                    st.rerun()  # habilitar depois do teste
-                    
-            
-                except Exception as e:
-                    st.error(f"Erro ao atualizar: {e}")
 
 
 
