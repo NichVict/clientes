@@ -925,15 +925,27 @@ if dados:
     })
     
     # Status Vigência
-    def status_vigencia(d):
-        hoje = date.today()
-        if isinstance(d, date):
-            if d < hoje: return "🔴 Vencida"
-            dias = (d - hoje).days
-            return "🟡 < 30 dias" if dias <= 30 else "🟢 > 30 dias"
-        return ""
+    def status_vigencia(data_fim, carteiras=None):        
+        # Leads sempre ficam com bolinha branca
+        if carteiras and "Leads" in carteiras:
+            return "⚪ Lead"
     
-    df_view["Status Vigência"] = df_view["Fim"].apply(status_vigencia)
+        hoje = date.today()
+    
+        if isinstance(data_fim, date):
+            if data_fim < hoje:
+                return "🔴 Vencida"
+            dias = (data_fim - hoje).days
+            return "🟡 < 30 dias" if dias <= 30 else "🟢 > 30 dias"
+    
+        return ""
+
+    
+    df_view["Status Vigência"] = df.apply(
+        lambda row: status_vigencia(row["data_fim"], row["carteiras"]),
+        axis=1
+    )
+
     
     # Adiciona coluna Selecionar primeiro
     df_view.insert(0, "Selecionar", False)
