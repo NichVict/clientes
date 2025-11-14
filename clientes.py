@@ -473,10 +473,6 @@ def _enviar_email(nome: str, email_destino: str, assunto: str, corpo: str, anexa
         return False, f"{e}"
 
 def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, inicio: date, fim: date) -> list[tuple[str, bool, str]]:
-    """
-    Envia 1 e-mail por carteira.
-    Retorna lista de (carteira, sucesso, mensagem)
-    """
     resultados = []
     inicio_br = _format_date_br(inicio)
     fim_br = _format_date_br(fim)
@@ -486,29 +482,34 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
         if not corpo:
             resultados.append((c, False, "Sem template configurado"))
             continue
-    
-        # ---- Formata texto base ----
+
+        # ---- Formata o texto base (sem botão de Telegram antigo) ----
         corpo = corpo.format(nome=nome, inicio=inicio_br, fim=fim_br)
-    
-        # ---- Insere link do bot acima do conteúdo ----
+
+        # ---- Insere o botão NOVO de validação logo após o texto principal ----
         if st.session_state.get("last_cadastro") and st.session_state.last_cadastro.get("telegram_link"):
             link = st.session_state.last_cadastro["telegram_link"]
-            bloco_bot = (
-                f'<h3>🤖 Valide seu acesso ao Telegram</h3>'
-                f'<p>Clique abaixo para entrar com seu acesso exclusivo:</p>'
+
+            botao_validacao = (
+                f'<br><h3>🤖 Validar seu acesso</h3>'
+                f'<p>Clique no botão abaixo para validar seu acesso ao Telegram:</p>'
                 f'<p><a href="{link}" '
-                f'style="font-size:18px;font-weight:700;color:#0088ff;">'
+                f'style="border:2px solid #0088ff; color:#0088ff; padding:12px 20px; '
+                f'border-radius:8px; text-decoration:none; font-weight:700; display:inline-block;">'
                 f'👉 VALIDAR ACESSO NO TELEGRAM</a></p><br>'
             )
-            corpo = bloco_bot + corpo
-    
+
+            # Insere o botão de validação imediatamente após o parágrafo inicial
+            corpo = botao_validacao + corpo
+
         anexar_pdf = (c != "Clube")
         assunto = f"Bem-vindo(a) — {c}"
-    
+
         ok, msg = _enviar_email(nome, email_destino, assunto, corpo, anexar_pdf)
         resultados.append((c, ok, msg))
-    
+
     return resultados
+
 
 
 def enviar_email_renovacao(nome, email_destino, carteira, inicio, fim, dias):
