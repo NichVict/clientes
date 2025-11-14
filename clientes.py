@@ -128,7 +128,7 @@ PAISES = {
     "🌍 Outro": ""
 }
 
-CARTEIRAS_OPCOES = ["Curto Prazo", "Curtíssimo Prazo", "Opções", "Criptomoedas", "Clube"]
+CARTEIRAS_OPCOES = ["Curto Prazo", "Curtíssimo Prazo", "Opções", "Criptomoedas", "Clube", "Leads"]
 PAGAMENTOS = ["PIX", "PAYPAL", "Infinite"]  # se precisar "Infinitie", troque aqui
 
 def montar_telefone(cod: str, numero: str) -> str:
