@@ -665,16 +665,39 @@ with st.expander("Formulário", expanded=is_edit):
             # Se estiver editando → UPDATE
             if is_edit:
                 try:
-                    edit_id = str(st.session_state.get("selected_client_id"))  # ✅ convertendo
-
+                    edit_id = str(st.session_state.get("selected_client_id"))
             
+                    # 🔄 Atualiza cliente no Supabase
                     response = (
                         supabase
                         .table("clientes")
                         .update(payload)
-                        .eq("id", str(st.session_state.get("selected_client_id")))
+                        .eq("id", edit_id)
                         .execute()
                     )
+            
+                    # 🎯 Sempre disponibiliza a opção de enviar Pack após editar
+                    st.session_state.last_cadastro = {
+                        "nome": nome,
+                        "email": email,
+                        "carteiras": payload.get("carteiras", []),
+                        "inicio": inicio,
+                        "fim": fim
+                    }
+            
+                    st.success("✅ Cliente atualizado com sucesso!")
+                    
+                    # Reset do modo edição
+                    st.session_state["edit_mode"] = False
+                    st.session_state["edit_id"] = None
+                    st.session_state["edit_data"] = None
+                    st.session_state["selected_client_id"] = None
+            
+                    st.rerun()
+            
+                except Exception as e:
+                    st.error(f"Erro ao atualizar: {e}")
+
 
             
                     
