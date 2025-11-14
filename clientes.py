@@ -482,19 +482,34 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
     fim_br = _format_date_br(fim)
 
     for c in carteiras:
-        corpo = EMAIL_CORPOS.get(c, "")
-        if not corpo:
-            resultados.append((c, False, "Sem template configurado"))
-            continue
+    corpo = EMAIL_CORPOS.get(c, "")
+    if not corpo:
+        resultados.append((c, False, "Sem template configurado"))
+        continue
 
-        corpo = corpo.format(nome=nome, inicio=inicio_br, fim=fim_br)
+    # ---- Formata texto base ----
+    corpo = corpo.format(nome=nome, inicio=inicio_br, fim=fim_br)
 
-        anexar_pdf = (c != "Clube")
-        assunto = f"Bem-vindo(a) — {c}"
+    # ---- Insere link do bot acima do conteúdo ----
+    if st.session_state.get("last_cadastro") and st.session_state.last_cadastro.get("telegram_link"):
+        link = st.session_state.last_cadastro["telegram_link"]
+        bloco_bot = (
+            f'<h3>🤖 Valide seu acesso ao Telegram</h3>'
+            f'<p>Clique abaixo para entrar com seu acesso exclusivo:</p>'
+            f'<p><a href="{link}" '
+            f'style="font-size:18px;font-weight:700;color:#0088ff;">'
+            f'👉 VALIDAR ACESSO NO TELEGRAM</a></p><br>'
+        )
+        corpo = bloco_bot + corpo
 
-        ok, msg = _enviar_email(nome, email_destino, assunto, corpo, anexar_pdf)
-        resultados.append((c, ok, msg))
-    return resultados
+    anexar_pdf = (c != "Clube")
+    assunto = f"Bem-vindo(a) — {c}"
+
+    ok, msg = _enviar_email(nome, email_destino, assunto, corpo, anexar_pdf)
+    resultados.append((c, ok, msg))
+
+return resultados
+
 
 def enviar_email_renovacao(nome, email_destino, carteira, inicio, fim, dias):
     inicio_br = _format_date_br(inicio)
@@ -756,31 +771,32 @@ with st.expander("Formulário", expanded=is_edit):
             
                     # 🔄 Atualiza cliente no Supabase
                     response = (
-                        supabase
-                        .table("clientes")
+                        supabase.table("clientes")
                         .update(payload)
                         .eq("id", edit_id)
                         .execute()
                     )
-            
-                    # 🎯 Sempre disponibiliza a opção de enviar Pack após editar
+                    
+                    telegram_link = f"https://t.me/milhao_crm_bot?start={edit_id}"
+                    
                     st.session_state.last_cadastro = {
+                        "id": edit_id,
                         "nome": nome,
                         "email": email,
                         "carteiras": payload.get("carteiras", []),
                         "inicio": inicio,
-                        "fim": fim
+                        "fim": fim,
+                        "telegram_link": telegram_link
                     }
-            
-                    st.success("✅ Cliente atualizado com sucesso!")
                     
-                    # Reset do modo edição
+                    st.success("✅ Cliente atualizado com sucesso!")
                     st.session_state["edit_mode"] = False
                     st.session_state["edit_id"] = None
                     st.session_state["edit_data"] = None
                     st.session_state["selected_client_id"] = None
-            
+                    
                     st.rerun()
+
             
                 except Exception as e:
                     st.error(f"Erro ao atualizar: {e}")
@@ -806,15 +822,30 @@ with st.expander("Formulário", expanded=is_edit):
             # Se for novo → INSERT
             else:
                 try:
-                    supabase.table("clientes").insert(payload).execute()
+                    # 🔄 Salva no Supabase
+                    res = supabase.table("clientes").insert(payload).execute()
+                    
+                    # 📌 Captura o ID recém inserido
+                    cliente_id = res.data[0]["id"]
+                    
+                    # 🔗 Gera link do bot
+                    telegram_link = f"https://t.me/milhao_crm_bot?start={cliente_id}"
+                    
                     st.success("✅ Cliente cadastrado com sucesso!")
+                    
+                    # Guarda no estado para enviar email depois
                     st.session_state.last_cadastro = {
+                        "id": cliente_id,
                         "nome": nome,
                         "email": email,
                         "carteiras": list(carteiras) if carteiras else [],
                         "inicio": inicio,
-                        "fim": fim
+                        "fim": fim,
+                        "telegram_link": telegram_link
                     }
+
+
+
                     st.rerun()
                 except Exception as e:
                     st.error(f"Erro ao salvar no Supabase: {e}")
