@@ -510,7 +510,7 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
         # ------------------------------------------
         botao_telegram = ""
         if link_telegram:
-            botao_telegram = BOTAO_TELEGRAM("Validar acesso no Telegram", link_telegram)
+            botao_telegram = BOTAO_TELEGRAM("Entrar no Telegram", link_telegram)
 
         # ------------------------------------------
         # 4) Insere o botão do Telegram LOGO ABAIXO
