@@ -479,8 +479,8 @@ def _enviar_email(nome: str, email_destino: str, assunto: str, corpo: str, anexa
 def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, inicio: date, fim: date) -> list[tuple[str, bool, str]]:
     """
     Envia 1 e-mail por carteira.
-    Remove botões antigos de Telegram, insere botão correto de validação
-    e deixa apenas o botão de Google Groups do template original.
+    Mantém o botão original do Google Groups
+    e adiciona o botão ESTILIZADO de validação no Telegram logo abaixo.
     """
     resultados = []
     inicio_br = _format_date_br(inicio)
@@ -493,43 +493,44 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
             continue
 
         # ------------------------------------------
-        # 1) Preenche texto base da carteira
+        # 1) Preenche texto do template
         # ------------------------------------------
         corpo = corpo.format(nome=nome, inicio=inicio_br, fim=fim_br)
 
         # ------------------------------------------
-        # 2) Remove QUALQUER botão antigo de Telegram
+        # 2) Gera link dinâmico do Telegram usando o ID salvo
         # ------------------------------------------
-        remover = [
-            "Entrar no Grupo do Telegram",
-            "Clique abaixo para validar sua entrada",
-            "VALIDAR ACESSO NO TELEGRAM",
-            "Valide seu acesso ao Telegram",
-        ]
-        for r in remover:
-            corpo = corpo.replace(r, "")
+        link_telegram = None
+        if st.session_state.get("last_cadastro") and st.session_state.last_cadastro.get("id"):
+            cliente_id = st.session_state.last_cadastro["id"]
+            link_telegram = f"https://t.me/milhao_crm_bot?start={cliente_id}"
 
         # ------------------------------------------
-        # 3) Monta botão correto de validação Telegram
+        # 3) Monta botão do Telegram estilizado (se houver link)
         # ------------------------------------------
         botao_telegram = ""
-        if st.session_state.get("last_cadastro") and st.session_state.last_cadastro.get("telegram_link"):
-            link = st.session_state.last_cadastro["telegram_link"]
+        if link_telegram:
             botao_telegram = BOTAO_TELEGRAM("Validar acesso no Telegram", link_telegram)
 
         # ------------------------------------------
-        # 4) Injeta o botão do Telegram ANTES do botão Google        # ------------------------------------------
-        
+        # 4) Insere o botão do Telegram LOGO ABAIXO
+        #    do botão “Entrar no Grupo Google”
+        # ------------------------------------------
         marker = "Entrar no Grupo Google"
-        if marker in corpo and botao_telegram:
-            corpo = corpo.replace(
-                marker,
-                marker + "</a></p>\n" + botao_telegram  # fecha botão Google e insere Telegram logo abaixo
+        if marker in corpo:
+            partes = corpo.split(marker)
+            corpo = (
+                partes[0]
+                + marker
+                + partes[1]
+                + botao_telegram  # botão depois do botão Google
             )
-
+        else:
+            # fallback — caso raro
+            corpo = corpo + botao_telegram
 
         # ------------------------------------------
-        # 5) Envia e-mail com ou sem PDF
+        # 5) Envia e-mail
         # ------------------------------------------
         anexar_pdf = (c != "Clube")
         assunto = f"Bem-vindo(a) — {c}"
@@ -538,6 +539,7 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
         resultados.append((c, ok, msg))
 
     return resultados
+
 
 
 
