@@ -516,18 +516,15 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
         # 4) Insere o botão do Telegram LOGO ABAIXO
         #    do botão “Entrar no Grupo Google”
         # ------------------------------------------
-        marker = "Entrar no Grupo Google"
-        if marker in corpo:
-            partes = corpo.split(marker)
-            corpo = (
-                partes[0]
-                + marker
-                + partes[1]
-                + botao_telegram  # botão depois do botão Google
-            )
+        # Inserir o botão do Telegram logo ANTES do <hr>
+        anchor = "<hr>"
+        if anchor in corpo:
+            partes = corpo.split(anchor)
+            corpo = partes[0] + botao_telegram + anchor + partes[1]
         else:
-            # fallback — caso raro
+            # fallback (caso raro)
             corpo = corpo + botao_telegram
+
 
         # ------------------------------------------
         # 5) Envia e-mail
