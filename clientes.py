@@ -941,10 +941,14 @@ if dados:
         return ""
 
     
-    df_view["Status Vigência"] = df.apply(
-        lambda row: status_vigencia(row["data_fim"], row["carteiras"]),
+    df_view["Status Vigência"] = df_view.apply(
+        lambda r: status_vigencia(
+            r["Fim"],
+            r["Carteiras"].split(", ") if isinstance(r["Carteiras"], str) else []
+        ),
         axis=1
     )
+
 
     
     # Adiciona coluna Selecionar primeiro
