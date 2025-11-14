@@ -3,6 +3,14 @@ import pandas as pd
 import os
 from supabase import create_client, Client
 
+LINKS_TELEGRAM = {
+    "Curto Prazo": "https://t.me/+3BTqTX--W6gyNTE0",
+    "Curtíssimo Prazo": "https://t.me/+BiTfqYUSiWpjN2U0",
+    "Opções": "https://t.me/+1si_16NC5E8xNDhk",
+    "Criptomoedas": "https://t.me/+-08kGaN0ZMsyNjJk"
+}
+
+
 last_update_id = 0
 
 # ==========================
@@ -105,13 +113,6 @@ def parse_date(d):
 
 
 # Grupo por carteira (config no secrets)
-CARTEIRA_GRUPOS = {
-    "Curto Prazo": st.secrets.get("TG_CURTO_LINK", ""),
-    "Curtíssimo Prazo": st.secrets.get("TG_CURTISSIMO_LINK", ""),
-    "Opções": st.secrets.get("TG_OPCOES_LINK", ""),
-    "Criptomoedas": st.secrets.get("TG_CRIPTO_LINK", ""),
-    "Clube": st.secrets.get("TG_CLUBE_LINK", ""),
-}
 
 # ==========================
 # PROCESSADOR DO /start
@@ -163,11 +164,12 @@ def processar_start(message):
     ]
 
     for c in carteiras:
-        link = CARTEIRA_GRUPOS.get(c, "")
+        link = LINKS_TELEGRAM.get(c, "")
         if link:
             linhas.append(f"• <b>{c}</b>: {link}")
         else:
-            linhas.append(f"• <b>{c}</b>: (link não configurado)")
+            linhas.append(f"• <b>{c}</b>: (sem grupo configurado)")
+
 
     bot.reply_to(message, "\n".join(linhas))
 
