@@ -482,33 +482,33 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
     fim_br = _format_date_br(fim)
 
     for c in carteiras:
-    corpo = EMAIL_CORPOS.get(c, "")
-    if not corpo:
-        resultados.append((c, False, "Sem template configurado"))
-        continue
-
-    # ---- Formata texto base ----
-    corpo = corpo.format(nome=nome, inicio=inicio_br, fim=fim_br)
-
-    # ---- Insere link do bot acima do conteúdo ----
-    if st.session_state.get("last_cadastro") and st.session_state.last_cadastro.get("telegram_link"):
-        link = st.session_state.last_cadastro["telegram_link"]
-        bloco_bot = (
-            f'<h3>🤖 Valide seu acesso ao Telegram</h3>'
-            f'<p>Clique abaixo para entrar com seu acesso exclusivo:</p>'
-            f'<p><a href="{link}" '
-            f'style="font-size:18px;font-weight:700;color:#0088ff;">'
-            f'👉 VALIDAR ACESSO NO TELEGRAM</a></p><br>'
-        )
-        corpo = bloco_bot + corpo
-
-    anexar_pdf = (c != "Clube")
-    assunto = f"Bem-vindo(a) — {c}"
-
-    ok, msg = _enviar_email(nome, email_destino, assunto, corpo, anexar_pdf)
-    resultados.append((c, ok, msg))
-
-return resultados
+        corpo = EMAIL_CORPOS.get(c, "")
+        if not corpo:
+            resultados.append((c, False, "Sem template configurado"))
+            continue
+    
+        # ---- Formata texto base ----
+        corpo = corpo.format(nome=nome, inicio=inicio_br, fim=fim_br)
+    
+        # ---- Insere link do bot acima do conteúdo ----
+        if st.session_state.get("last_cadastro") and st.session_state.last_cadastro.get("telegram_link"):
+            link = st.session_state.last_cadastro["telegram_link"]
+            bloco_bot = (
+                f'<h3>🤖 Valide seu acesso ao Telegram</h3>'
+                f'<p>Clique abaixo para entrar com seu acesso exclusivo:</p>'
+                f'<p><a href="{link}" '
+                f'style="font-size:18px;font-weight:700;color:#0088ff;">'
+                f'👉 VALIDAR ACESSO NO TELEGRAM</a></p><br>'
+            )
+            corpo = bloco_bot + corpo
+    
+        anexar_pdf = (c != "Clube")
+        assunto = f"Bem-vindo(a) — {c}"
+    
+        ok, msg = _enviar_email(nome, email_destino, assunto, corpo, anexar_pdf)
+        resultados.append((c, ok, msg))
+    
+    return resultados
 
 
 def enviar_email_renovacao(nome, email_destino, carteira, inicio, fim, dias):
