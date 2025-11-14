@@ -183,6 +183,10 @@ def rodar_bot():
 
         msg = update.message
 
+        # evita mensagens sem texto
+        if not msg.text:
+            continue
+
         if msg.text.startswith("/start"):
             processar_start(msg)
 
