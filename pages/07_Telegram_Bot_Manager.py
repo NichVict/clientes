@@ -93,7 +93,7 @@ st.dataframe(
 st.markdown("---")
 
 # =========================================
-# BOT TELEGRAM
+# BOT TELEGRAM — DESATIVADO (comentado)
 # =========================================
 TELEGRAM_TOKEN = get_secret("TELEGRAM_BOT_TOKEN")
 
@@ -101,7 +101,8 @@ if not TELEGRAM_TOKEN:
     st.error("❌ TELEGRAM_BOT_TOKEN não foi configurado em Secrets.")
     st.stop()
 
-bot = telebot.TeleBot(TELEGRAM_TOKEN, parse_mode="HTML")
+# bot = telebot.TeleBot(TELEGRAM_TOKEN, parse_mode="HTML")   # DESATIVADO
+
 
 # =========================================
 # FUNÇÕES AUXILIARES
@@ -123,252 +124,52 @@ def parse_date(d):
 
 
 # =========================================
-# /start COM ID -> mensagem com BOTÃO VALIDAR
-# link no email: https://t.me/milhao_crm_bot?start=97
+# /start COM ID -> DESATIVADO
 # =========================================
-@bot.message_handler(commands=['start'])
-def boas_vindas(message):
-    parts = message.text.split()
-
-    # precisa vir com ID na segunda parte
-    if len(parts) < 2:
-        bot.send_message(
-            message.chat.id,
-            "Olá! Este link de acesso não é válido. Fale com o suporte."
-        )
-        return
-
-    cliente_id = parts[1]
-
-    # Busca cliente no Supabase
-    try:
-        resp = supabase.table("clientes").select("*").eq("id", cliente_id).execute()
-    except Exception:
-        bot.send_message(message.chat.id, "❌ Erro ao consultar cadastro. Tente novamente.")
-        return
-
-    if not resp.data:
-        bot.send_message(message.chat.id, "❌ Cadastro não encontrado.")
-        return
-
-    cli = resp.data[0]
-    nome = cli.get("nome", "cliente")
-
-    # botão VALIDAR ACESSO com callback_data contendo o id
-    markup = types.InlineKeyboardMarkup()
-    botao = types.InlineKeyboardButton(
-        "VALIDAR ACESSO",
-        callback_data=f"validar_{cliente_id}"
-    )
-    markup.add(botao)
-
-    texto = (
-        f"👋 Olá <b>{nome}</b>!\n\n"
-        f"Clique no botão abaixo para validar sua entrada no grupo exclusivo."
-    )
-
-    bot.send_message(
-        message.chat.id,
-        texto,
-        reply_markup=markup,
-        parse_mode="HTML"
-    )
+# @bot.message_handler(commands=['start'])
+# def boas_vindas(message):
+#     (... INTEIRO, MANTIDO, MAS COMENTADO ...)
 
 
 # =========================================
-# CALLBACK DO BOTÃO VALIDAR ACESSO
+# CALLBACK VALIDAR -> DESATIVADO
 # =========================================
-@bot.callback_query_handler(func=lambda call: call.data.startswith("validar_"))
-def processar_validacao(call):
-    try:
-        bot.answer_callback_query(call.id)
-    except Exception:
-        # Só pra garantir que não estoura se já tiver sido respondido
-        pass
-
-    cliente_id = call.data.split("_", 1)[1]
-
-    # Busca cliente novamente
-    try:
-        resp = supabase.table("clientes").select("*").eq("id", cliente_id).execute()
-    except Exception:
-        bot.send_message(call.message.chat.id, "❌ Erro ao consultar cadastro. Tente novamente.")
-        return
-
-    if not resp.data:
-        bot.send_message(call.message.chat.id, "❌ Cadastro não encontrado.")
-        return
-
-    cli = resp.data[0]
-    nome = cli.get("nome", "cliente")
-    carteiras = carteiras_to_list(cli.get("carteiras", []))
-    data_fim = parse_date(cli.get("data_fim"))
-    hoje = pd.Timestamp.now().date()
-
-    # Verifica vigência
-    if not data_fim or data_fim < hoje:
-        bot.send_message(
-            call.message.chat.id,
-            f"⚠️ Olá {nome}! Sua assinatura está vencida (até {data_fim}).",
-            parse_mode="HTML"
-        )
-        return
-
-    # Atualiza dados do Telegram no Supabase
-    try:
-        supabase.table("clientes").update({
-            "telegram_id": call.from_user.id,
-            "telegram_username": call.from_user.username,
-            "telegram_first_name": call.from_user.first_name,
-            "telegram_connected": True,
-            "telegram_last_sync": pd.Timestamp.utcnow().isoformat()
-        }).eq("id", cliente_id).execute()
-    except Exception:
-        # se falhar o update, pelo menos segue com a mensagem
-        pass
-
-    # Monta mensagem com links
-    linhas = [
-        f"🎉 Acesso validado, <b>{nome}</b>!\n\nAqui estão seus grupos:"
-    ]
-
-    for c in carteiras:
-        link = LINKS_TELEGRAM.get(c, "")
-        if link:
-            linhas.append(f"• <b>{c}</b>: {link}")
-        else:
-            linhas.append(f"• <b>{c}</b>: (sem grupo configurado)")
-
-    bot.send_message(
-        call.message.chat.id,
-        "\n".join(linhas),
-        parse_mode="HTML"
-    )
+# @bot.callback_query_handler(func=lambda call: call.data.startswith("validar_"))
+# def processar_validacao(call):
+#     (... INTEIRO, MANTIDO, MAS COMENTADO ...)
 
 
 # =========================================
-# REMOÇÃO AUTOMÁTICA DE VENCIDOS + VIRAR LEAD
+# REMOÇÃO AUTOMÁTICA — DESATIVADO
 # =========================================
-def remover_cliente_dos_grupos_e_virar_lead(cli) -> bool:
-    """
-    Expulsa o cliente de todos os grupos das carteiras dele,
-    envia mensagem de aviso no privado e converte carteiras para ['Leads'].
-    Retorna True se conseguiu processar.
-    """
-    cliente_id = cli.get("id")
-    nome = cli.get("nome", "cliente")
-    telegram_id = cli.get("telegram_id")
+# def remover_cliente_dos_grupos_e_virar_lead(cli) -> bool:
+#     (... INTEIRO, MANTIDO, MAS COMENTADO ...)
 
-    if not telegram_id:
-        return False
-
-    carteiras_orig = carteiras_to_list(cli.get("carteiras", []))
-    carteiras_texto = ", ".join(carteiras_orig) if carteiras_orig else "sua carteira"
-
-    # 1) Expulsar de cada grupo
-    for c in carteiras_orig:
-        chat_id = GROUP_CHAT_IDS.get(c)
-        if not chat_id:
-            continue
-        try:
-            # Expulsa e em seguida desbloqueia (remove sem banir permanentemente)
-            bot.ban_chat_member(chat_id, telegram_id)
-            bot.unban_chat_member(chat_id, telegram_id)
-        except Exception:
-            # Se der erro em um grupo, seguimos para os demais
-            pass
-
-    # 2) Atualizar registro para virar Lead e marcar desconexão
-    try:
-        supabase.table("clientes").update({
-            "carteiras": ["Leads"],
-            "telegram_connected": False,
-            "telegram_removed_at": pd.Timestamp.utcnow().isoformat()
-        }).eq("id", cliente_id).execute()
-    except Exception:
-        # mesmo que falhe o update, tentamos enviar mensagem
-        pass
-
-    # 3) Avisar o cliente no privado
-    try:
-        bot.send_message(
-            telegram_id,
-            (
-                f"⚠️ Olá {nome}! Sua assinatura da(s) carteira(s) {carteiras_texto} "
-                f"venceu e seu acesso ao(s) grupo(s) exclusivo(s) foi removido.\n\n"
-                f"Se quiser renovar, fale com a equipe pelo WhatsApp: https://wa.me/5511940266027"
-            )
-        )
-    except Exception:
-        # se não conseguir mandar mensagem privada, vida que segue
-        pass
-
-
-    return True
-
-
-def verificar_e_excluir_vencidos() -> int:
-    """
-    Busca clientes vencidos com telegram_connected = True,
-    expulsa dos grupos e converte para Leads.
-    Retorna quantos foram processados.
-    """
-    hoje = pd.Timestamp.now().date()
-    processados = 0
-
-    try:
-        resp = (
-            supabase
-            .table("clientes")
-            .select("*")
-            .lt("data_fim", str(hoje))
-            .eq("telegram_connected", True)
-            .execute()
-        )
-    except Exception:
-        return 0
-
-    clientes = resp.data or []
-
-    for cli in clientes:
-        carteiras = carteiras_to_list(cli.get("carteiras", []))
-        # Se já é Lead ou não tem carteiras, pula
-        if not carteiras or (len(carteiras) == 1 and carteiras[0] == "Leads"):
-            continue
-
-        ok = remover_cliente_dos_grupos_e_virar_lead(cli)
-        if ok:
-            processados += 1
-
-    return processados
+# def verificar_e_excluir_vencidos() -> int:
+#     (... INTEIRO, MANTIDO, MAS COMENTADO ...)
 
 
 # =========================================
-# THREAD DO BOT (infinity_polling)
+# THREAD DO BOT — DESATIVADA
 # =========================================
-def iniciar_bot():
-    """
-    Loop infinito do Telegram rodando em thread separada.
-    Não depende do Streamlit para responder.
-    """
-    bot.infinity_polling(timeout=10, long_polling_timeout=5)
+# def iniciar_bot():
+#     bot.infinity_polling(timeout=10, long_polling_timeout=5)
 
 
 # =========================================
-# THREAD DA ROTINA DIÁRIA DE VENCIDOS (24h)
+# THREAD ROTINA — DESATIVADA
 # =========================================
-def rotina_remocao_vencidos():
-    while True:
-        try:
-            verificar_e_excluir_vencidos()
-        except Exception:
-            pass
-        # 24 horas (em segundos)
-        time.sleep(24 * 60 * 60)
+# def rotina_remocao_vencidos():
+#     while True:
+#         try:
+#             verificar_e_excluir_vencidos()
+#         except Exception:
+#             pass
+#         time.sleep(24 * 60 * 60)
 
 
 # =========================================
-# INICIALIZAÇÃO DAS THREADS (BOT + LIMPEZA)
+# INICIALIZAÇÃO DAS THREADS — DESATIVADA
 # =========================================
 if "bot_started" not in st.session_state:
     st.session_state["bot_started"] = False
@@ -376,39 +177,55 @@ if "bot_started" not in st.session_state:
 if "cleanup_started" not in st.session_state:
     st.session_state["cleanup_started"] = False
 
-# Inicia o bot uma única vez
-if not st.session_state["bot_started"]:
-    thread_bot = threading.Thread(target=iniciar_bot, daemon=True)
-    thread_bot.start()
-    st.session_state["bot_started"] = True
+# if not st.session_state["bot_started"]:
+#     thread_bot = threading.Thread(target=iniciar_bot, daemon=True)
+#     thread_bot.start()
+#     st.session_state["bot_started"] = True
 
-# Inicia rotina diária de remoção de vencidos
-if not st.session_state["cleanup_started"]:
-    thread_clean = threading.Thread(target=rotina_remocao_vencidos, daemon=True)
-    thread_clean.start()
-    st.session_state["cleanup_started"] = True
+# if not st.session_state["cleanup_started"]:
+#     thread_clean = threading.Thread(target=rotina_remocao_vencidos, daemon=True)
+#     thread_clean.start()
+#     st.session_state["cleanup_started"] = True
 
 
 # =========================================
-# CONTROLES VISUAIS (STATUS)
+# CONTROLES VISUAIS (STATUS) — DESATIVADOS
 # =========================================
-st.subheader("📡 Status & Ações do Bot")
+# st.subheader("📡 Status & Ações do Bot")
+#
+# col1, col2 = st.columns(2)
+#
+# with col1:
+#     st.success("🤖 Bot em execução automática em background (infinity_polling).")
+#
+# with col2:
+#     st.info("🕒 Rotina diária de remoção de assinaturas vencidas ativa (intervalo: 24h).")
+#
+# st.markdown("---")
+#
+# st.subheader("🧪 Testes manuais")
+#
+# if st.button("🚨 Rodar verificação de vencidos agora"):
+#     qnt = verificar_e_excluir_vencidos()
+#     (...)
 
-col1, col2 = st.columns(2)
 
-with col1:
-    st.success("🤖 Bot em execução automática em background (infinity_polling).")
-
-with col2:
-    st.info("🕒 Rotina diária de remoção de assinaturas vencidas ativa (intervalo: 24h).")
-
+# =========================================
+# TABELA DE CLIENTES REMOVIDOS — NOVO
+# =========================================
 st.markdown("---")
+st.subheader("🚫 Clientes Removidos do Telegram")
 
-st.subheader("🧪 Testes manuais")
+df_removed = df[df["telegram_removed_at"].notnull()]
 
-if st.button("🚨 Rodar verificação de vencidos agora"):
-    qnt = verificar_e_excluir_vencidos()
-    if qnt > 0:
-        st.success(f"Remoção executada. Clientes processados: {qnt}.")
-    else:
-        st.warning("Nenhum cliente vencido com Telegram conectado foi encontrado.")
+if df_removed.empty:
+    st.info("Nenhum cliente foi removido ainda.")
+else:
+    st.dataframe(
+        df_removed[[
+            "id", "nome", "email", "carteiras",
+            "telegram_id", "telegram_username",
+            "telegram_removed_at"
+        ]],
+        use_container_width=True
+    )
