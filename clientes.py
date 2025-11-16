@@ -99,7 +99,7 @@ except Exception as e:
 # ---------------------- AUTENTICAÇÃO SIMPLES ----------------------
 def check_login(user: str, pwd: str) -> bool:
     # Ajuste aqui se quiser trocar credenciais
-    return user == "admin" and pwd == "123"
+    return user == "Eu" and pwd == "251200"
 
 if "auth" not in st.session_state:
     st.session_state.auth = False
