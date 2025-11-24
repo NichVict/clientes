@@ -12,11 +12,11 @@ SUPABASE_KEY   = os.getenv("SUPABASE_KEY")            # coloque no Render
 
 # IDs dos grupos — você já me passou
 GRUPOS = {
-    "Curto Prazo":       "https://t.me/+XP7q0D_z9uxhZDY0",
-    "Curtíssimo Prazo":  "https://t.me/+XP7q0D_z9uxhZDY0",
-    "Opções":            "https://t.me/+XP7q0D_z9uxhZDY0",
-    "Criptomoedas":      "https://t.me/+XP7q0D_z9uxhZDY0",
-    "Estratégias Phoenix": "https://t.me/+XP7q0D_z9uxhZDY0"
+    "Curto Prazo":       -1002198655576,
+    "Curtíssimo Prazo":  -1002198655576,
+    "Opções":            -1002198655576,
+    "Criptomoedas":      -1002198655576,
+    "Estratégias Phoenix": -1002198655576
 }
 
 
