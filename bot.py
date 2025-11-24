@@ -6,23 +6,11 @@ from datetime import datetime
 # ============================================================
 # CONFIGURAÇÕES
 # ============================================================
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")          # Render
-SUPABASE_URL   = os.getenv("SUPABASE_URL")            # Render
-SUPABASE_KEY   = os.getenv("SUPABASE_KEY")            # Render
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")          # coloque no Render
+SUPABASE_URL   = os.getenv("SUPABASE_URL")            # coloque no Render
+SUPABASE_KEY   = os.getenv("SUPABASE_KEY")            # coloque no Render
 
-BASE_API = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}"
-
-# ============================================================
-# CONFIGURAÇÃO DO LINK FIXO (TEMPORÁRIO)
-# ============================================================
-# 🔥 Use sempre este link para todas as carteiras
-LINK_FIXO = "https://t.me/+Rkvw9CfJBkowMTg0"
-
-# Quando quiser voltar aos chats individuais basta colocar:
-# USE_LINK_FIXO = False
-USE_LINK_FIXO = True
-
-# Se um dia quiser voltar aos IDs individuais, estarão aqui:
+# IDs dos grupos — você já me passou
 GRUPOS = {
     "Curto Prazo":       -1002198655576,
     "Curtíssimo Prazo":  -1002198655576,
@@ -31,11 +19,16 @@ GRUPOS = {
     "Estratégias Phoenix": -1002198655576
 }
 
+
+
+BASE_API = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}"
+
+
 # ============================================================
 # FUNÇÕES DE SUPABASE
 # ============================================================
 def supabase_get_client(cliente_id):
-    """Busca cliente pelo ID"""
+    """Busca cliente no Supabase pelo ID"""
     url = f"{SUPABASE_URL}/rest/v1/clientes?id=eq.{cliente_id}"
     headers = {
         "apikey": SUPABASE_KEY,
@@ -52,12 +45,15 @@ def supabase_get_client(cliente_id):
 # FUNÇÕES TELEGRAM
 # ============================================================
 def tg_get_updates(offset=None):
+    """Pega mensagens novas do Telegram"""
     url = BASE_API + "/getUpdates"
     if offset:
         url += f"?offset={offset}"
     return requests.get(url).json()
 
+
 def tg_send_message(chat_id, text, reply_markup=None):
+    """Envia mensagem simples"""
     payload = {
         "chat_id": chat_id,
         "text": text,
@@ -68,6 +64,13 @@ def tg_send_message(chat_id, text, reply_markup=None):
     requests.post(BASE_API + "/sendMessage", json=payload)
 
 
+def tg_kick_user(group_id, user_id):
+    """Expulsa usuário do grupo - usado mais tarde"""
+    url = BASE_API + "/kickChatMember"
+    payload = {"chat_id": group_id, "user_id": user_id}
+    requests.post(url, json=payload)
+
+
 # ============================================================
 # PROCESSAMENTO DO /start
 # ============================================================
@@ -75,46 +78,52 @@ def process_start(message):
     chat_id = message["chat"]["id"]
     text = message["text"]
 
+    # extrai argumento do /start
     parts = text.split()
     if len(parts) < 2 or not parts[1].isdigit():
-        tg_send_message(chat_id,
-            "❌ Link inválido ou expirado.\nPeça um novo ao suporte.")
+        tg_send_message(chat_id, "❌ Link inválido ou expirado. Peça um novo ao suporte.")
         return
 
     cliente_id = parts[1]
-    cliente = supabase_get_client(cliente_id)
 
+    cliente = supabase_get_client(cliente_id)
     if not cliente:
-        tg_send_message(chat_id,
-            "❌ Cliente não encontrado.\nPeça um novo link ao suporte.")
+        tg_send_message(chat_id, "❌ Cliente não encontrado. Peça um novo link ao suporte.")
         return
 
     nome = cliente["nome"]
+    carteiras = cliente["carteiras"]
 
+    # botão de validação
     teclado = {
         "inline_keyboard": [
-            [{"text": "🔓 VALIDAR ACESSO", "callback_data": f"validar:{cliente_id}"}]
+            [
+                {
+                    "text": "🔓 VALIDAR ACESSO",
+                    "callback_data": f"validar:{cliente_id}"
+                }
+            ]
         ]
     }
 
     tg_send_message(
         chat_id,
-        f"👋 Olá <b>{nome}</b>!\nClique abaixo para validar seu acesso aos grupos.",
+        f"👋 Olá <b>{nome}</b>!\n\nClique abaixo para validar seu acesso.",
         reply_markup=teclado
     )
 
 
 # ============================================================
-# PROCESSAMENTO DA VALIDAÇÃO
+# PROCESSAMENTO DE CALLBACK (quando clica VALIDAR ACESSO)
 # ============================================================
 def process_callback(callback):
-    data = callback["data"]
+    data = callback["data"]            # ex: validar:939
     user_id = callback["from"]["id"]
     chat_id = callback["message"]["chat"]["id"]
 
     _, cliente_id = data.split(":")
-    cliente = supabase_get_client(cliente_id)
 
+    cliente = supabase_get_client(cliente_id)
     if not cliente:
         tg_send_message(chat_id, "❌ Cliente não encontrado.")
         return
@@ -122,20 +131,24 @@ def process_callback(callback):
     nome = cliente["nome"]
     carteiras = cliente["carteiras"]
 
+    # envia links corretos por carteira
     resposta = [f"🎉 <b>Acesso Validado, {nome}!</b>\n"]
 
-    # ⛔ Agora sempre envia o mesmo link para qualquer carteira
     for c in carteiras:
-        resposta.append(f"➡️ <b>{c}</b>: {LINK_FIXO}")
+        if c in GRUPOS:
+            link = f"https://t.me/{GRUPOS[c]}" if str(GRUPOS[c]).startswith("+") else f"https://t.me/c/{str(GRUPOS[c])[4:]}"
+            resposta.append(f"➡️ <b>{c}</b>: {link}")
+        else:
+            resposta.append(f"⚠️ Carteira sem grupo configurado: {c}")
 
     tg_send_message(chat_id, "\n".join(resposta))
 
 
 # ============================================================
-# LOOP PRINCIPAL DO BOT
+# LOOP PRINCIPAL
 # ============================================================
 def main():
-    print("🤖 milhao_crm_bot rodando no Render…")
+    print("🤖 Bot do Telegram rodando no Render…")
     last_update = None
 
     while True:
@@ -145,13 +158,13 @@ def main():
                 for u in updates["result"]:
                     last_update = u["update_id"] + 1
 
-                    # Mensagem normal
+                    # mensagem normal
                     if "message" in u and "text" in u["message"]:
                         texto = u["message"]["text"]
                         if texto.startswith("/start"):
                             process_start(u["message"])
 
-                    # Callback
+                    # callback
                     if "callback_query" in u:
                         process_callback(u["callback_query"])
 
