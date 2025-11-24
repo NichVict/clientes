@@ -128,7 +128,7 @@ PAISES = {
     "🌍 Outro": ""
 }
 
-CARTEIRAS_OPCOES = ["Curto Prazo", "Curtíssimo Prazo", "Opções", "Criptomoedas", "Clube", "Leads"]
+CARTEIRAS_OPCOES = ["Curto Prazo", "Curtíssimo Prazo", "Opções", "Criptomoedas", "Clube", "Leads", "Estratégias Phoenix"]
 PAGAMENTOS = ["PIX", "PAYPAL", "Infinite"]  # se precisar "Infinitie", troque aqui
 
 def montar_telefone(cod: str, numero: str) -> str:
@@ -158,17 +158,19 @@ from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 
 # Links Telegram
-LINK_CURTO = "https://t.me/+3BTqTX--W6gyNTE0"
-LINK_CURTISSIMO = "https://t.me/+BiTfqYUSiWpjN2U0"
-LINK_OPCOES = "https://t.me/+1si_16NC5E8xNDhk"
-LINK_CRIPTO = "https://t.me/+f9Ck6W_Bb00zZDI0"
+LINK_CURTO        = "https://t.me/+XP7q0D_z9uxhZDY0"
+LINK_CURTISSIMO   = "https://t.me/+XP7q0D_z9uxhZDY0"
+LINK_OPCOES       = "https://t.me/+XP7q0D_z9uxhZDY0"
+LINK_CRIPTO       = "https://t.me/+XP7q0D_z9uxhZDY0"
+
 
 # Links Google Groups (um por carteira)
-LINK_GG_CURTO         = "https://groups.google.com/g/listasemanal"
-LINK_GG_CURTISSIMO    = "https://groups.google.com/g/listacurtissimo"
-LINK_GG_OPCOES        = "https://groups.google.com/g/lisopcoes"
-LINK_GG_CRIPTO        = "https://groups.google.com/g/carteiracriptos"
-LINK_GG_CLUBE         = "https://groups.google.com/g/clubenecton"
+LINK_GG_CURTO         = "https://groups.google.com/g/estrategias-phoenix"
+LINK_GG_CURTISSIMO    = "https://groups.google.com/g/estrategias-phoenix"
+LINK_GG_OPCOES        = "https://groups.google.com/g/estrategias-phoenix"
+LINK_GG_CRIPTO        = "https://groups.google.com/g/estrategias-phoenix"
+LINK_GG_CLUBE         = "https://groups.google.com/g/estrategias-phoenix"
+
 
 # Botão sólido (estilo Google) – azul
 def BOTAO_GOOGLE(texto: str, link: str) -> str:
