@@ -157,22 +157,21 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 
-# Links Telegram
-LINK_CURTO        = "https://t.me/+Rkvw9CfJBkowMTg0"
-LINK_CURTISSIMO   = "https://t.me/+Rkvw9CfJBkowMTg0"
-LINK_OPCOES       = "https://t.me/+Rkvw9CfJBkowMTg0"
-LINK_CRIPTO       = "https://t.me/+Rkvw9CfJBkowMTg0"
+# ============================ NOVAS CARTEIRAS PHOENIX ============================
+CARTEIRAS_OPCOES = [
+    "Carteira de Ações IBOV",
+    "Carteira de BDRs",
+    "Carteira de Opções",
+    "Leads",
+    "Estratégias Phoenix"
+]
 
+# ============================ LINKS GOOGLE GROUPS ============================
+LINK_GG_ACOES  = "https://groups.google.com/g/estrategias-phoenix"
+LINK_GG_BDRS   = "https://groups.google.com/g/estrategiasbdr-phoenix"
+LINK_GG_OPCOES = "https://groups.google.com/g/estrategiasopcoes-phoenix"
 
-# Links Google Groups (um por carteira)
-LINK_GG_CURTO         = "https://groups.google.com/g/estrategias-phoenix"
-LINK_GG_CURTISSIMO    = "https://groups.google.com/g/estrategias-phoenix"
-LINK_GG_OPCOES        = "https://groups.google.com/g/estrategias-phoenix"
-LINK_GG_CRIPTO        = "https://groups.google.com/g/estrategias-phoenix"
-LINK_GG_CLUBE         = "https://groups.google.com/g/estrategias-phoenix"
-
-
-# Botão sólido (estilo Google) – azul
+# ============================ BOTÕES ============================
 def BOTAO_GOOGLE(texto: str, link: str) -> str:
     return f'''
 <p style="text-align:left;margin:10px 0 18px;">
@@ -205,43 +204,6 @@ def BOTAO_TELEGRAM(texto: str, link: str) -> str:
 </p>
 '''
 
-
-# Aulas bônus (links limpos e clicáveis)
-AULAS_TXT_HTML = (
-    '<h3>📚 Bônus — Curso Completo (5 aulas)</h3>'
-    '<p>'
-    '<a href="https://youtu.be/usGS5KpBPcA">Aula 1</a><br>'
-    '<a href="https://youtu.be/mtY0qY1zZN4">Aula 2</a><br>'
-    '<a href="https://youtu.be/2aHj8LSGrV8">Aula 3</a><br>'
-    '<a href="https://youtu.be/0QOtVHX1n-4">Aula 4</a><br>'
-    '<a href="https://youtu.be/pzK8dnK6jsk">Aula 5</a>'
-    '</p>'
-)
-
-# Botão estilo B (outline)
-def BOTAO_OUTLINE(texto: str, link: str) -> str:
-    return f'''
-<p style="text-align:left;margin:16px 0;">
-  <a href="{link}" target="_blank" style="
-    border:2px solid #0169FF;
-    color:#0169FF;
-    padding:12px 20px;
-    border-radius:8px;
-    text-decoration:none;
-    font-weight:700;
-    display:inline-block;">
-    {texto}
-  </a>
-</p>
-'''
-
-
-# E-book Opções
-EBOOK_OPCOES_HTML = (
-    '<h3>📘 Material Exclusivo</h3>'
-    '<p><a href="https://drive.google.com/file/d/1U3DBmTbbjiq34tTQdvHcxi2MnZnd8owN/view">Baixar E-book de Opções</a></p>'
-)
-
 WHATSAPP_BTN = """
 <p style="text-align:left;margin-top:18px;">
   <a href="https://wa.me/351915323219" target="_blank" style="
@@ -251,218 +213,218 @@ WHATSAPP_BTN = """
     border-radius:8px;
     text-decoration:none;
     font-weight:600;
-    display:inline-block;
-  ">
+    display:inline-block;">
     💬 Falar com Suporte
   </a>
 </p>
 """
 
+# ============================ AULAS (COMENTADAS) ============================
+AULAS_TXT_HTML = """
+<!--
+<h3>📚 Bônus — Curso Completo (5 aulas)</h3>
+<p>
+<a href="https://youtu.be/usGS5KpBPcA">Aula 1</a><br>
+<a href="https://youtu.be/mtY0qY1zZN4">Aula 2</a><br>
+<a href="https://youtu.be/2aHj8LSGrV8">Aula 3</a><br>
+<a href="https://youtu.be/0QOtVHX1n-4">Aula 4</a><br>
+<a href="https://youtu.be/pzK8dnK6jsk">Aula 5</a>
+</p>
+-->
+"""
 
-# Textos por carteira (com placeholders {nome}, {inicio}, {fim}) — AGORA SEM BOTÃO ANTIGO DE TELEGRAM
+# ============================ DASHBOARD PHOENIX ============================
+DASHBOARD_LINK = "https://fenixproject.streamlit.app/Dashboard"
+
+# ============================ TEMPLATE DOS E-MAILS PHOENIX ============================
 EMAIL_CORPOS = {
-    "Curto Prazo": f"""
-<h2>👋 Olá {{nome}}!</h2>
-<p>Que bom ter você conosco na <b>Carteira Recomendada de Curto Prazo</b>. 🧠📈</p>
-<p><b>Vigência do contrato:</b> {{inicio}} a {{fim}}</p>
+    # =====================================================================
+    # 1) AÇÕES IBOV
+    # =====================================================================
+    "Carteira de Ações IBOV": f"""
+<h2>📈 Olá {{nome}}!</h2>
+<p>Bem-vindo(a) à <b>Carteira de Ações IBOV — Projeto Phoenix</b>.</p>
 
-<h3>✅ Passos iniciais</h3>
-<ol>
-  <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>A seguir, valide seu acesso ao grupo do Google e ao grupo do Telegram:</li>
-</ol>
+<p><b>Período da assinatura:</b> {{inicio}} a {{fim}}</p>
 
-{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CURTO)}
-
-<hr>
-<h3>📬 Você receberá toda semana</h3>
+<h3>🔥 O que você recebe</h3>
 <ul>
-  <li>Até 5 recomendações de <b>compra</b></li>
-  <li>Até 5 recomendações de <b>venda descoberta</b></li>
-  <li>Entrada, alvos e stop</li>
-  <li>Atualizações diárias das operações abertas</li>
-  <li>Alertas automatizados de início e fim de cada operação</li>  
+  <li><b>Análises automatizadas</b> com algoritmos proprietários</li>
+  <li><b>Alertas automáticos</b> de entrada, saída e gestão</li>
+  <li><b>Métricas exclusivas Phoenix</b> (momentum, volatilidade, força setorial, score Phoenix)</li>
+  <li><b>Dashboard exclusivo</b> para acompanhamento:
+    <br><a href="{DASHBOARD_LINK}" target="_blank">{DASHBOARD_LINK}</a>
+  </li>
+  <li><b>StopATR inteligente</b>: ajusta stops dinamicamente conforme volatilidade</li>
 </ul>
 
-{AULAS_TXT_HTML}
+<h3>🚀 Próximos passos</h3>
+<ol>
+  <li>Leia o documento anexo e responda <b>ACEITE</b></li>
+  <li>Acesse o Grupo Google e valide sua entrada</li>
+  <li>Entre no canal do Telegram (link personalizado)</li>
+</ol>
 
-<p>Bem-vindo(a) ao próximo nível!<br>Equipe 1 Milhão Invest</p>
+{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_ACOES)}
+
+<hr>
+
+<p>
+O Projeto Phoenix é construído sobre automação, disciplina e métricas inteligentes.<br>
+Conte conosco para elevar seu nível como investidor(a)!
+</p>
+
+{AULAS_TXT_HTML}
 {WHATSAPP_BTN}
 """,
 
-    "Curtíssimo Prazo": f"""
-<h2>⚡ Olá {{nome}}!</h2>
-<p>Bem-vindo(a) à <b>Carteira Recomendada de Curtíssimo Prazo</b>.</p>
-<p><b>Vigência do contrato:</b> {{inicio}} a {{fim}}</p>
+    # =====================================================================
+    # 2) BDRs
+    # =====================================================================
+    "Carteira de BDRs": f"""
+<h2>🌎 Olá {{nome}}!</h2>
+<p>Você agora faz parte da <b>Carteira de BDRs — Projeto Phoenix</b>.</p>
 
-<h3>✅ Passos iniciais</h3>
-<ol>
-  <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>A seguir, valide seu acesso ao grupo do Google e ao grupo do Telegram:</li>
-</ol>
+<p><b>Período da assinatura:</b> {{inicio}} a {{fim}}</p>
 
-{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CURTISSIMO)}
-
-<hr>
-<h3>📬 Você receberá toda semana</h3>
+<h3>🔥 O que você recebe</h3>
 <ul>
-  <li>Até 5 compras e 5 vendas descoberta</li>
-  <li>Estratégias com entrada, alvos e stop</li>
-  <li>Alertas automatizados de início e fim de cada operação</li>  
+  <li><b>Análises automatizadas</b> com enfoque internacional</li>
+  <li><b>Alertas automáticos</b> de compra, venda e risco</li>
+  <li><b>Métricas Phoenix</b> aplicadas a BDRs (momentum global, volatilidade, força setorial)</li>
+  <li><b>Dashboard exclusivo</b> para acompanhamento:
+    <br><a href="{DASHBOARD_LINK}" target="_blank">{DASHBOARD_LINK}</a>
+  </li>
+  <li><b>StopATR automático</b> ajustado ao comportamento dos ativos globais</li>
 </ul>
 
-{AULAS_TXT_HTML}
+<h3>🚀 Próximos passos</h3>
+<ol>
+  <li>Leia o documento em anexo e responda <b>ACEITE</b></li>
+  <li>Entre no Grupo Google da carteira</li>
+  <li>Entre no canal do Telegram (link personalizado)</li>
+</ol>
 
-<p>Bora buscar performance com agilidade!<br>Equipe 1 Milhão Invest</p>
+{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_BDRS)}
+
+<hr>
+
+<p>
+Estamos juntos dentro do ecossistema Phoenix — tecnologia, análise e execução com precisão.
+</p>
+
+{AULAS_TXT_HTML}
 {WHATSAPP_BTN}
 """,
 
-    "Opções": f"""
+    # =====================================================================
+    # 3) OPÇÕES
+    # =====================================================================
+    "Carteira de Opções": f"""
 <h2>🔥 Olá {{nome}}!</h2>
-<p>Seja bem-vindo(a) à <b>Carteira Recomendada de Opções</b>.</p>
-<p><b>Vigência do contrato:</b> {{inicio}} a {{fim}}</p>
+<p>Seja bem-vindo(a) à <b>Carteira de Opções — Projeto Phoenix</b>.</p>
 
-<h3>✅ Passos iniciais</h3>
+<p><b>Período da assinatura:</b> {{inicio}} a {{fim}}</p>
+
+<h3>🔥 O que você recebe</h3>
+<ul>
+  <li><b>Operações estruturadas</b> com critérios objetivos</li>
+  <li><b>Alertas automáticos</b> com ticker, strike, vencimento e preço</li>
+  <li><b>Sistema Phoenix</b> com métricas exclusivas (IV, volatilidade, posição dos players, momentum)</li>
+  <li><b>Atualizações contínuas</b> de gestão e ajustes</li>
+  <li><b>StopATR inteligente</b> para proteção dinâmica</li>
+</ul>
+
+<h3>📌 Importante</h3>
+<p>
+Opções possuem maior volatilidade — siga os alertas do Phoenix para não perder o timing.
+</p>
+
+<h3>🚀 Próximos passos</h3>
 <ol>
-  <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>A seguir, valide seu acesso ao grupo do Google e ao grupo do Telegram:</li>
+  <li>Leia o documento em anexo e responda <b>ACEITE</b></li>
+  <li>Valide sua entrada no Grupo Google</li>
+  <li>Acesse o canal do Telegram (link abaixo)</li>
 </ol>
 
 {BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_OPCOES)}
 
 <hr>
-<h3>📈 Você terá</h3>
-<ul>
-  <li>Mínimo de 8 operações por mês (média 2/semana)</li>
-  <li>Alertas com ticker, strike, vencimento e preço</li>
-  <li>Atualizações semanais das operações</li>
-  <li>Relatório de rentabilidade</li>
-</ul>
-<p><i>Por ser um mercado mais volátil, acompanhe os avisos para não perder o timing.</i></p>
+
+<p>
+Vamos buscar precisão, gestão e estratégia — pilares que definem o Projeto Phoenix.
+</p>
 
 {AULAS_TXT_HTML}
-{EBOOK_OPCOES_HTML}
-
-<p>Vamos operar com estratégia e controle!<br>Equipe 1 Milhão Invest</p>
 {WHATSAPP_BTN}
 """,
-
-    "Criptomoedas": f"""
-<h2>👋 Olá {{nome}}!</h2>
-<p>Bem-vindo(a) à <b>Carteira de Criptomoedas</b>. 🚀</p>
-<p><b>Vigência do contrato:</b> {{inicio}} a {{fim}}</p>
-
-<h3>✅ Passos iniciais</h3>
-<ol>
-  <li>Leia o documento em anexo e responda este e-mail com <b>ACEITE</b></li>
-  <li>A seguir, valide seu acesso ao grupo do Google e ao grupo do Telegram:</li>
-</ol>
-
-{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CRIPTO)}
-
-<hr>
-
-{AULAS_TXT_HTML}
-
-<p>Bem-vindo(a) ao universo cripto com inteligência e gestão!<br>Equipe 1 Milhão Invest</p>
-{WHATSAPP_BTN}
-""",
-
-    "Clube": f"""
-<h2>🏆 Olá {{nome}}!</h2>
-<p>Bem-vindo(a) ao <b>Clube 1 Milhão Invest</b>.</p>
-<p>Nosso contato será personalizado e direto com nossa equipe.</p>
-
-<p>Estamos muito felizes em ter você conosco!</p>
-<br><br>
-
-{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_CLUBE)}
-
-<p>Equipe 1 Milhão Invest</p>
-{WHATSAPP_BTN}
-"""
 }
 
-
-
-# ---------------------- TEMPLATES DE RENOVAÇÃO ----------------------
-# ---------------------- TEMPLATES DE RENOVAÇÃO ----------------------
-
-
-
+# ============================ RENOVAÇÕES ============================
 EMAIL_RENOVACAO_30 = f"""
-<h2>⚠️ Sua assinatura está quase vencendo, {{nome}}</h2>
+<h2>⚠️ Sua assinatura está a 30 dias do vencimento, {{nome}}</h2>
 
-<p>Falta cerca de <b>30 dias</b> para o fim da sua assinatura da carteira <b>{{carteira}}</b>.</p>
+<p>Sua carteira <b>{{carteira}}</b> do Projeto Phoenix está próxima de vencer.</p>
 
-<p><b>Período atual:</b> {{inicio}} até {{fim}}</p>
+<p><b>Período atual:</b> {{inicio}} → {{fim}}</p>
 
-<p>Quer continuar recebendo nossas análises exclusivas e recomendações semanais?</p>
-
-<p>➡️ Responda este e-mail com <b>RENOVAR</b> ou clique abaixo:</p>
-
-{WHATSAPP_BTN}
-
-<p>Equipe 1 Milhão Invest 💚</p>
-"""
-
-EMAIL_RENOVACAO_15 = f"""
-<h2>📈 Renovação da sua assinatura — {{carteira}}</h2>
-
-<p>Olá {{nome}}, sua assinatura vence em aproximadamente <b>15 dias</b>.</p>
-
-<p>Para manter seu acesso sem interrupções, responda este e-mail com:</p>
-
-<p><b>Quero renovar</b></p>
-
-<p><b>Período atual:</b> {{inicio}} até {{fim}}</p>
-
-{WHATSAPP_BTN}
-
-<p>Estamos juntos 🚀</p>
-"""
-
-EMAIL_RENOVACAO_7 = f"""
-<h2>⏳ Atenção — sua assinatura expira em breve</h2>
-
-<p>{{nome}}, faltam menos de <b>7 dias</b> para o fim da sua assinatura da carteira <b>{{carteira}}</b>.</p>
-
-<p>Para não perder as operações e análises exclusivas, responda:</p>
+<p>Para manter acesso às análises automatizadas, alertas e métricas Phoenix, responda:</p>
 
 <p><b>RENOVAR</b></p>
 
-<p><b>Período atual:</b> {{inicio}} até {{fim}}</p>
+{WHATSAPP_BTN}
+
+<p>Equipe Phoenix 💚</p>
+"""
+
+EMAIL_RENOVACAO_15 = f"""
+<h2>📈 Renovação — faltam 15 dias</h2>
+
+<p>Olá {{nome}}, sua assinatura da carteira <b>{{carteira}}</b> está próxima do vencimento.</p>
+
+<p><b>Período atual:</b> {{inicio}} → {{fim}}</p>
+
+<p>Deseja renovar? Basta responder este e-mail com:</p>
+
+<p><b>Quero renovar</b></p>
+
+{WHATSAPP_BTN}
+"""
+
+EMAIL_RENOVACAO_7 = f"""
+<h2>⏳ Atenção — sua assinatura vence em 7 dias</h2>
+
+<p>{{nome}}, sua carteira <b>{{carteira}}</b> está quase no fim.</p>
+
+<p><b>Período atual:</b> {{inicio}} → {{fim}}</p>
+
+<p>Responda <b>RENOVAR</b> para não perder o acesso ao Phoenix.</p>
 
 {WHATSAPP_BTN}
 
-<p>Obrigado por confiar no nosso trabalho 💪</p>
+<p>Obrigado pela confiança! 💪</p>
 """
 
-
-
-
+# ============================ ENVIO DOS E-MAILS ============================
 def _format_date_br(d: date) -> str:
     try:
         return d.strftime("%d/%m/%Y")
-    except Exception:
-        # caso venha string
+    except:
         try:
             return pd.to_datetime(d).strftime("%d/%m/%Y")
-        except Exception:
+        except:
             return str(d)
 
-def _enviar_email(nome: str, email_destino: str, assunto: str, corpo: str, anexar_pdf: bool) -> tuple[bool, str]:
+def _enviar_email(nome: str, email_destino: str, assunto: str, corpo: str, anexar_pdf: bool):
     try:
         msg = MIMEMultipart()
         msg["Subject"] = assunto
         msg["From"] = EMAIL_USER
         msg["To"] = email_destino
 
-        # HTML no corpo do e-mail
         msg.attach(MIMEText(corpo, "html", "utf-8"))
 
         if anexar_pdf:
-            # anexa contrato padrão
             with open("1milhaoinvest.pdf", "rb") as f:
                 part = MIMEApplication(f.read(), _subtype="pdf")
                 part.add_header("Content-Disposition", "attachment", filename="Contrato_1MilhaoInvest.pdf")
@@ -475,14 +437,9 @@ def _enviar_email(nome: str, email_destino: str, assunto: str, corpo: str, anexa
         server.quit()
         return True, "OK"
     except Exception as e:
-        return False, f"{e}"
+        return False, str(e)
 
-def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, inicio: date, fim: date) -> list[tuple[str, bool, str]]:
-    """
-    Envia 1 e-mail por carteira.
-    Mantém o botão original do Google Groups
-    e adiciona o botão ESTILIZADO de validação no Telegram logo abaixo.
-    """
+def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, inicio: date, fim: date):
     resultados = []
     inicio_br = _format_date_br(inicio)
     fim_br = _format_date_br(fim)
@@ -493,44 +450,25 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
             resultados.append((c, False, "Sem template configurado"))
             continue
 
-        # ------------------------------------------
-        # 1) Preenche texto do template
-        # ------------------------------------------
         corpo = corpo.format(nome=nome, inicio=inicio_br, fim=fim_br)
 
-        # ------------------------------------------
-        # 2) Gera link dinâmico do Telegram usando o ID salvo
-        # ------------------------------------------
         link_telegram = None
         if st.session_state.get("last_cadastro") and st.session_state.last_cadastro.get("id"):
             cliente_id = st.session_state.last_cadastro["id"]
             link_telegram = f"https://t.me/milhao_crm_bot?start={cliente_id}"
 
-        # ------------------------------------------
-        # 3) Monta botão do Telegram estilizado (se houver link)
-        # ------------------------------------------
         botao_telegram = ""
         if link_telegram:
             botao_telegram = BOTAO_TELEGRAM("Entrar no Telegram", link_telegram)
 
-        # ------------------------------------------
-        # 4) Insere o botão do Telegram LOGO ABAIXO
-        #    do botão “Entrar no Grupo Google”
-        # ------------------------------------------
-        # Inserir o botão do Telegram logo ANTES do <hr>
         anchor = "<hr>"
         if anchor in corpo:
             partes = corpo.split(anchor)
             corpo = partes[0] + botao_telegram + anchor + partes[1]
         else:
-            # fallback (caso raro)
-            corpo = corpo + botao_telegram
+            corpo += botao_telegram
 
-
-        # ------------------------------------------
-        # 5) Envia e-mail
-        # ------------------------------------------
-        anexar_pdf = (c != "Clube")
+        anexar_pdf = True  # sempre anexa, menos Leads
         assunto = f"Bem-vindo(a) — {c}"
 
         ok, msg = _enviar_email(nome, email_destino, assunto, corpo, anexar_pdf)
@@ -538,39 +476,16 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
 
     return resultados
 
-
-
-
-
 def enviar_email_renovacao(nome, email_destino, carteira, inicio, fim, dias):
     inicio_br = _format_date_br(inicio)
     fim_br = _format_date_br(fim)
 
-    # Escolhe qual template usar
-    templates = {
-        30: EMAIL_RENOVACAO_30,
-        15: EMAIL_RENOVACAO_15,
-        7: EMAIL_RENOVACAO_7
-    }
+    mapping = {30: EMAIL_RENOVACAO_30, 15: EMAIL_RENOVACAO_15, 7: EMAIL_RENOVACAO_7}
+    corpo = mapping[dias].format(nome=nome, carteira=carteira, inicio=inicio_br, fim=fim_br)
 
-    corpo = templates[dias].format(
-        nome=nome,
-        carteira=carteira,
-        inicio=inicio_br,
-        fim=fim_br
-    )
+    assunto = f"Renovação — {carteira} ({dias} dias)"
 
-    assunto = f"Renovação — {carteira} ({dias} dias restantes)"
-
-    ok, msg = _enviar_email(
-        nome,
-        email_destino,
-        assunto,
-        corpo,
-        anexar_pdf=False  # PDF não precisa na renovação
-    )
-
-    return ok, msg
+    return _enviar_email(nome, email_destino, assunto, corpo, anexar_pdf=False)
 
 
 
