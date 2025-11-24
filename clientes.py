@@ -158,10 +158,10 @@ from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 
 # Links Telegram
-LINK_CURTO        = "https://t.me/+XP7q0D_z9uxhZDY0"
-LINK_CURTISSIMO   = "https://t.me/+XP7q0D_z9uxhZDY0"
-LINK_OPCOES       = "https://t.me/+XP7q0D_z9uxhZDY0"
-LINK_CRIPTO       = "https://t.me/+XP7q0D_z9uxhZDY0"
+LINK_CURTO        = "https://t.me/+Rkvw9CfJBkowMTg0"
+LINK_CURTISSIMO   = "https://t.me/+Rkvw9CfJBkowMTg0"
+LINK_OPCOES       = "https://t.me/+Rkvw9CfJBkowMTg0"
+LINK_CRIPTO       = "https://t.me/+Rkvw9CfJBkowMTg0"
 
 
 # Links Google Groups (um por carteira)
