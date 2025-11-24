@@ -244,7 +244,7 @@ EBOOK_OPCOES_HTML = (
 
 WHATSAPP_BTN = """
 <p style="text-align:left;margin-top:18px;">
-  <a href="https://wa.me/5511940266027" target="_blank" style="
+  <a href="https://wa.me/351915323219" target="_blank" style="
     background-color:#25D366;
     color:white;
     padding:12px 20px;
