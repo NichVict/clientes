@@ -12,11 +12,13 @@ SUPABASE_KEY   = os.getenv("SUPABASE_KEY")            # coloque no Render
 
 # IDs dos grupos — você já me passou
 GRUPOS = {
-    "Curto Prazo":       -1002046197953,
-    "Curtíssimo Prazo":  -1002074291817,
-    "Opções":            -1002001152534,
-    "Criptomoedas":      -1002947159530,
+    "Curto Prazo":       -1002198655576,
+    "Curtíssimo Prazo":  -1002198655576,
+    "Opções":            -1002198655576,
+    "Criptomoedas":      -1002198655576,
+    "Estratégias Phoenix": -1002198655576
 }
+
 
 BASE_API = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}"
 
