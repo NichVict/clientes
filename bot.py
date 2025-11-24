@@ -6,30 +6,36 @@ from datetime import datetime
 # ============================================================
 # CONFIGURAÇÕES
 # ============================================================
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-SUPABASE_URL   = os.getenv("SUPABASE_URL")
-SUPABASE_KEY   = os.getenv("SUPABASE_KEY")
-
-# ============================================================
-# NOVO: TODOS OS GRUPOS USAM O MESMO LINK DE CONVITE
-# ============================================================
-LINK_CONVITE = "https://t.me/+Rkvw9CfJBkowMTg0"
-
-GRUPOS = {
-    "Curto Prazo": LINK_CONVITE,
-    "Curtíssimo Prazo": LINK_CONVITE,
-    "Opções": LINK_CONVITE,
-    "Criptomoedas": LINK_CONVITE,
-    "Estratégias Phoenix": LINK_CONVITE
-}
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")          # Render
+SUPABASE_URL   = os.getenv("SUPABASE_URL")            # Render
+SUPABASE_KEY   = os.getenv("SUPABASE_KEY")            # Render
 
 BASE_API = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}"
 
+# ============================================================
+# CONFIGURAÇÃO DO LINK FIXO (TEMPORÁRIO)
+# ============================================================
+# 🔥 Use sempre este link para todas as carteiras
+LINK_FIXO = "https://t.me/+Rkvw9CfJBkowMTg0"
+
+# Quando quiser voltar aos chats individuais basta colocar:
+# USE_LINK_FIXO = False
+USE_LINK_FIXO = True
+
+# Se um dia quiser voltar aos IDs individuais, estarão aqui:
+GRUPOS = {
+    "Curto Prazo":       -1002198655576,
+    "Curtíssimo Prazo":  -1002198655576,
+    "Opções":            -1002198655576,
+    "Criptomoedas":      -1002198655576,
+    "Estratégias Phoenix": -1002198655576
+}
 
 # ============================================================
 # FUNÇÕES DE SUPABASE
 # ============================================================
 def supabase_get_client(cliente_id):
+    """Busca cliente pelo ID"""
     url = f"{SUPABASE_URL}/rest/v1/clientes?id=eq.{cliente_id}"
     headers = {
         "apikey": SUPABASE_KEY,
@@ -43,14 +49,13 @@ def supabase_get_client(cliente_id):
 
 
 # ============================================================
-# TELEGRAM API
+# FUNÇÕES TELEGRAM
 # ============================================================
 def tg_get_updates(offset=None):
     url = BASE_API + "/getUpdates"
     if offset:
         url += f"?offset={offset}"
     return requests.get(url).json()
-
 
 def tg_send_message(chat_id, text, reply_markup=None):
     payload = {
@@ -60,7 +65,6 @@ def tg_send_message(chat_id, text, reply_markup=None):
     }
     if reply_markup:
         payload["reply_markup"] = reply_markup
-
     requests.post(BASE_API + "/sendMessage", json=payload)
 
 
@@ -73,45 +77,44 @@ def process_start(message):
 
     parts = text.split()
     if len(parts) < 2 or not parts[1].isdigit():
-        tg_send_message(chat_id, "❌ Link inválido ou expirado. Peça um novo ao suporte.")
+        tg_send_message(chat_id,
+            "❌ Link inválido ou expirado.\nPeça um novo ao suporte.")
         return
 
     cliente_id = parts[1]
-
     cliente = supabase_get_client(cliente_id)
+
     if not cliente:
-        tg_send_message(chat_id, "❌ Cliente não encontrado.")
+        tg_send_message(chat_id,
+            "❌ Cliente não encontrado.\nPeça um novo link ao suporte.")
         return
 
     nome = cliente["nome"]
 
     teclado = {
         "inline_keyboard": [
-            [
-                {
-                    "text": "🔓 VALIDAR ACESSO",
-                    "callback_data": f"validar:{cliente_id}"
-                }
-            ]
+            [{"text": "🔓 VALIDAR ACESSO", "callback_data": f"validar:{cliente_id}"}]
         ]
     }
 
     tg_send_message(
         chat_id,
-        f"👋 Olá <b>{nome}</b>!\n\nClique abaixo para validar seu acesso.",
+        f"👋 Olá <b>{nome}</b>!\nClique abaixo para validar seu acesso aos grupos.",
         reply_markup=teclado
     )
 
 
 # ============================================================
-# PROCESSAMENTO DO CALLBACK
+# PROCESSAMENTO DA VALIDAÇÃO
 # ============================================================
 def process_callback(callback):
-    data = callback["data"]             # validar:123
+    data = callback["data"]
+    user_id = callback["from"]["id"]
     chat_id = callback["message"]["chat"]["id"]
-    _, cliente_id = data.split(":")
 
+    _, cliente_id = data.split(":")
     cliente = supabase_get_client(cliente_id)
+
     if not cliente:
         tg_send_message(chat_id, "❌ Cliente não encontrado.")
         return
@@ -121,36 +124,34 @@ def process_callback(callback):
 
     resposta = [f"🎉 <b>Acesso Validado, {nome}!</b>\n"]
 
+    # ⛔ Agora sempre envia o mesmo link para qualquer carteira
     for c in carteiras:
-        link = GRUPOS.get(c)
-        if link:
-            resposta.append(f"➡️ <b>{c}</b>: {link}")
-        else:
-            resposta.append(f"⚠️ Carteira sem link configurado: {c}")
+        resposta.append(f"➡️ <b>{c}</b>: {LINK_FIXO}")
 
     tg_send_message(chat_id, "\n".join(resposta))
 
 
 # ============================================================
-# LOOP PRINCIPAL
+# LOOP PRINCIPAL DO BOT
 # ============================================================
 def main():
-    print("🤖 Bot do Telegram rodando no Render…")
+    print("🤖 milhao_crm_bot rodando no Render…")
     last_update = None
 
     while True:
         try:
             updates = tg_get_updates(last_update)
-
             if "result" in updates:
                 for u in updates["result"]:
                     last_update = u["update_id"] + 1
 
+                    # Mensagem normal
                     if "message" in u and "text" in u["message"]:
                         texto = u["message"]["text"]
                         if texto.startswith("/start"):
                             process_start(u["message"])
 
+                    # Callback
                     if "callback_query" in u:
                         process_callback(u["callback_query"])
 
