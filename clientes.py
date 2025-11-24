@@ -425,9 +425,9 @@ def _enviar_email(nome: str, email_destino: str, assunto: str, corpo: str, anexa
         msg.attach(MIMEText(corpo, "html", "utf-8"))
 
         if anexar_pdf:
-            with open("1milhaoinvest.pdf", "rb") as f:
+            with open("contrato_Aurinvest.pdf", "rb") as f:
                 part = MIMEApplication(f.read(), _subtype="pdf")
-                part.add_header("Content-Disposition", "attachment", filename="Contrato_1MilhaoInvest.pdf")
+                part.add_header("Content-Disposition", "attachment", filename="Contrato_Aurinvest.pdf")
                 msg.attach(part)
 
         server = smtplib.SMTP(EMAIL_HOST, EMAIL_PORT)
