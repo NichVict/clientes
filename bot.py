@@ -13,13 +13,13 @@ SUPABASE_URL   = os.getenv("SUPABASE_URL")            # coloque no Render
 SUPABASE_KEY   = os.getenv("SUPABASE_KEY")            # coloque no Render
 
 # IDs dos grupos — você já me passou
+# NOVOS GRUPOS PHOENIX — links de convite oficiais
 GRUPOS = {
-    "Curto Prazo":       -1002198655576,
-    "Curtíssimo Prazo":  -1002198655576,
-    "Opções":            -1002198655576,
-    "Criptomoedas":      -1002198655576,
-    "Estratégias Phoenix": -1002198655576
+    "Carteira de Ações IBOV": "https://t.me/+Rkvw9CfJBkowMTg0",
+    "Carteira de BDRs": "https://t.me/+-Io0aAFaGJ0yN2Rk",
+    "Carteira de Opções": "https://t.me/+3YzTJqBi-xYxNjNk",
 }
+
 
 
 
@@ -80,7 +80,6 @@ def process_start(message):
     chat_id = message["chat"]["id"]
     text = message["text"]
 
-    # extrai argumento do /start
     parts = text.split()
     if len(parts) < 2 or not parts[1].isdigit():
         tg_send_message(chat_id, "❌ Link inválido ou expirado. Peça um novo ao suporte.")
@@ -94,9 +93,7 @@ def process_start(message):
         return
 
     nome = cliente["nome"]
-    carteiras = cliente["carteiras"]
 
-    # botão de validação
     teclado = {
         "inline_keyboard": [
             [
@@ -113,6 +110,7 @@ def process_start(message):
         f"👋 Olá <b>{nome}</b>!\n\nClique abaixo para validar seu acesso.",
         reply_markup=teclado
     )
+
 
 
 # ============================================================
@@ -133,17 +131,18 @@ def process_callback(callback):
     nome = cliente["nome"]
     carteiras = cliente["carteiras"]
 
-    # envia links corretos por carteira
     resposta = [f"🎉 <b>Acesso Validado, {nome}!</b>\n"]
 
+    # percorre as carteiras novas
     for c in carteiras:
         if c in GRUPOS:
-            link = f"https://t.me/{GRUPOS[c]}" if str(GRUPOS[c]).startswith("+") else f"https://t.me/c/{str(GRUPOS[c])[4:]}"
+            link = GRUPOS[c]
             resposta.append(f"➡️ <b>{c}</b>: {link}")
         else:
-            resposta.append(f"⚠️ Carteira sem grupo configurado: {c}")
+            resposta.append(f"⚠️ Nenhum grupo configurado para: {c}")
 
     tg_send_message(chat_id, "\n".join(resposta))
+
 
 
 # ============================================================
