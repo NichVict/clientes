@@ -1218,10 +1218,28 @@ if dados:
         dt_inicio = c1.date_input("Data inicial", value=date.today().replace(day=1))
         dt_fim = c2.date_input("Data final", value=date.today())
 
-        df_rel = df[
-            (df["data_inicio"] >= dt_inicio) &
-            (df["data_inicio"] <= dt_fim)
+        # Normaliza carteiras antes do filtro
+        def normalize_carteiras(v):
+            if isinstance(v, list):
+                return v
+            if isinstance(v, str):
+                try:
+                    return [x.strip().strip("'").strip('"') for x in v.strip("[]").split(",") if x.strip()]
+                except:
+                    return []
+            return []
+        
+        df["carteiras"] = df["carteiras"].apply(normalize_carteiras)
+        
+        # Filtra apenas clientes NÃO Leads
+        df_sem_leads = df[df["carteiras"].apply(lambda x: "Leads" not in x)]
+        
+        # Relatório apenas com clientes reais
+        df_rel = df_sem_leads[
+            (df_sem_leads["data_inicio"] >= dt_inicio) &
+            (df_sem_leads["data_inicio"] <= dt_fim)
         ].copy()
+
 
         st.write(f"🔎 Registros encontrados: **{len(df_rel)}**")
 
