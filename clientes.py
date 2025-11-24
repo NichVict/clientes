@@ -668,35 +668,44 @@ with st.expander("ℹ️ Como funciona este CRM", expanded=False):
     """)
 
 # ---------------------- DASHBOARD / KPIs ----------------------
+# ---------------------- DASHBOARD / KPIs ----------------------
 try:
     query = supabase.table("clientes").select("*").execute()
     dados_kpi = query.data or []
     df_kpi = pd.DataFrame(dados_kpi)
 
     if not df_kpi.empty:
+
         df_kpi["data_fim"] = pd.to_datetime(df_kpi["data_fim"], errors="coerce").dt.date
 
+        # --- Normaliza carteiras ---
+        def normalize_carteiras(v):
+            if isinstance(v, list):
+                return v
+            if isinstance(v, str):
+                try:
+                    return [x.strip().strip("'").strip('"') for x in v.strip("[]").split(",") if x.strip()]
+                except:
+                    return []
+            return []
+
+        df_kpi["carteiras"] = df_kpi["carteiras"].apply(normalize_carteiras)
+
         today = date.today()
-        
-        # Converte carteiras p/ lista sempre
-        df_kpi["carteiras"] = df_kpi["carteiras"].apply(
-            lambda v: v if isinstance(v, list) else []
-        )
-        
-        # 👉 Filtra LEADS primeiro
+
+        # 👉 Filtra LEADS
         leads = df_kpi[df_kpi["carteiras"].apply(lambda x: "Leads" in x)]
-        
-        # 👉 Clientes "não-leads" (clientes reais)
+
+        # 👉 Clientes reais
         clientes = df_kpi[df_kpi["carteiras"].apply(lambda x: "Leads" not in x)]
-        
+
         # KPIs corretos
         ativos = clientes[clientes["data_fim"] >= today]
         vencendo = clientes[(clientes["data_fim"] >= today) & (clientes["data_fim"] <= today + timedelta(days=30))]
         vencidos = clientes[clientes["data_fim"] < today]
 
-
         c1, c2, c3, c4 = st.columns(4)
-        
+
         with c1:
             st.markdown(f"<div class='card'><h3>🟢 {len(ativos)}</h3><p>Clientes Ativos</p></div>", unsafe_allow_html=True)
         
@@ -708,6 +717,8 @@ try:
 
         with c4:
             st.markdown(f"<div class='card'><h3>⚪ {len(leads)}</h3><p>Leads</p></div>", unsafe_allow_html=True)
+
+
 
 
 
