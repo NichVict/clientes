@@ -677,11 +677,25 @@ try:
         df_kpi["data_fim"] = pd.to_datetime(df_kpi["data_fim"], errors="coerce").dt.date
 
         today = date.today()
-        ativos = df_kpi[df_kpi["data_fim"] >= today]
-        vencendo = df_kpi[(df_kpi["data_fim"] >= today) & (df_kpi["data_fim"] <= today + timedelta(days=30))]
-        vencidos = df_kpi[df_kpi["data_fim"] < today]
+        
+        # Converte carteiras p/ lista sempre
+        df_kpi["carteiras"] = df_kpi["carteiras"].apply(
+            lambda v: v if isinstance(v, list) else []
+        )
+        
+        # 👉 Filtra LEADS primeiro
+        leads = df_kpi[df_kpi["carteiras"].apply(lambda x: "Leads" in x)]
+        
+        # 👉 Clientes "não-leads" (clientes reais)
+        clientes = df_kpi[df_kpi["carteiras"].apply(lambda x: "Leads" not in x)]
+        
+        # KPIs corretos
+        ativos = clientes[clientes["data_fim"] >= today]
+        vencendo = clientes[(clientes["data_fim"] >= today) & (clientes["data_fim"] <= today + timedelta(days=30))]
+        vencidos = clientes[clientes["data_fim"] < today]
 
-        c1, c2, c3 = st.columns(3)
+
+        c1, c2, c3, c4 = st.columns(4)
         
         with c1:
             st.markdown(f"<div class='card'><h3>🟢 {len(ativos)}</h3><p>Clientes Ativos</p></div>", unsafe_allow_html=True)
@@ -691,6 +705,12 @@ try:
         
         with c3:
             st.markdown(f"<div class='card'><h3>🔴 {len(vencidos)}</h3><p>Vencidos</p></div>", unsafe_allow_html=True)
+
+        with c4:
+            st.markdown(f"<div class='card'><h3>⚪ {len(leads)}</h3><p>Leads</p></div>", unsafe_allow_html=True)
+
+
+
  
 
      
