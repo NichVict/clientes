@@ -576,7 +576,7 @@ def enviar_email_renovacao(nome, email_destino, carteira, inicio, fim, dias):
 
 
 # ---------------------- UI: CABEÇALHO ----------------------
-st.title("🌀 CRM 1Milhao Invest")
+st.title("🌀 CRM Aurinvest")
 st.markdown("<div style='height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,180,0.35),transparent);'></div>", unsafe_allow_html=True)
 
 st.caption("Customer Relationship Management")
