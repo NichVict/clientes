@@ -808,7 +808,8 @@ with st.expander("Formulário", expanded=is_edit):
                         .execute()
                     )
                     
-                    telegram_link = f"https://t.me/aurinvestbot?start={edit_id}"
+                    telegram_link = f"https://t.me/milhao_crm_bot?start={edit_id}"
+
                     
                     st.session_state.last_cadastro = {
                         "id": edit_id,
@@ -846,7 +847,8 @@ with st.expander("Formulário", expanded=is_edit):
                     cliente_id = res.data[0]["id"]
                     
                     # 🔗 Gera link do bot
-                    telegram_link = f"https://t.me/aurinvestbot?start={cliente_id}"
+                    telegram_link = f"https://t.me/milhao_crm_bot?start={cliente_id}"
+
                     
                     st.success("✅ Cliente cadastrado com sucesso!")
                     
