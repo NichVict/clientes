@@ -1,3 +1,5 @@
+quero. segue abaixo o que tenho agora. proceda as alteracoes necessarias
+
 import os
 import time
 import requests
