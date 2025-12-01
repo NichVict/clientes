@@ -162,9 +162,9 @@ from email.mime.text import MIMEText
 CARTEIRAS_OPCOES = [
     "Carteira de Ações IBOV",
     "Carteira de BDRs",
+    "Carteira de Small Caps",
     "Carteira de Opções",
-    "Leads",
-    "Estratégias Phoenix"
+    "Leads"    
 ]
 
 # ============================ LINKS GOOGLE GROUPS ============================
@@ -280,6 +280,51 @@ Conte conosco para elevar seu nível como investidor(a)!
 {WHATSAPP_BTN}
 """,
 
+
+
+    # =====================================================================
+    # 3) SMALL CAPS — copia do template IBOV com nome alterado
+    # =====================================================================
+    "Carteira de Small Caps": f"""
+<h2>📉 Olá {{nome}}!</h2>
+<p>Bem-vindo(a) à <b>Carteira de Small Caps — Projeto Phoenix</b>.</p>
+
+<p><b>Período da assinatura:</b> {{inicio}} a {{fim}}</p>
+
+<h3>🔥 O que você recebe</h3>
+<ul>
+  <li><b>Análises automatizadas</b> focadas em empresas de menor capitalização</li>
+  <li><b>Alertas automáticos</b> de entrada, saída e gestão</li>
+  <li><b>Métricas exclusivas Phoenix</b>: momentum, volatilidade, força setorial, score Phoenix</li>
+  <li><b>Dashboard exclusivo</b> para acompanhamento:
+    <br><a href="{DASHBOARD_LINK}" target="_blank">{DASHBOARD_LINK}</a>
+  </li>
+  <li><b>StopATR inteligente</b>: ajusta stops dinamicamente conforme volatilidade</li>
+</ul>
+
+<h3>🚀 Próximos passos</h3>
+<ol>
+  <li>Leia o documento anexo e responda <b>ACEITE</b></li>
+  <li>Entre no Grupo Google da carteira (link abaixo)</li>
+  <li>Acesse o canal do Telegram (link personalizado)</li>
+</ol>
+
+{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_ACOES)}
+
+<hr>
+
+<p>
+O Projeto Phoenix é construído sobre automação, disciplina e métricas inteligentes.<br>
+Conte conosco para elevar seu nível como investidor(a)!
+</p>
+
+{AULAS_TXT_HTML}
+{WHATSAPP_BTN}
+""",
+
+
+
+
     # =====================================================================
     # 2) BDRs
     # =====================================================================
@@ -335,6 +380,9 @@ Estamos juntos dentro do ecossistema Phoenix — tecnologia, análise e execuç�
   <li><b>Sistema Phoenix</b> com métricas exclusivas (IV, volatilidade, posição dos players, momentum)</li>
   <li><b>Atualizações contínuas</b> de gestão e ajustes</li>
   <li><b>StopATR inteligente</b> para proteção dinâmica</li>
+  <li><b>Dashboard exclusivo</b> para acompanhamento:
+    <br><a href="{DASHBOARD_LINK}" target="_blank">{DASHBOARD_LINK}</a>
+  </li>
 </ul>
 
 <h3>📌 Importante</h3>
