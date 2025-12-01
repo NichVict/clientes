@@ -30,6 +30,7 @@ import pandas as pd
 import streamlit as st
 import re
 from supabase import create_client, Client
+import secrets
 
 st.markdown("""
 <style>
@@ -468,6 +469,17 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
         else:
             corpo += botao_telegram
 
+        # === ADICIONAR LINK DE ACESSO AO PHOENIX ===
+        link_acesso = st.session_state.last_cadastro.get("link_acesso")
+        
+        if link_acesso:
+            corpo += f"""
+            <br><br>
+            <p><b>🔑 Acesso exclusivo ao Painel Premium:</b></p>
+            <p><a href="{link_acesso}" target="_blank">{link_acesso}</a></p>
+            """
+     
+
         anexar_pdf = True  # sempre anexa, menos Leads
         assunto = f"Bem-vindo(a) — {c}"
 
@@ -791,6 +803,24 @@ with st.expander("Formulário", expanded=is_edit):
                     
                     # 📌 Captura o ID recém inserido
                     cliente_id = res.data[0]["id"]
+
+                    import secrets
+
+                    # gerar token único
+                    token = secrets.token_urlsafe(32)
+                    
+                    # salvar token no BD
+                    supabase.table("clientes").update({"token": token}).eq("id", cliente_id).execute()
+                    
+                    # gerar link de acesso completo
+                    link_acesso = f"https://fenixproject.streamlit.app/?token={token}"
+                    
+                    # salvar no estado
+                    st.session_state.last_cadastro["token"] = token
+                    st.session_state.last_cadastro["link_acesso"] = link_acesso
+
+
+                    
                     
                     # 🔗 Gera link do bot
                     telegram_link = f"https://t.me/milhao_crm_bot?start={cliente_id}"
