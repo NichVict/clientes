@@ -235,7 +235,8 @@ AULAS_TXT_HTML = """
 """
 
 # ============================ DASHBOARD PHOENIX ============================
-DASHBOARD_LINK = "https://fenixproject.streamlit.app/Dashboard"
+DASHBOARD_LINK = "https://phoenixmaster.streamlit.app"
+
 
 # ============================ TEMPLATE DOS E-MAILS PHOENIX ============================
 EMAIL_CORPOS = {
@@ -834,7 +835,7 @@ with st.expander("Formulário", expanded=is_edit):
                     supabase.table("clientes").update({"token": token}).eq("id", cliente_id).execute()
                     
                     # gerar link de acesso completo
-                    link_acesso = f"https://fenixproject.streamlit.app/?token={token}"
+                    link_acesso = f"https://phoenixmaster.streamlit.app/?token={token}"
                     
                     # salvar no estado
                     st.session_state.last_cadastro["token"] = token
