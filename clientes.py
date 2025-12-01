@@ -803,23 +803,6 @@ with st.expander("Formulário", expanded=is_edit):
                     
                     # 📌 Captura o ID recém inserido
                     cliente_id = res.data[0]["id"]
-
-                    import secrets
-
-                    # gerar token único
-                    token = secrets.token_urlsafe(32)
-                    
-                    # salvar token no BD
-                    supabase.table("clientes").update({"token": token}).eq("id", cliente_id).execute()
-                    
-                    # gerar link de acesso completo
-                    link_acesso = f"https://fenixproject.streamlit.app/?token={token}"
-                    
-                    # salvar no estado
-                    st.session_state.last_cadastro["token"] = token
-                    st.session_state.last_cadastro["link_acesso"] = link_acesso
-
-
                     
                     
                     # 🔗 Gera link do bot
@@ -839,7 +822,24 @@ with st.expander("Formulário", expanded=is_edit):
                         "telegram_link": telegram_link
                     }
 
-
+                    # ===========================================
+                    #  TOKEN DE LOGIN - NOVO TRECHO
+                    # ===========================================
+                    import secrets
+                    
+                    # gerar token único
+                    token = secrets.token_urlsafe(32)
+                    
+                    # salvar token no BD
+                    supabase.table("clientes").update({"token": token}).eq("id", cliente_id).execute()
+                    
+                    # gerar link de acesso completo
+                    link_acesso = f"https://fenixproject.streamlit.app/?token={token}"
+                    
+                    # salvar no estado
+                    st.session_state.last_cadastro["token"] = token
+                    st.session_state.last_cadastro["link_acesso"] = link_acesso
+                    # ===========================================
 
                     st.rerun()
                 except Exception as e:
