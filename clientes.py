@@ -883,7 +883,7 @@ with st.expander("Formulário", expanded=is_edit):
                     supabase.table("clientes").update({"token": token}).eq("id", cliente_id).execute()
                     
                     # gerar link de acesso completo
-                    link_acesso = f"https://phoenixmaster.streamlit.app/?token={token}"
+                    link_acesso = f"https://phoenix-master.onrender.com/?token={token}"
                     
                     # salvar no estado
                     st.session_state.last_cadastro["token"] = token
