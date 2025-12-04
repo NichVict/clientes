@@ -178,17 +178,16 @@ LINK_GG_SMALL = "https://groups.google.com/g/estrategiassmll-phoenix"
 
 def BOTAO_GOOGLE(texto: str, link: str) -> str:
     return f"""
-<p style="margin:16px 0;">
+<p style="margin:14px 0;">
   <a href="{link}" target="_blank" style="
-    background: linear-gradient(90deg, #00e676, #00c853);
-    color: #042f1a;
+    background: linear-gradient(90deg, #00c853, #00e676);
+    color:#000000 !important;
     padding: 14px 26px;
     border-radius: 10px;
     text-decoration: none;
     font-size: 16px;
-    font-weight: 800;
+    font-weight: 700;
     display: inline-block;
-    box-shadow: 0 0 10px rgba(0, 255, 180, 0.45);
   ">
     {texto}
   </a>
@@ -196,19 +195,19 @@ def BOTAO_GOOGLE(texto: str, link: str) -> str:
 """
 
 
+
 def BOTAO_TELEGRAM(texto: str, link: str) -> str:
     return f"""
-<p style="margin:16px 0;">
+<p style="margin:14px 0;">
   <a href="{link}" target="_blank" style="
     background: linear-gradient(90deg, #7c4dff, #b47cff);
-    color: white;
+    color:#000000 !important;
     padding: 14px 26px;
     border-radius: 10px;
     text-decoration: none;
     font-size: 16px;
-    font-weight: 800;
+    font-weight: 700;
     display: inline-block;
-    box-shadow: 0 0 10px rgba(150, 100, 255, 0.45);
   ">
     {texto}
   </a>
@@ -217,17 +216,16 @@ def BOTAO_TELEGRAM(texto: str, link: str) -> str:
 
 
 WHATSAPP_BTN = """
-<p style="margin:20px 0;">
+<p style="margin-top:24px;">
   <a href="https://wa.me/351915323219" target="_blank" style="
-    background: linear-gradient(90deg, #1bd741, #25D366);
-    color: white;
+    background: linear-gradient(90deg, #25D366, #32e67f);
+    color:#000000 !important;
     padding: 14px 26px;
     border-radius: 10px;
     text-decoration: none;
     font-size: 16px;
-    font-weight: 800;
+    font-weight: 700;
     display: inline-block;
-    box-shadow: 0 0 10px rgba(50, 240, 120, 0.45);
   ">
     💬 Falar com Suporte
   </a>
@@ -235,26 +233,26 @@ WHATSAPP_BTN = """
 """
 
 
+
 def BOTAO_PREMIUM(link: str) -> str:
-    """Botão do Painel Premium (Link Mágico)"""
     return f"""
-<p style="margin:22px 0;">
+<p style="margin:18px 0 24px;">
   <a href="{link}" target="_blank" style="
-    background: linear-gradient(90deg, #ff8f00, #ff6d00);
-    color: #fffbe6;
-    padding: 16px 32px;
+    background: linear-gradient(90deg, #ff6d00, #ff8f00);
+    color:#000000 !important;
+    padding: 16px 30px;
     border-radius: 12px;
     text-decoration: none;
     font-size: 18px;
-    font-weight: 900;
+    font-weight: 800;
     display: inline-block;
-    letter-spacing: 0.5px;
-    box-shadow: 0 0 14px rgba(255, 145, 0, 0.55);
+    box-shadow:0 3px 10px rgba(0,0,0,0.25);
   ">
     🔑 Acessar Painel Premium
   </a>
 </p>
 """
+
 
 
 
