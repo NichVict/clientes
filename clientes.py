@@ -171,7 +171,7 @@ CARTEIRAS_OPCOES = [
 LINK_GG_ACOES  = "https://groups.google.com/g/estrategias-phoenix"
 LINK_GG_BDRS   = "https://groups.google.com/g/estrategiasbdr-phoenix"
 LINK_GG_OPCOES = "https://groups.google.com/g/estrategiasopcoes-phoenix"
-
+LINK_GG_SMALL = "https://groups.google.com/g/estrategiassmll-phoenix"
 # ============================ BOTÕES ============================
 def BOTAO_GOOGLE(texto: str, link: str) -> str:
     return f'''
@@ -309,7 +309,7 @@ Conte conosco para elevar seu nível como investidor(a)!
   <li>Acesse o canal do Telegram (link personalizado)</li>
 </ol>
 
-{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_ACOES)}
+{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_SMALL)}
 
 <hr>
 
