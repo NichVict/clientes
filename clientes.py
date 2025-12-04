@@ -303,7 +303,7 @@ O Projeto Phoenix é construído sobre automação, disciplina e métricas intel
 Conte conosco para elevar seu nível como investidor(a)!
 </p>
 
-{AULAS_TXT_HTML}
+
 {WHATSAPP_BTN}
 """,
 
@@ -352,7 +352,7 @@ para entrar sempre que quiser.
 Estamos juntos dentro do ecossistema Phoenix — tecnologia, análise e execução com precisão.
 </p>
 
-{AULAS_TXT_HTML}
+
 {WHATSAPP_BTN}
 """,
 
@@ -402,7 +402,7 @@ O Projeto Phoenix é construído sobre automação, disciplina e métricas intel
 Conte conosco para elevar seu nível como investidor(a)!
 </p>
 
-{AULAS_TXT_HTML}
+
 {WHATSAPP_BTN}
 """,
 
@@ -457,7 +457,7 @@ Opções possuem maior volatilidade — siga os alertas do Phoenix para não per
 Vamos buscar precisão, gestão e estratégia — pilares que definem o Projeto Phoenix.
 </p>
 
-{AULAS_TXT_HTML}
+
 {WHATSAPP_BTN}
 """,
 }
