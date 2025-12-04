@@ -173,71 +173,89 @@ LINK_GG_BDRS   = "https://groups.google.com/g/estrategiasbdr-phoenix"
 LINK_GG_OPCOES = "https://groups.google.com/g/estrategiasopcoes-phoenix"
 LINK_GG_SMALL = "https://groups.google.com/g/estrategiassmll-phoenix"
 # ============================ BOTÕES ============================
+# ============================ BOTÕES (ESTILO PHOENIX) ============================
 def BOTAO_GOOGLE(texto: str, link: str) -> str:
-    return f'''
-<p style="text-align:left;margin:10px 0 18px;">
+    return f"""
+<p style="margin:14px 0;">
   <a href="{link}" target="_blank" style="
-    border:2px solid #25D366;
-    color:#25D366;
-    padding:12px 20px;
-    border-radius:8px;
-    text-decoration:none;
-    font-weight:700;
-    display:inline-block;">
+    background: linear-gradient(90deg, #00c853, #00e676);
+    color: white;
+    padding: 14px 26px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700;
+    display: inline-block;
+  ">
     {texto}
   </a>
 </p>
-'''
+"""
+
 
 def BOTAO_TELEGRAM(texto: str, link: str) -> str:
-    return f'''
-<p style="text-align:left;margin:10px 0 18px;">
+    return f"""
+<p style="margin:14px 0;">
   <a href="{link}" target="_blank" style="
-    border:2px solid #7D3C98;
-    color:#7D3C98;
-    padding:12px 20px;
-    border-radius:8px;
-    text-decoration:none;
-    font-weight:700;
-    display:inline-block;">
+    background: linear-gradient(90deg, #7c4dff, #b47cff);
+    color: white;
+    padding: 14px 26px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700;
+    display: inline-block;
+  ">
     {texto}
   </a>
 </p>
-'''
+"""
+
 
 WHATSAPP_BTN = """
-<p style="text-align:left;margin-top:18px;">
+<p style="margin-top:24px;">
   <a href="https://wa.me/351915323219" target="_blank" style="
-    background-color:#25D366;
-    color:white;
-    padding:12px 20px;
-    border-radius:8px;
-    text-decoration:none;
-    font-weight:600;
-    display:inline-block;">
+    background: linear-gradient(90deg, #25D366, #32e67f);
+    color: white;
+    padding: 14px 26px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 700;
+    display: inline-block;
+  ">
     💬 Falar com Suporte
   </a>
 </p>
 """
 
-# ============================ AULAS (COMENTADAS) ============================
-AULAS_TXT_HTML = """
-<!--
-<h3>📚 Bônus — Curso Completo (5 aulas)</h3>
-<p>
-<a href="https://youtu.be/usGS5KpBPcA">Aula 1</a><br>
-<a href="https://youtu.be/mtY0qY1zZN4">Aula 2</a><br>
-<a href="https://youtu.be/2aHj8LSGrV8">Aula 3</a><br>
-<a href="https://youtu.be/0QOtVHX1n-4">Aula 4</a><br>
-<a href="https://youtu.be/pzK8dnK6jsk">Aula 5</a>
+
+def BOTAO_PREMIUM(link: str) -> str:
+    """Botão do Painel Premium (Link Mágico)"""
+    return f"""
+<p style="margin:18px 0 24px;">
+  <a href="{link}" target="_blank" style="
+    background: linear-gradient(90deg, #ff6d00, #ff8f00);
+    color: white;
+    padding: 16px 30px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 800;
+    display: inline-block;
+    box-shadow:0 3px 10px rgba(0,0,0,0.25);
+  ">
+    🔑 Acessar Painel Premium
+  </a>
 </p>
--->
 """
 
-# ============================ DASHBOARD PHOENIX ============================
-DASHBOARD_LINK = "https://phoenixmaster.streamlit.app"
 
 
+
+
+
+# ============================ TEMPLATE DOS E-MAILS PHOENIX ============================
 # ============================ TEMPLATE DOS E-MAILS PHOENIX ============================
 EMAIL_CORPOS = {
     # =====================================================================
@@ -254,11 +272,20 @@ EMAIL_CORPOS = {
   <li><b>Análises automatizadas</b> com algoritmos proprietários</li>
   <li><b>Alertas automáticos</b> de entrada, saída e gestão</li>
   <li><b>Métricas exclusivas Phoenix</b> (momentum, volatilidade, força setorial, score Phoenix)</li>
-  <li><b>Dashboard exclusivo</b> para acompanhamento:
-    <br><a href="{DASHBOARD_LINK}" target="_blank">{DASHBOARD_LINK}</a>
-  </li>
   <li><b>StopATR inteligente</b>: ajusta stops dinamicamente conforme volatilidade</li>
 </ul>
+
+<h3>🔑 Seu acesso ao Painel Premium</h3>
+<p style="margin: 4px 0 14px; color:#555; font-size:14px;">
+Use o botão abaixo para entrar no seu painel exclusivo. Este acesso já está liberado e não exige senha.
+</p>
+
+{{PAINEL_PREMIUM}}
+
+<p style="color:#777; font-size:13px; margin-bottom: 22px;">
+💡 <b>Dica:</b> abra este acesso uma vez e salve nos Favoritos ou crie um atalho na Área de Trabalho
+para entrar sempre que quiser.
+</p>
 
 <h3>🚀 Próximos passos</h3>
 <ol>
@@ -281,50 +308,6 @@ Conte conosco para elevar seu nível como investidor(a)!
 """,
 
 
-
-    # =====================================================================
-    # 3) SMALL CAPS — copia do template IBOV com nome alterado
-    # =====================================================================
-    "Carteira de Small Caps": f"""
-<h2>📉 Olá {{nome}}!</h2>
-<p>Bem-vindo(a) à <b>Carteira de Small Caps — Projeto Phoenix</b>.</p>
-
-<p><b>Período da assinatura:</b> {{inicio}} a {{fim}}</p>
-
-<h3>🔥 O que você recebe</h3>
-<ul>
-  <li><b>Análises automatizadas</b> focadas em empresas de menor capitalização</li>
-  <li><b>Alertas automáticos</b> de entrada, saída e gestão</li>
-  <li><b>Métricas exclusivas Phoenix</b>: momentum, volatilidade, força setorial, score Phoenix</li>
-  <li><b>Dashboard exclusivo</b> para acompanhamento:
-    <br><a href="{DASHBOARD_LINK}" target="_blank">{DASHBOARD_LINK}</a>
-  </li>
-  <li><b>StopATR inteligente</b>: ajusta stops dinamicamente conforme volatilidade</li>
-</ul>
-
-<h3>🚀 Próximos passos</h3>
-<ol>
-  <li>Leia o documento anexo e responda <b>ACEITE</b></li>
-  <li>Entre no Grupo Google da carteira (link abaixo)</li>
-  <li>Acesse o canal do Telegram (link personalizado)</li>
-</ol>
-
-{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_SMALL)}
-
-<hr>
-
-<p>
-O Projeto Phoenix é construído sobre automação, disciplina e métricas inteligentes.<br>
-Conte conosco para elevar seu nível como investidor(a)!
-</p>
-
-{AULAS_TXT_HTML}
-{WHATSAPP_BTN}
-""",
-
-
-
-
     # =====================================================================
     # 2) BDRs
     # =====================================================================
@@ -339,11 +322,20 @@ Conte conosco para elevar seu nível como investidor(a)!
   <li><b>Análises automatizadas</b> com enfoque internacional</li>
   <li><b>Alertas automáticos</b> de compra, venda e risco</li>
   <li><b>Métricas Phoenix</b> aplicadas a BDRs (momentum global, volatilidade, força setorial)</li>
-  <li><b>Dashboard exclusivo</b> para acompanhamento:
-    <br><a href="{DASHBOARD_LINK}" target="_blank">{DASHBOARD_LINK}</a>
-  </li>
   <li><b>StopATR automático</b> ajustado ao comportamento dos ativos globais</li>
 </ul>
+
+<h3>🔑 Seu acesso ao Painel Premium</h3>
+<p style="margin: 4px 0 14px; color:#555; font-size:14px;">
+Use o botão abaixo para entrar no seu painel exclusivo. Este acesso já está liberado e não exige senha.
+</p>
+
+{{PAINEL_PREMIUM}}
+
+<p style="color:#777; font-size:13px; margin-bottom: 22px;">
+💡 <b>Dica:</b> abra este acesso uma vez e salve nos Favoritos ou crie um atalho na Área de Trabalho
+para entrar sempre que quiser.
+</p>
 
 <h3>🚀 Próximos passos</h3>
 <ol>
@@ -364,8 +356,59 @@ Estamos juntos dentro do ecossistema Phoenix — tecnologia, análise e execuç�
 {WHATSAPP_BTN}
 """,
 
+
     # =====================================================================
-    # 3) OPÇÕES
+    # 3) SMALL CAPS
+    # =====================================================================
+    "Carteira de Small Caps": f"""
+<h2>📉 Olá {{nome}}!</h2>
+<p>Bem-vindo(a) à <b>Carteira de Small Caps — Projeto Phoenix</b>.</p>
+
+<p><b>Período da assinatura:</b> {{inicio}} a {{fim}}</p>
+
+<h3>🔥 O que você recebe</h3>
+<ul>
+  <li><b>Análises automatizadas</b> focadas em empresas de menor capitalização</li>
+  <li><b>Alertas automáticos</b> de entrada, saída e gestão</li>
+  <li><b>Métricas exclusivas Phoenix</b>: momentum, volatilidade, força setorial, score Phoenix</li>
+  <li><b>StopATR inteligente</b>: ajusta stops dinamicamente conforme volatilidade</li>
+</ul>
+
+<h3>🔑 Seu acesso ao Painel Premium</h3>
+<p style="margin: 4px 0 14px; color:#555; font-size:14px;">
+Use o botão abaixo para entrar no seu painel exclusivo. Este acesso já está liberado e não exige senha.
+</p>
+
+{{PAINEL_PREMIUM}}
+
+<p style="color:#777; font-size:13px; margin-bottom: 22px;">
+💡 <b>Dica:</b> abra este acesso uma vez e salve nos Favoritos ou crie um atalho na Área de Trabalho
+para entrar sempre que quiser.
+</p>
+
+<h3>🚀 Próximos passos</h3>
+<ol>
+  <li>Leia o documento anexo e responda <b>ACEITE</b></li>
+  <li>Entre no Grupo Google da carteira (link abaixo)</li>
+  <li>Acesse o canal do Telegram (link personalizado)</li>
+</ol>
+
+{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_ACOES)}
+
+<hr>
+
+<p>
+O Projeto Phoenix é construído sobre automação, disciplina e métricas inteligentes.<br>
+Conte conosco para elevar seu nível como investidor(a)!
+</p>
+
+{AULAS_TXT_HTML}
+{WHATSAPP_BTN}
+""",
+
+
+    # =====================================================================
+    # 4) OPÇÕES
     # =====================================================================
     "Carteira de Opções": f"""
 <h2>🔥 Olá {{nome}}!</h2>
@@ -380,10 +423,19 @@ Estamos juntos dentro do ecossistema Phoenix — tecnologia, análise e execuç�
   <li><b>Sistema Phoenix</b> com métricas exclusivas (IV, volatilidade, posição dos players, momentum)</li>
   <li><b>Atualizações contínuas</b> de gestão e ajustes</li>
   <li><b>StopATR inteligente</b> para proteção dinâmica</li>
-  <li><b>Dashboard exclusivo</b> para acompanhamento:
-    <br><a href="{DASHBOARD_LINK}" target="_blank">{DASHBOARD_LINK}</a>
-  </li>
 </ul>
+
+<h3>🔑 Seu acesso ao Painel Premium</h3>
+<p style="margin: 4px 0 14px; color:#555; font-size:14px;">
+Use o botão abaixo para entrar no seu painel exclusivo. Este acesso já está liberado e não exige senha.
+</p>
+
+{{PAINEL_PREMIUM}}
+
+<p style="color:#777; font-size:13px; margin-bottom: 22px;">
+💡 <b>Dica:</b> abra este acesso uma vez e salve nos Favoritos ou crie um atalho na Área de Trabalho
+para entrar sempre que quiser.
+</p>
 
 <h3>📌 Importante</h3>
 <p>
@@ -409,6 +461,7 @@ Vamos buscar precisão, gestão e estratégia — pilares que definem o Projeto 
 {WHATSAPP_BTN}
 """,
 }
+
 
 # ============================ RENOVAÇÕES ============================
 EMAIL_RENOVACAO_30 = f"""
@@ -494,14 +547,28 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
     inicio_br = _format_date_br(inicio)
     fim_br = _format_date_br(fim)
 
+    # pega link_acesso do último cadastro (gerado na criação/edição)
+    link_acesso = None
+    if st.session_state.get("last_cadastro"):
+        link_acesso = st.session_state.last_cadastro.get("link_acesso")
+
     for c in carteiras:
         corpo = EMAIL_CORPOS.get(c, "")
         if not corpo:
             resultados.append((c, False, "Sem template configurado"))
             continue
 
+        # preenche nome e datas
         corpo = corpo.format(nome=nome, inicio=inicio_br, fim=fim_br)
 
+        # substitui marcador do botão premium
+        if link_acesso:
+            premium_html = BOTAO_PREMIUM(link_acesso)
+            corpo = corpo.replace("{{PAINEL_PREMIUM}}", premium_html)
+        else:
+            corpo = corpo.replace("{{PAINEL_PREMIUM}}", "")
+
+        # monta botão de Telegram dinâmico
         link_telegram = None
         if st.session_state.get("last_cadastro") and st.session_state.last_cadastro.get("id"):
             cliente_id = st.session_state.last_cadastro["id"]
@@ -511,6 +578,7 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
         if link_telegram:
             botao_telegram = BOTAO_TELEGRAM("Entrar no Telegram", link_telegram)
 
+        # insere botão do Telegram antes do <hr> (âncora)
         anchor = "<hr>"
         if anchor in corpo:
             partes = corpo.split(anchor)
@@ -518,24 +586,14 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
         else:
             corpo += botao_telegram
 
-        # === ADICIONAR LINK DE ACESSO AO PHOENIX ===
-        link_acesso = st.session_state.last_cadastro.get("link_acesso")
-        
-        if link_acesso:
-            corpo += f"""
-            <br><br>
-            <p><b>🔑 Acesso exclusivo ao Painel Premium:</b></p>
-            <p><a href="{link_acesso}" target="_blank">{link_acesso}</a></p>
-            """
-     
-
-        anexar_pdf = True  # sempre anexa, menos Leads
+        anexar_pdf = True  # sempre anexa, menos Leads (se quiser tratar depois)
         assunto = f"Bem-vindo(a) — {c}"
 
         ok, msg = _enviar_email(nome, email_destino, assunto, corpo, anexar_pdf)
         resultados.append((c, ok, msg))
 
     return resultados
+
 
 def enviar_email_renovacao(nome, email_destino, carteira, inicio, fim, dias):
     inicio_br = _format_date_br(inicio)
