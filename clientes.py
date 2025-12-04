@@ -176,16 +176,17 @@ LINK_GG_SMALL = "https://groups.google.com/g/estrategiassmll-phoenix"
 # ============================ BOTÕES (ESTILO PHOENIX) ============================
 def BOTAO_GOOGLE(texto: str, link: str) -> str:
     return f"""
-<p style="margin:14px 0;">
+<p style="margin:16px 0;">
   <a href="{link}" target="_blank" style="
-    background: linear-gradient(90deg, #00c853, #00e676);
-    color: white;
+    background: linear-gradient(90deg, #00e676, #00c853);
+    color: #042f1a;
     padding: 14px 26px;
     border-radius: 10px;
     text-decoration: none;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 800;
     display: inline-block;
+    box-shadow: 0 0 10px rgba(0, 255, 180, 0.45);
   ">
     {texto}
   </a>
@@ -193,9 +194,10 @@ def BOTAO_GOOGLE(texto: str, link: str) -> str:
 """
 
 
+
 def BOTAO_TELEGRAM(texto: str, link: str) -> str:
     return f"""
-<p style="margin:14px 0;">
+<p style="margin:16px 0;">
   <a href="{link}" target="_blank" style="
     background: linear-gradient(90deg, #7c4dff, #b47cff);
     color: white;
@@ -203,8 +205,9 @@ def BOTAO_TELEGRAM(texto: str, link: str) -> str:
     border-radius: 10px;
     text-decoration: none;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 800;
     display: inline-block;
+    box-shadow: 0 0 10px rgba(150, 100, 255, 0.45);
   ">
     {texto}
   </a>
@@ -212,17 +215,19 @@ def BOTAO_TELEGRAM(texto: str, link: str) -> str:
 """
 
 
+
 WHATSAPP_BTN = """
-<p style="margin-top:24px;">
+<p style="margin:20px 0;">
   <a href="https://wa.me/351915323219" target="_blank" style="
-    background: linear-gradient(90deg, #25D366, #32e67f);
+    background: linear-gradient(90deg, #1bd741, #25D366);
     color: white;
     padding: 14px 26px;
     border-radius: 10px;
     text-decoration: none;
     font-size: 16px;
-    font-weight: 700;
+    font-weight: 800;
     display: inline-block;
+    box-shadow: 0 0 10px rgba(50, 240, 120, 0.45);
   ">
     💬 Falar com Suporte
   </a>
@@ -230,20 +235,21 @@ WHATSAPP_BTN = """
 """
 
 
+
 def BOTAO_PREMIUM(link: str) -> str:
-    """Botão do Painel Premium (Link Mágico)"""
     return f"""
-<p style="margin:18px 0 24px;">
+<p style="margin:22px 0;">
   <a href="{link}" target="_blank" style="
-    background: linear-gradient(90deg, #ff6d00, #ff8f00);
-    color: white;
-    padding: 16px 30px;
+    background: linear-gradient(90deg, #ff8f00, #ff6d00);
+    color: #fffbe6;
+    padding: 16px 32px;
     border-radius: 12px;
     text-decoration: none;
     font-size: 18px;
-    font-weight: 800;
+    font-weight: 900;
     display: inline-block;
-    box-shadow:0 3px 10px rgba(0,0,0,0.25);
+    box-shadow: 0 0 14px rgba(255, 145, 0, 0.55);
+    letter-spacing: 0.5px;
   ">
     🔑 Acessar Painel Premium
   </a>
@@ -255,17 +261,19 @@ def BOTAO_PREMIUM(link: str) -> str:
 
 
 
+
 # ============================ TEMPLATE DOS E-MAILS PHOENIX ============================
 # ============================ TEMPLATE DOS E-MAILS PHOENIX ============================
 EMAIL_CORPOS = {
+
     # =====================================================================
     # 1) AÇÕES IBOV
     # =====================================================================
-    "Carteira de Ações IBOV": f"""
-<h2>📈 Olá {{nome}}!</h2>
+    "Carteira de Ações IBOV": """
+<h2>📈 Olá [[nome]]!</h2>
 <p>Bem-vindo(a) à <b>Carteira de Ações IBOV — Projeto Phoenix</b>.</p>
 
-<p><b>Período da assinatura:</b> {{inicio}} a {{fim}}</p>
+<p><b>Período da assinatura:</b> [[inicio]] a [[fim]]</p>
 
 <h3>🔥 O que você recebe</h3>
 <ul>
@@ -277,14 +285,15 @@ EMAIL_CORPOS = {
 
 <h3>🔑 Seu acesso ao Painel Premium</h3>
 <p style="margin: 4px 0 14px; color:#555; font-size:14px;">
-Use o botão abaixo para entrar no seu painel exclusivo. Este acesso já está liberado e não exige senha.
+Use o botão abaixo para entrar no seu painel exclusivo. 
+Este acesso já está liberado e não exige senha.
 </p>
 
-{{PAINEL_PREMIUM}}
+[[PAINEL_PREMIUM]]
 
 <p style="color:#777; font-size:13px; margin-bottom: 22px;">
-💡 <b>Dica:</b> abra este acesso uma vez e salve nos Favoritos ou crie um atalho na Área de Trabalho
-para entrar sempre que quiser.
+💡 Dica: abra este acesso uma vez e salve nos Favoritos 
+ou crie um atalho na Área de Trabalho para entrar sempre que quiser.
 </p>
 
 <h3>🚀 Próximos passos</h3>
@@ -294,7 +303,7 @@ para entrar sempre que quiser.
   <li>Entre no canal do Telegram (link personalizado)</li>
 </ol>
 
-{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_ACOES)}
+{{BOTAO_GOOGLE_ACOES}}
 
 <hr>
 
@@ -303,19 +312,17 @@ O Projeto Phoenix é construído sobre automação, disciplina e métricas intel
 Conte conosco para elevar seu nível como investidor(a)!
 </p>
 
-
-{WHATSAPP_BTN}
+{{WHATSAPP_BTN}}
 """,
-
 
     # =====================================================================
     # 2) BDRs
     # =====================================================================
-    "Carteira de BDRs": f"""
-<h2>🌎 Olá {{nome}}!</h2>
+    "Carteira de BDRs": """
+<h2>🌎 Olá [[nome]]!</h2>
 <p>Você agora faz parte da <b>Carteira de BDRs — Projeto Phoenix</b>.</p>
 
-<p><b>Período da assinatura:</b> {{inicio}} a {{fim}}</p>
+<p><b>Período da assinatura:</b> [[inicio]] a [[fim]]</p>
 
 <h3>🔥 O que você recebe</h3>
 <ul>
@@ -327,24 +334,23 @@ Conte conosco para elevar seu nível como investidor(a)!
 
 <h3>🔑 Seu acesso ao Painel Premium</h3>
 <p style="margin: 4px 0 14px; color:#555; font-size:14px;">
-Use o botão abaixo para entrar no seu painel exclusivo. Este acesso já está liberado e não exige senha.
+Use o botão abaixo para entrar no seu painel exclusivo.
 </p>
 
-{{PAINEL_PREMIUM}}
+[[PAINEL_PREMIUM]]
 
 <p style="color:#777; font-size:13px; margin-bottom: 22px;">
-💡 <b>Dica:</b> abra este acesso uma vez e salve nos Favoritos ou crie um atalho na Área de Trabalho
-para entrar sempre que quiser.
+💡 Dica: salve o link nos Favoritos para acesso rápido.
 </p>
 
 <h3>🚀 Próximos passos</h3>
 <ol>
-  <li>Leia o documento em anexo e responda <b>ACEITE</b></li>
+  <li>Leia o documento anexo e responda <b>ACEITE</b></li>
   <li>Entre no Grupo Google da carteira</li>
   <li>Entre no canal do Telegram (link personalizado)</li>
 </ol>
 
-{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_BDRS)}
+{{BOTAO_GOOGLE_BDRS}}
 
 <hr>
 
@@ -352,89 +358,82 @@ para entrar sempre que quiser.
 Estamos juntos dentro do ecossistema Phoenix — tecnologia, análise e execução com precisão.
 </p>
 
-
-{WHATSAPP_BTN}
+{{WHATSAPP_BTN}}
 """,
-
 
     # =====================================================================
     # 3) SMALL CAPS
     # =====================================================================
-    "Carteira de Small Caps": f"""
-<h2>📉 Olá {{nome}}!</h2>
+    "Carteira de Small Caps": """
+<h2>📉 Olá [[nome]]!</h2>
 <p>Bem-vindo(a) à <b>Carteira de Small Caps — Projeto Phoenix</b>.</p>
 
-<p><b>Período da assinatura:</b> {{inicio}} a {{fim}}</p>
+<p><b>Período da assinatura:</b> [[inicio]] a [[fim]]</p>
 
 <h3>🔥 O que você recebe</h3>
 <ul>
   <li><b>Análises automatizadas</b> focadas em empresas de menor capitalização</li>
   <li><b>Alertas automáticos</b> de entrada, saída e gestão</li>
-  <li><b>Métricas exclusivas Phoenix</b>: momentum, volatilidade, força setorial, score Phoenix</li>
+  <li><b>Métricas exclusivas Phoenix</b> (momentum, volatilidade, força setorial, score Phoenix)</li>
   <li><b>StopATR inteligente</b>: ajusta stops dinamicamente conforme volatilidade</li>
 </ul>
 
 <h3>🔑 Seu acesso ao Painel Premium</h3>
 <p style="margin: 4px 0 14px; color:#555; font-size:14px;">
-Use o botão abaixo para entrar no seu painel exclusivo. Este acesso já está liberado e não exige senha.
+Este acesso já está liberado e não exige senha.
 </p>
 
-{{PAINEL_PREMIUM}}
+[[PAINEL_PREMIUM]]
 
 <p style="color:#777; font-size:13px; margin-bottom: 22px;">
-💡 <b>Dica:</b> abra este acesso uma vez e salve nos Favoritos ou crie um atalho na Área de Trabalho
-para entrar sempre que quiser.
+💡 Salve o link nos favoritos para acesso permanente.
 </p>
 
 <h3>🚀 Próximos passos</h3>
 <ol>
   <li>Leia o documento anexo e responda <b>ACEITE</b></li>
-  <li>Entre no Grupo Google da carteira (link abaixo)</li>
-  <li>Acesse o canal do Telegram (link personalizado)</li>
+  <li>Entre no Grupo Google da carteira</li>
+  <li>Acesse o canal do Telegram</li>
 </ol>
 
-{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_ACOES)}
+{{BOTAO_GOOGLE_ACOES}}
 
 <hr>
 
 <p>
-O Projeto Phoenix é construído sobre automação, disciplina e métricas inteligentes.<br>
-Conte conosco para elevar seu nível como investidor(a)!
+O Projeto Phoenix é construído sobre tecnologia e disciplina.
 </p>
 
-
-{WHATSAPP_BTN}
+{{WHATSAPP_BTN}}
 """,
-
 
     # =====================================================================
     # 4) OPÇÕES
     # =====================================================================
-    "Carteira de Opções": f"""
-<h2>🔥 Olá {{nome}}!</h2>
+    "Carteira de Opções": """
+<h2>🔥 Olá [[nome]]!</h2>
 <p>Seja bem-vindo(a) à <b>Carteira de Opções — Projeto Phoenix</b>.</p>
 
-<p><b>Período da assinatura:</b> {{inicio}} a {{fim}}</p>
+<p><b>Período da assinatura:</b> [[inicio]] a [[fim]]</p>
 
 <h3>🔥 O que você recebe</h3>
 <ul>
   <li><b>Operações estruturadas</b> com critérios objetivos</li>
   <li><b>Alertas automáticos</b> com ticker, strike, vencimento e preço</li>
-  <li><b>Sistema Phoenix</b> com métricas exclusivas (IV, volatilidade, posição dos players, momentum)</li>
+  <li><b>Métricas Phoenix</b> (IV, volatilidade, momentum, posição dos players)</li>
   <li><b>Atualizações contínuas</b> de gestão e ajustes</li>
   <li><b>StopATR inteligente</b> para proteção dinâmica</li>
 </ul>
 
 <h3>🔑 Seu acesso ao Painel Premium</h3>
 <p style="margin: 4px 0 14px; color:#555; font-size:14px;">
-Use o botão abaixo para entrar no seu painel exclusivo. Este acesso já está liberado e não exige senha.
+Use o botão abaixo para entrar no seu Painel exclusivo.
 </p>
 
-{{PAINEL_PREMIUM}}
+[[PAINEL_PREMIUM]]
 
 <p style="color:#777; font-size:13px; margin-bottom: 22px;">
-💡 <b>Dica:</b> abra este acesso uma vez e salve nos Favoritos ou crie um atalho na Área de Trabalho
-para entrar sempre que quiser.
+💡 Salve esse acesso nos Favoritos para uso diário.
 </p>
 
 <h3>📌 Importante</h3>
@@ -444,21 +443,20 @@ Opções possuem maior volatilidade — siga os alertas do Phoenix para não per
 
 <h3>🚀 Próximos passos</h3>
 <ol>
-  <li>Leia o documento em anexo e responda <b>ACEITE</b></li>
+  <li>Leia o documento anexo e responda ACEITE</li>
   <li>Valide sua entrada no Grupo Google</li>
-  <li>Acesse o canal do Telegram (link abaixo)</li>
+  <li>Acesse o canal do Telegram</li>
 </ol>
 
-{BOTAO_GOOGLE("Entrar no Grupo Google", LINK_GG_OPCOES)}
+{{BOTAO_GOOGLE_OPCOES}}
 
 <hr>
 
 <p>
-Vamos buscar precisão, gestão e estratégia — pilares que definem o Projeto Phoenix.
+Vamos buscar precisão, gestão e estratégia — pilares do Projeto Phoenix.
 </p>
 
-
-{WHATSAPP_BTN}
+{{WHATSAPP_BTN}}
 """,
 }
 
