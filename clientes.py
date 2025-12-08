@@ -178,80 +178,104 @@ LINK_GG_SMALL = "https://groups.google.com/g/estrategiassmll-phoenix"
 
 def BOTAO_GOOGLE(texto: str, link: str) -> str:
     return f"""
-<p style="margin:14px 0;">
-  <a href="{link}" target="_blank" style="
-    background: linear-gradient(90deg, #00c853, #00e676);
-    color:#000000 !important;
-    padding: 14px 26px;
-    border-radius: 10px;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 700;
-    display: inline-block;
-  ">
-    {texto}
-  </a>
-</p>
+<table border="0" cellspacing="0" cellpadding="0" style="margin: 14px 0;">
+  <tr>
+    <td align="center" style="
+      border-radius: 10px;
+      background: linear-gradient(90deg,#00c853,#00e676);
+      padding: 12px 24px;
+    ">
+      <a href="{link}" target="_blank" style="
+        font-size: 16px;
+        font-weight: 700;
+        color: #000000;
+        text-decoration: none;
+        font-family: Arial, sans-serif;
+      ">
+        {texto}
+      </a>
+    </td>
+  </tr>
+</table>
 """
+
 
 
 
 def BOTAO_TELEGRAM(texto: str, link: str) -> str:
     return f"""
-<p style="margin:14px 0;">
-  <a href="{link}" target="_blank" style="
-    background: linear-gradient(90deg, #7c4dff, #b47cff);
-    color:#000000 !important;
-    padding: 14px 26px;
-    border-radius: 10px;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 700;
-    display: inline-block;
-  ">
-    {texto}
-  </a>
-</p>
+<table border="0" cellspacing="0" cellpadding="0" style="margin: 14px 0;">
+  <tr>
+    <td align="center" style="
+      border-radius: 10px;
+      background: linear-gradient(90deg,#7c4dff,#b47cff);
+      padding: 12px 24px;
+    ">
+      <a href="{link}" target="_blank" style="
+        font-size: 16px;
+        font-weight: 700;
+        color: #ffffff;
+        text-decoration: none;
+        font-family: Arial, sans-serif;
+      ">
+        {texto}
+      </a>
+    </td>
+  </tr>
+</table>
 """
+
 
 
 WHATSAPP_BTN = """
-<p style="margin-top:24px;">
-  <a href="https://wa.me/351915323219" target="_blank" style="
-    background: linear-gradient(90deg, #25D366, #32e67f);
-    color:#000000 !important;
-    padding: 14px 26px;
-    border-radius: 10px;
-    text-decoration: none;
-    font-size: 16px;
-    font-weight: 700;
-    display: inline-block;
-  ">
-    💬 Falar com Suporte
-  </a>
-</p>
+<table border="0" cellspacing="0" cellpadding="0" style="margin-top: 24px;">
+  <tr>
+    <td align="center" style="
+      border-radius: 10px;
+      background: linear-gradient(90deg, #25D366, #32e67f);
+      padding: 12px 24px;
+    ">
+      <a href="https://wa.me/351915323219" target="_blank" style="
+        font-size: 16px;
+        font-weight: 700;
+        color: #000000;
+        text-decoration: none;
+        font-family: Arial, sans-serif;
+      ">
+        💬 Falar com Suporte
+      </a>
+    </td>
+  </tr>
+</table>
 """
+
 
 
 
 def BOTAO_PREMIUM(link: str) -> str:
     return f"""
-<p style="margin:18px 0 24px;">
-  <a href="{link}" target="_blank" style="
-    background: linear-gradient(90deg, #ff6d00, #ff8f00);
-    color:#000000 !important;
-    padding: 16px 30px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-size: 18px;
-    font-weight: 800;
-    display: inline-block;
-    box-shadow:0 3px 10px rgba(0,0,0,0.25);
-  ">
-    🔑 Acessar Painel Premium
-  </a>
-</p>
+<table border="0" cellspacing="0" cellpadding="0" style="margin: 18px 0 24px;">
+  <tr>
+    <td align="center" style="
+      border-radius: 12px;
+      background: linear-gradient(90deg, #ff6d00, #ff8f00);
+      padding: 16px 30px;
+    ">
+      <a href="{link}" target="_blank" style="
+        font-size: 18px;
+        font-weight: 800;
+        color: #000000;
+        text-decoration: none;
+        display: inline-block;
+        font-family: Arial, sans-serif;
+      ">
+        🔑 Acessar Painel Premium
+      </a>
+    </td>
+  </tr>
+</table>
 """
+
 
 
 
