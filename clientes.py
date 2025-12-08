@@ -180,17 +180,17 @@ def BOTAO_GOOGLE(texto: str, link: str) -> str:
     return f"""
 <table border="0" cellspacing="0" cellpadding="0" style="margin: 14px 0;">
   <tr>
-    <td align="center" style="
+    <td align="center" bgcolor="#00C853" style="
       border-radius: 10px;
-      background: linear-gradient(90deg,#00c853,#00e676);
       padding: 12px 24px;
     ">
       <a href="{link}" target="_blank" style="
         font-size: 16px;
         font-weight: 700;
-        color: #000000;
+        color: #FFFFFF;
         text-decoration: none;
         font-family: Arial, sans-serif;
+        display: inline-block;
       ">
         {texto}
       </a>
@@ -206,17 +206,17 @@ def BOTAO_TELEGRAM(texto: str, link: str) -> str:
     return f"""
 <table border="0" cellspacing="0" cellpadding="0" style="margin: 14px 0;">
   <tr>
-    <td align="center" style="
+    <td align="center" bgcolor="#7C4DFF" style="
       border-radius: 10px;
-      background: linear-gradient(90deg,#7c4dff,#b47cff);
       padding: 12px 24px;
     ">
       <a href="{link}" target="_blank" style="
         font-size: 16px;
         font-weight: 700;
-        color: #ffffff;
+        color: #FFFFFF;
         text-decoration: none;
         font-family: Arial, sans-serif;
+        display: inline-block;
       ">
         {texto}
       </a>
@@ -227,12 +227,12 @@ def BOTAO_TELEGRAM(texto: str, link: str) -> str:
 
 
 
+
 WHATSAPP_BTN = """
 <table border="0" cellspacing="0" cellpadding="0" style="margin-top: 24px;">
   <tr>
-    <td align="center" style="
+    <td align="center" bgcolor="#25D366" style="
       border-radius: 10px;
-      background: linear-gradient(90deg, #25D366, #32e67f);
       padding: 12px 24px;
     ">
       <a href="https://wa.me/351915323219" target="_blank" style="
@@ -241,6 +241,7 @@ WHATSAPP_BTN = """
         color: #000000;
         text-decoration: none;
         font-family: Arial, sans-serif;
+        display: inline-block;
       ">
         💬 Falar com Suporte
       </a>
@@ -252,13 +253,13 @@ WHATSAPP_BTN = """
 
 
 
+
 def BOTAO_PREMIUM(link: str) -> str:
     return f"""
 <table border="0" cellspacing="0" cellpadding="0" style="margin: 18px 0 24px;">
   <tr>
-    <td align="center" style="
+    <td align="center" bgcolor="#FF8F00" style="
       border-radius: 12px;
-      background: linear-gradient(90deg, #ff6d00, #ff8f00);
       padding: 16px 30px;
     ">
       <a href="{link}" target="_blank" style="
@@ -266,8 +267,8 @@ def BOTAO_PREMIUM(link: str) -> str:
         font-weight: 800;
         color: #000000;
         text-decoration: none;
-        display: inline-block;
         font-family: Arial, sans-serif;
+        display: inline-block;
       ">
         🔑 Acessar Painel Premium
       </a>
@@ -275,6 +276,7 @@ def BOTAO_PREMIUM(link: str) -> str:
   </tr>
 </table>
 """
+
 
 
 
