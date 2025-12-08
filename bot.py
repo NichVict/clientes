@@ -17,6 +17,7 @@ GRUPOS = {
     "Carteira de Ações IBOV": "https://t.me/+Rkvw9CfJBkowMTg0",
     "Carteira de BDRs": "https://t.me/+-Io0aAFaGJ0yN2Rk",
     "Carteira de Opções": "https://t.me/+3YzTJqBi-xYxNjNk",
+    "Carteira de Small Caps": "https://t.me/+2UD3b1xLWvU0NDFk",
 }
 
 
