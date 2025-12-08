@@ -548,7 +548,7 @@ def _format_date_br(d: date) -> str:
 
 def _enviar_email(nome: str, email_destino: str, assunto: str, corpo: str, anexar_pdf: bool):
     try:
-        msg = MIMEMultipart()
+        msg = MIMEMultipart("alternative")
         msg["Subject"] = assunto
         msg["From"] = EMAIL_USER
         msg["To"] = email_destino
