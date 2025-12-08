@@ -548,19 +548,32 @@ def _format_date_br(d: date) -> str:
 
 def _enviar_email(nome: str, email_destino: str, assunto: str, corpo: str, anexar_pdf: bool):
     try:
-        msg = MIMEMultipart("alternative")
+        # camada externa
+        msg = MIMEMultipart("mixed")
         msg["Subject"] = assunto
         msg["From"] = EMAIL_USER
         msg["To"] = email_destino
 
-        msg.attach(MIMEText(corpo, "html", "utf-8"))
+        # camada interna (corpo do email)
+        body = MIMEMultipart("alternative")
 
+        # versão texto simples (fallback)
+        body.attach(MIMEText("Seu e-mail contém conteúdo em HTML. Abra em um cliente compatível.", "plain"))
+
+        # versão HTML
+        body.attach(MIMEText(corpo, "html", "utf-8"))
+
+        # adiciona o corpo ao email
+        msg.attach(body)
+
+        # anexo PDF (se existir)
         if anexar_pdf:
             with open("contrato_Aurinvest.pdf", "rb") as f:
                 part = MIMEApplication(f.read(), _subtype="pdf")
                 part.add_header("Content-Disposition", "attachment", filename="Contrato_Aurinvest.pdf")
                 msg.attach(part)
 
+        # envia
         server = smtplib.SMTP(EMAIL_HOST, EMAIL_PORT)
         server.starttls()
         server.login(EMAIL_USER, EMAIL_PASS)
@@ -569,6 +582,7 @@ def _enviar_email(nome: str, email_destino: str, assunto: str, corpo: str, anexa
         return True, "OK"
     except Exception as e:
         return False, str(e)
+
 
 def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, inicio: date, fim: date):
     resultados = []
