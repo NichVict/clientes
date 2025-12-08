@@ -1008,7 +1008,7 @@ with st.expander("Formulário", expanded=is_edit):
                     supabase.table("clientes").update({"token": token}).eq("id", cliente_id).execute()
                     
                     # gerar link de acesso completo
-                    link_acesso = f"https://phoenix-master.onrender.com/login/?token={token}"
+                    link_acesso = f"https://phoenix-strategy.onrender.com/login/?token={token}"
                     
                     # salvar no estado
                     st.session_state.last_cadastro["token"] = token
