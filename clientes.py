@@ -129,18 +129,6 @@ PAISES = {
     "🌍 Outro": ""
 }
 
-CARTEIRAS_OPCOES = [
-    "Carteira de Ações IBOV",
-    "Carteira de BDRs",
-    "Carteira de Small Caps",
-    "Carteira de Opções",
-
-    # 🔥 Phoenix
-    "Carteira Phoenix Equity",
-    "Carteira Phoenix Full",
-
-    "Leads"
-]
 
 PAGAMENTOS = ["PIX", "PAYPAL", "Infinite"]  # se precisar "Infinitie", troque aqui
 
@@ -171,13 +159,22 @@ from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 
 # ============================ NOVAS CARTEIRAS PHOENIX ============================
+# ============================ CARTEIRAS DISPONÍVEIS NO CRM ============================
 CARTEIRAS_OPCOES = [
+    # Carteiras individuais
     "Carteira de Ações IBOV",
     "Carteira de BDRs",
     "Carteira de Small Caps",
     "Carteira de Opções",
-    "Leads"    
+
+    # 🔥 Pacotes Phoenix
+    "Carteira Phoenix Equity",
+    "Carteira Phoenix Full",
+
+    # Sistema
+    "Leads"
 ]
+
 
 # ============================ LINKS GOOGLE GROUPS ============================
 LINK_GG_ACOES  = "https://groups.google.com/g/estrategias-phoenix"
