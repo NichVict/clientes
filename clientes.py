@@ -129,7 +129,19 @@ PAISES = {
     "🌍 Outro": ""
 }
 
-CARTEIRAS_OPCOES = ["Curto Prazo", "Curtíssimo Prazo", "Opções", "Criptomoedas", "Clube", "Leads", "Estratégias Phoenix"]
+CARTEIRAS_OPCOES = [
+    "Carteira de Ações IBOV",
+    "Carteira de BDRs",
+    "Carteira de Small Caps",
+    "Carteira de Opções",
+
+    # 🔥 Phoenix
+    "Carteira Phoenix Equity",
+    "Carteira Phoenix Full",
+
+    "Leads"
+]
+
 PAGAMENTOS = ["PIX", "PAYPAL", "Infinite"]  # se precisar "Infinitie", troque aqui
 
 def montar_telefone(cod: str, numero: str) -> str:
@@ -586,12 +598,55 @@ def _enviar_email(nome: str, email_destino: str, assunto: str, corpo: str, anexa
         return False, str(e)
 
 
+        
+# =========================================================
+# 🔁 EXPANSÃO DE PACOTES PHOENIX → CARTEIRAS REAIS
+# =========================================================
+PHOENIX_EXPANSION_MAP = {
+    "Carteira Phoenix Equity": [
+        "Carteira de Ações IBOV",
+        "Carteira de Small Caps",
+        "Carteira de BDRs",
+    ],
+    "Carteira Phoenix Full": [
+        "Carteira de Ações IBOV",
+        "Carteira de Small Caps",
+        "Carteira de BDRs",
+        "Carteira de Opções",
+    ],
+}
+
+
+def _expandir_carteiras(carteiras: list[str]) -> list[str]:
+    """
+    Recebe as carteiras cadastradas no CRM e
+    devolve a lista REAL de carteiras para envio de e-mails.
+    """
+    resultado = []
+
+    for c in carteiras:
+        # Se for pacote Phoenix → expande
+        if c in PHOENIX_EXPANSION_MAP:
+            for sub in PHOENIX_EXPANSION_MAP[c]:
+                if sub not in resultado:
+                    resultado.append(sub)
+        else:
+            # Carteira normal
+            if c not in resultado:
+                resultado.append(c)
+
+    return resultado
+
+
 def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, inicio: date, fim: date):
     resultados = []
     inicio_br = _format_date_br(inicio)
     fim_br = _format_date_br(fim)
 
-    for c in carteiras:
+    # 🔥 AQUI ACONTECE A MÁGICA
+    carteiras_reais = _expandir_carteiras(carteiras)
+
+    for c in carteiras_reais:
         template = EMAIL_CORPOS.get(c, "")
         if not template:
             resultados.append((c, False, "Sem template configurado"))
@@ -613,7 +668,6 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
 
         botao_telegram = BOTAO_TELEGRAM("Entrar no Telegram", link_telegram) if link_telegram else ""
 
-        # Injeta botão Telegram antes do <hr>, se existir
         anchor = "<hr>"
         if botao_telegram:
             if anchor in corpo:
@@ -652,14 +706,13 @@ def enviar_emails_por_carteira(nome: str, email_destino: str, carteiras: list, i
         corpo = corpo.replace("{WHATSAPP_BTN}", WHATSAPP_BTN)
 
         # 6) Envio
-        anexar_pdf = True  # continua igual
         assunto = f"Bem-vindo(a) — {c}"
+        anexar_pdf = True
 
         ok, msg = _enviar_email(nome, email_destino, assunto, corpo, anexar_pdf)
         resultados.append((c, ok, msg))
 
     return resultados
-
 
 
 def enviar_email_renovacao(nome, email_destino, carteira, inicio, fim, dias):
