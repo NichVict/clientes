@@ -504,7 +504,7 @@ Vamos buscar precisão, gestão e estratégia — pilares que definem o Projeto 
 """,
 }
 
-    "Scanner de Ações": """
+"Scanner de Ações": """
 <h2>🧠 Olá [[nome]]!</h2>
 
 <p>
@@ -547,7 +547,7 @@ O Scanner de Ações Phoenix foi criado para quem busca
 """
 
 
-    "Scanner de Opções": """
+"Scanner de Opções": """
 <h2>⚙️ Olá [[nome]]!</h2>
 
 <p>
