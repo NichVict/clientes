@@ -171,6 +171,10 @@ CARTEIRAS_OPCOES = [
     "Carteira Phoenix Equity",
     "Carteira Phoenix Full",
 
+    # 🔥 SCANNERS (NOVO)
+    "Scanner de Ações",
+    "Scanner de Opções",
+
     # Sistema
     "Leads"
 ]
@@ -499,6 +503,92 @@ Vamos buscar precisão, gestão e estratégia — pilares que definem o Projeto 
 {WHATSAPP_BTN}
 """,
 }
+
+    "Scanner de Ações": """
+<h2>🧠 Olá [[nome]]!</h2>
+
+<p>
+Bem-vindo(a) ao <b>Scanner de Ações — Projeto Phoenix</b>.
+Você agora tem acesso a uma ferramenta profissional de análise técnica,
+desenvolvida para identificar oportunidades objetivas no mercado.
+</p>
+
+<p><b>Período da assinatura:</b> [[inicio]] a [[fim]]</p>
+
+<h3>🔥 O que você recebe</h3>
+<ul>
+  <li>Scanner diário de ações do IBOV, SMLL e BDRs</li>
+  <li>Ranking automático por <b>Score Fênix</b></li>
+  <li>Análise técnica completa (tendência, momentum, volatilidade e volume)</li>
+  <li>Radar gráfico e critérios explicados ativo por ativo</li>
+  <li>Geração de <b>Relatórios APIMEC (PDF)</b></li>
+</ul>
+
+<h3>🔑 Seu acesso ao Scanner</h3>
+<p style="margin: 4px 0 14px; color:#555; font-size:14px;">
+Utilize o botão abaixo para acessar o scanner exclusivo.
+Este acesso é pessoal e não exige senha.
+</p>
+
+[[PAINEL_PREMIUM]]
+
+<p style="color:#777; font-size:13px; margin-bottom: 22px;">
+💡 <b>Dica:</b> abra este link uma vez e salve nos Favoritos para acessar sempre que quiser.
+</p>
+
+<hr>
+
+<p>
+O Scanner de Ações Phoenix foi criado para quem busca
+<b>disciplina, método e leitura objetiva do mercado</b>.
+</p>
+
+{WHATSAPP_BTN}
+"""
+
+
+    "Scanner de Opções": """
+<h2>⚙️ Olá [[nome]]!</h2>
+
+<p>
+Você agora tem acesso ao <b>Scanner de Opções — Projeto Phoenix</b>,
+uma ferramenta avançada para leitura estratégica do mercado de derivativos.
+</p>
+
+<p><b>Período da assinatura:</b> [[inicio]] a [[fim]]</p>
+
+<h3>🔥 O que você recebe</h3>
+<ul>
+  <li>Scanner de opções por ativo e vencimento</li>
+  <li>Filtros por volatilidade implícita, moneyness e payoff</li>
+  <li>Análise objetiva de Calls e Puts</li>
+  <li>Identificação de oportunidades com assimetria favorável</li>
+  <li>Visualização clara para estudos e relatórios</li>
+</ul>
+
+<h3>🔑 Seu acesso ao Scanner</h3>
+<p style="margin: 4px 0 14px; color:#555; font-size:14px;">
+Utilize o botão abaixo para acessar o scanner exclusivo.
+Este acesso é pessoal e não exige senha.
+</p>
+
+[[PAINEL_PREMIUM]]
+
+<p style="color:#777; font-size:13px; margin-bottom: 22px;">
+💡 <b>Dica:</b> salve este link para acessar rapidamente sempre que precisar.
+</p>
+
+<hr>
+
+<p>
+Ferramenta desenvolvida para leitura profissional de opções,
+com foco em <b>gestão de risco, probabilidade e estrutura</b>.
+</p>
+
+{WHATSAPP_BTN}
+"""
+
+
 
 
 
